@@ -92,6 +92,16 @@ def _configure_gdal_for_remote() -> None:
     os.environ.setdefault("VSI_CACHE_SIZE", "200000000")
 
 
+class TileNotAvailableError(RuntimeError):
+    """Raised when a tile name resolves to no published tile.
+
+    19 of the 121 candidate tiles over the India bounding box do not exist because
+    they are entirely ocean. A point near a coast or on a small island can resolve
+    to one of them. The caller records the affected points as unsampled rather than
+    guessing a class for them.
+    """
+
+
 def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int | None]:
     """Sample one tile over the network, without downloading it.
 
@@ -105,7 +115,13 @@ def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int
     _configure_gdal_for_remote()
     url = f"/vsicurl/{S3_BASE}/{name}"
     results: list[int | None] = [None] * len(points)
-    with rasterio.open(url) as raster:
+    try:
+        opened = rasterio.open(url)
+    except rasterio.errors.RasterioIOError as exc:
+        if "404" in str(exc):
+            raise TileNotAvailableError(f"{name} is not published") from exc
+        raise
+    with opened as raster:
         left, bottom, right, top = raster.bounds
         inside = [
             (index, point)

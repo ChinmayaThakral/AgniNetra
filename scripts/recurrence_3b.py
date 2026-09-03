@@ -63,7 +63,29 @@ def main() -> int:
     payload = []
     leak_failures = 0
 
+    # Detections sharing an acquisition timestamp in one cell are contemporaneous,
+    # not prior history. VIIRS resolves acquisition time to the minute and a swath
+    # can put several detections in one 0.005 degree cell in the same minute:
+    # measured here, 6370 such groups covering 13134 detections, largest group 4.
+    #
+    # Appending each detection to its cell as the loop advances makes the second
+    # member of such a group see the first as history at its own reference time,
+    # which the leakage guard correctly refuses. Detections are therefore processed
+    # in timestamp batches: features for every detection at time t are computed
+    # against history strictly earlier than t, and only then is the whole batch
+    # added to the histories.
+    pending: list[tuple[tuple[int, int], Event]] = []
+    current_ts = None
+
+    def flush_pending() -> None:
+        for cell_key_value, event in pending:
+            by_cell.setdefault(cell_key_value, []).append(event)
+        pending.clear()
+
     for detection_id, lon, lat, when, frp, daynight in rows:
+        if when != current_ts:
+            flush_pending()
+            current_ts = when
         cell = cell_key(float(lon), float(lat))
         history = by_cell.get(cell, [])
         try:
@@ -78,9 +100,8 @@ def main() -> int:
                 print(f"  LeakageError on {detection_id}: {exc}", file=sys.stderr)
             continue
         payload.append((detection_id, cell[0], cell[1], count_90, count_30, nights, variance, gap))
-        by_cell.setdefault(cell, []).append(
-            Event(when=when, frp=float(frp or 0.0), is_night=(daynight == "N"))
-        )
+        pending.append((cell, Event(when=when, frp=float(frp or 0.0), is_night=(daynight == "N"))))
+    flush_pending()
 
     if leak_failures:
         print(f"\nSTOP: {leak_failures} detections raised LeakageError", file=sys.stderr)
