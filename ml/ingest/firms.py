@@ -32,6 +32,12 @@ RETRY_STATUSES: Final[frozenset[int]] = frozenset({429, 500, 502, 503, 504})
 MAX_ATTEMPTS: Final[int] = 5
 BACKOFF_BASE_SECONDS: Final[float] = 2.0
 
+# Measured on 2026-09-04: 74 requests over about 5 minutes, roughly 15 per
+# minute, held the rolling 10 minute transaction counter at a peak of 1365
+# against a limit of 5000. The constraint is a rate, not a quota, so the client
+# paces itself rather than tracking a budget.
+MIN_REQUEST_INTERVAL_SECONDS: Final[float] = 4.0
+
 
 @dataclass(frozen=True)
 class Response:
@@ -85,6 +91,8 @@ class FirmsClient:
         map_key: str | None,
         transport: Transport,
         sleep: Callable[[float], None] = time.sleep,
+        min_interval: float = 0.0,
+        clock: Callable[[], float] = time.monotonic,
     ) -> None:
         if not map_key or not map_key.strip():
             raise MissingMapKeyError(
@@ -94,12 +102,16 @@ class FirmsClient:
         self._key = map_key.strip()
         self._transport = transport
         self._sleep = sleep
+        self._min_interval = min_interval
+        self._clock = clock
+        self._last_request_at: float | None = None
         self.request_count = 0
 
     def _fetch(self, url: str) -> str:
         """Fetch with exponential backoff on the retryable statuses."""
         last_status = None
         for attempt in range(MAX_ATTEMPTS):
+            self._pace()
             self.request_count += 1
             response = self._transport.get(url)
             last_status = response.status
@@ -116,6 +128,18 @@ class FirmsClient:
             f"FIRMS still returning {last_status} after {MAX_ATTEMPTS} attempts "
             f"for {self._redact(url)}"
         )
+
+    def _pace(self) -> None:
+        """Hold the issue rate below the configured interval."""
+        if self._min_interval <= 0:
+            return
+        now = self._clock()
+        if self._last_request_at is not None:
+            wait = self._min_interval - (now - self._last_request_at)
+            if wait > 0:
+                self._sleep(wait)
+                now = self._clock()
+        self._last_request_at = now
 
     def _redact(self, url: str) -> str:
         return url.replace(self._key, "MAP_KEY_REDACTED")

@@ -174,3 +174,29 @@ def test_empty_chunk_inserts_nothing_without_raising(con: duckdb.DuckDBPyConnect
     """A quiet window returns no rows, and executemany rejects an empty list."""
     assert insert_detections(con, [], "run-empty", allow_fixture_rows=True) == 0
     assert con.execute("SELECT count(*) FROM detections").fetchone()[0] == 0
+
+
+class TestPacing:
+    def test_requests_are_spaced_by_the_minimum_interval(self) -> None:
+        transport = StubTransport([Response(200, read_fixture("SYNTHETIC_modis.csv"))])
+        slept: list[float] = []
+        ticks = iter([0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 1.5, 1.5])
+        client = FirmsClient(
+            "k",
+            transport,
+            sleep=slept.append,
+            min_interval=4.0,
+            clock=lambda: next(ticks),
+        )
+        for _ in range(3):
+            client.area_csv("MODIS_SP", "68,6.5,97.5,37.5", date(2026, 1, 1), 5)
+        assert len(slept) == 2, "first request should not wait, later ones should"
+        assert all(value > 0 for value in slept)
+
+    def test_zero_interval_does_not_sleep(self) -> None:
+        transport = StubTransport([Response(200, read_fixture("SYNTHETIC_modis.csv"))])
+        slept: list[float] = []
+        client = FirmsClient("k", transport, sleep=slept.append, min_interval=0.0)
+        for _ in range(3):
+            client.area_csv("MODIS_SP", "68,6.5,97.5,37.5", date(2026, 1, 1), 5)
+        assert slept == []

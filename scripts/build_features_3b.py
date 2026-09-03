@@ -15,6 +15,7 @@ Usage:
 
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -24,7 +25,12 @@ import duckdb
 from ml.labels.weak import label_from_distances
 from ml.paths import DUCKDB_PATH
 from ml.reference.geo import install_geo
-from ml.reference.landcover import class_name, group_by_tile, sample_tile_remote
+from ml.reference.landcover import (
+    TileNotAvailableError,
+    class_name,
+    group_by_tile,
+    sample_tile_remote,
+)
 
 CONTEXT_DDL = """
 CREATE OR REPLACE TABLE detection_context (
@@ -44,6 +50,9 @@ CREATE OR REPLACE TABLE detection_context (
 # Candidate window for the nearest neighbour prefilter. 0.06 degrees is about
 # 6.6 km, wider than any label radius, so no candidate inside a radius is missed.
 WINDOW_DEG = 0.06
+
+# Concurrent tile samplers. Network bound, so well above the core count.
+SAMPLE_WORKERS = 8
 
 STATE_SQL = """
 CREATE OR REPLACE TEMP TABLE det_state AS
@@ -95,31 +104,68 @@ def main() -> int:
     ids = [r[0] for r in rows]
     points = [(float(r[1]), float(r[2])) for r in rows]
 
-    # Persisted, not temp, and written one tile at a time. The network sampling is
-    # the long pole, so an interruption must not throw away the tiles already done.
+    # Persisted, not temp, and written as each tile lands. The network sampling is
+    # the long pole, so an interruption must not throw away completed work.
     con.execute(
         "CREATE TABLE IF NOT EXISTS det_cover ("
         "detection_id VARCHAR PRIMARY KEY, code SMALLINT, tile VARCHAR NOT NULL)"
     )
-    done_tiles = {r[0] for r in con.execute("SELECT DISTINCT tile FROM det_cover").fetchall()}
-    if done_tiles:
-        print(f"  resuming, {len(done_tiles)} tiles already sampled", flush=True)
+    # Resume by detection, not by tile. Skipping a whole tile because it was
+    # sampled once would silently leave every newly ingested detection in that
+    # tile unsampled, which is exactly what a second backfill window produces.
+    already = {r[0] for r in con.execute("SELECT detection_id FROM det_cover").fetchall()}
+    if already:
+        print(f"  resuming, {len(already)} detections already sampled", flush=True)
 
     grouped = group_by_tile(points)
-    for position, (name, indexes) in enumerate(sorted(grouped.items()), start=1):
-        if name in done_tiles:
-            print(f"  [{position:3d}/{len(grouped)}] {name} skipped, already done", flush=True)
-            continue
-        started = time.time()
-        subset = [points[i] for i in indexes]
-        sampled = sample_tile_remote(name, subset)
-        con.executemany(
-            "INSERT OR IGNORE INTO det_cover VALUES (?, ?, ?)",
-            [(ids[i], code, name) for i, code in zip(indexes, sampled, strict=True)],
-        )
+    pending = {
+        name: [i for i in indexes if ids[i] not in already] for name, indexes in grouped.items()
+    }
+    pending = {name: indexes for name, indexes in pending.items() if indexes}
+    print(
+        f"  {len(pending)} tiles, {sum(len(v) for v in pending.values())} points to sample",
+        flush=True,
+    )
+
+    # Network bound, not CPU bound: every point is a range read against S3. Tiles
+    # are sampled concurrently, each in its own thread with its own dataset handle.
+    # Writes stay on this thread because DuckDB takes a single writer.
+    missing_tiles: list[tuple[str, int]] = []
+    started_all = time.time()
+    done_count = 0
+
+    def sample_one(
+        item: tuple[str, list[int]],
+    ) -> tuple[str, list[int], list[int | None] | None]:
+        name, indexes = item
+        try:
+            return name, indexes, sample_tile_remote(name, [points[i] for i in indexes])
+        except TileNotAvailableError:
+            return name, indexes, None
+
+    with ThreadPoolExecutor(max_workers=SAMPLE_WORKERS) as pool:
+        futures = [pool.submit(sample_one, item) for item in sorted(pending.items())]
+        for future in as_completed(futures):
+            name, indexes, sampled = future.result()
+            done_count += 1
+            if sampled is None:
+                missing_tiles.append((name, len(indexes)))
+                print(f"  [{done_count:3d}/{len(pending)}] {name} not published", flush=True)
+                continue
+            con.executemany(
+                "INSERT OR IGNORE INTO det_cover VALUES (?, ?, ?)",
+                [(ids[i], code, name) for i, code in zip(indexes, sampled, strict=True)],
+            )
+            print(
+                f"  [{done_count:3d}/{len(pending)}] {name} {len(indexes):6d} points "
+                f"({(time.time() - started_all) / 60:.1f} min elapsed)",
+                flush=True,
+            )
+
+    if missing_tiles:
+        unsampled = sum(count for _, count in missing_tiles)
         print(
-            f"  [{position:3d}/{len(grouped)}] {name} {len(subset):6d} points "
-            f"{time.time() - started:5.1f}s",
+            f"  {len(missing_tiles)} tiles not published, {unsampled} points unsampled",
             flush=True,
         )
 

@@ -23,7 +23,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import duckdb
 from dotenv import load_dotenv
 
-from ml.ingest.firms import FirmsClient, MissingMapKeyError, day_chunks
+from ml.ingest.firms import (
+    MIN_REQUEST_INTERVAL_SECONDS,
+    FirmsClient,
+    MissingMapKeyError,
+    day_chunks,
+)
 from ml.ingest.load import insert_detections
 from ml.ingest.parse import INDIA_BBOX, parse_csv
 from ml.ingest.plan import (
@@ -51,6 +56,12 @@ def parse_args() -> argparse.Namespace:
         "--sensors", nargs="+", default=list(SENSOR_TIERS), choices=list(SENSOR_TIERS)
     )
     parser.add_argument(
+        "--min-interval",
+        type=float,
+        default=MIN_REQUEST_INTERVAL_SECONDS,
+        help="minimum seconds between requests, to hold the issue rate",
+    )
+    parser.add_argument(
         "--availability-only",
         action="store_true",
         help="print availability and map key status, write nothing",
@@ -63,7 +74,11 @@ def main() -> int:
     load_dotenv(ENV_PATH)
 
     try:
-        client = FirmsClient(os.environ.get("FIRMS_MAP_KEY"), RequestsTransport())
+        client = FirmsClient(
+            os.environ.get("FIRMS_MAP_KEY"),
+            RequestsTransport(),
+            min_interval=args.min_interval,
+        )
     except MissingMapKeyError as exc:
         print(f"BLOCKED: {exc}", file=sys.stderr)
         return 2

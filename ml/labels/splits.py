@@ -81,3 +81,49 @@ def split_for(
     test = frozenset(groups[group_name])
     everything = frozenset(state for states in groups.values() for state in states)
     return everything - test, test
+
+
+# The fourth group is not a state group. The ingest bounding box is a rectangle
+# and India is not, so 41 percent of ingested detections fall outside every Indian
+# state polygon, 96.6 percent of them inside a neighbouring country. Those rows are
+# a resource rather than a caveat: Pakistani Punjab burns the same crop on the same
+# calendar as Indian Punjab with entirely different reference coverage, and Sri
+# Lanka is a different agricultural regime altogether.
+#
+# Held apart from the three state groups, they answer a question no within India
+# split can: does the model transfer across a national border where agricultural
+# practice and reference coverage both change. D26.
+EXTERNAL_GROUP: Final[str] = "group_d_external"
+
+EXTERNAL_EXTENTS: Final[dict[str, tuple[float, float, float, float]]] = {
+    "Pakistan": (60.8, 23.6, 77.9, 37.1),
+    "Sri Lanka": (79.6, 5.8, 82.0, 10.0),
+}
+
+
+def in_external_extent(longitude: float, latitude: float) -> str | None:
+    """Return the external country a coordinate falls in, or None.
+
+    Only meaningful for a detection that falls inside no Indian state polygon.
+    These extents overlap India, so containment here is not by itself evidence of
+    being outside India.
+    """
+    for country, (west, south, east, north) in EXTERNAL_EXTENTS.items():
+        if west <= longitude <= east and south <= latitude <= north:
+            return country
+    return None
+
+
+def assert_external_disjoint_from_states(
+    groups: dict[str, tuple[str, ...]] = HELD_OUT_GROUPS,
+) -> None:
+    """The external group is defined by absence of a state, so it cannot overlap.
+
+    Asserted rather than assumed, because the guarantee rests on the assignment
+    rule and a future change to that rule would break it silently.
+    """
+    if EXTERNAL_GROUP in groups:
+        raise SplitError(
+            f"{EXTERNAL_GROUP} must not be a state group. It is defined by falling "
+            "outside every Indian state polygon, not by a list of state names."
+        )
