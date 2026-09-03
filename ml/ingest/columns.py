@@ -29,7 +29,6 @@ VIIRS_COLUMNS: Final[tuple[str, ...]] = (
 )
 
 MODIS_COLUMNS: Final[tuple[str, ...]] = (
-    "country_id",
     "latitude",
     "longitude",
     "brightness",
@@ -50,7 +49,18 @@ MODIS_COLUMNS: Final[tuple[str, ...]] = (
 # brightness and bright_t31; VIIRS carries bright_ti4 and bright_ti5. A column
 # absent from a source is stored as NULL rather than as a filled default, so that
 # a missing value is distinguishable from a measured zero.
-UNION_COLUMNS: Final[tuple[str, ...]] = tuple(dict.fromkeys(VIIRS_COLUMNS + MODIS_COLUMNS))
+# country_id is carried in the union, and therefore in the schema, even though the
+# area endpoint does not return it. The archive download product does, so a later
+# backfill from that product can populate it without a schema change.
+UNION_COLUMNS: Final[tuple[str, ...]] = tuple(
+    dict.fromkeys((*VIIRS_COLUMNS, *MODIS_COLUMNS, "country_id"))
+)
+
+# Columns the documentation lists but the area endpoint does not return. Measured
+# against the live MODIS_NRT area endpoint on 2026-09-04: the documented MODIS set
+# has 15 columns including country_id, the area response has 14 without it. The
+# documented set describes the archive download product, not this endpoint. D18.
+OPTIONAL_COLUMNS: Final[frozenset[str]] = frozenset({"country_id"})
 
 VIIRS_SOURCES: Final[tuple[str, ...]] = (
     "VIIRS_SNPP_NRT",
@@ -66,6 +76,11 @@ MODIS_SOURCES: Final[tuple[str, ...]] = (
 )
 
 ALL_SOURCES: Final[tuple[str, ...]] = VIIRS_SOURCES + MODIS_SOURCES
+
+
+def required_columns_for(source: str) -> tuple[str, ...]:
+    """Return the columns a response must carry for the source to be parseable."""
+    return tuple(c for c in columns_for(source) if c not in OPTIONAL_COLUMNS)
 
 
 def columns_for(source: str) -> tuple[str, ...]:

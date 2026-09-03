@@ -23,24 +23,33 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import duckdb
 from dotenv import load_dotenv
 
-from ml.ingest.columns import ALL_SOURCES
 from ml.ingest.firms import FirmsClient, MissingMapKeyError, day_chunks
 from ml.ingest.load import insert_detections
 from ml.ingest.parse import INDIA_BBOX, parse_csv
+from ml.ingest.plan import (
+    SENSOR_TIERS,
+    assert_no_double_count,
+    parse_availability,
+    plan_window,
+)
 from ml.ingest.schema import create_schema
 from ml.ingest.transport import RequestsTransport
 from ml.paths import DUCKDB_PATH, ENV_PATH, ensure_dir
 
 BBOX_PARAM = ",".join(str(value) for value in INDIA_BBOX)
 
-DEFAULT_SOURCES = ("VIIRS_SNPP_SP", "VIIRS_NOAA20_SP", "MODIS_SP")
+# Sources are never defaulted. They are planned from the availability endpoint,
+# because the standard processing and near real time tiers partition the calendar
+# and asking for the wrong tier returns nothing rather than failing. D17.
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--days", type=int, default=90, help="window length in days")
     parser.add_argument("--end", type=str, default=None, help="window end, YYYY-MM-DD")
-    parser.add_argument("--sources", nargs="+", default=list(DEFAULT_SOURCES))
+    parser.add_argument(
+        "--sensors", nargs="+", default=list(SENSOR_TIERS), choices=list(SENSOR_TIERS)
+    )
     parser.add_argument(
         "--availability-only",
         action="store_true",
@@ -59,25 +68,38 @@ def main() -> int:
         print(f"BLOCKED: {exc}", file=sys.stderr)
         return 2
 
-    unknown = [s for s in args.sources if s not in ALL_SOURCES]
-    if unknown:
-        print(f"unknown sources: {', '.join(unknown)}", file=sys.stderr)
-        print(f"known: {', '.join(ALL_SOURCES)}", file=sys.stderr)
-        return 2
-
     print("map key status before:")
     print(client.mapkey_status().strip())
+
+    availability_csv = client.availability()
+    availability = parse_availability(availability_csv)
     print("\ndata availability, min and max date per source:")
-    availability = client.availability().strip()
-    print(availability)
+    print(availability_csv.strip())
 
     if args.availability_only:
         return 0
 
     end = date.fromisoformat(args.end) if args.end else date.today() - timedelta(days=1)
     start = end - timedelta(days=args.days - 1)
+
+    segments, warnings = plan_window(start, end, availability, tuple(args.sensors))
+    assert_no_double_count(segments)
+
     print(f"\nwindow {start} to {end} inclusive, {args.days} days")
     print(f"bbox {BBOX_PARAM}")
+    print("\nsource plan:")
+    for segment in segments:
+        print(
+            f"  {segment.sensor:14s} {segment.source:18s} "
+            f"{segment.start} to {segment.end}  {segment.days:3d} days"
+        )
+    if warnings:
+        print("\nplan warnings, these belong in STATE.md:")
+        for warning in warnings:
+            print(f"  {warning}")
+    if not segments:
+        print("\nBLOCKED: no source covers the requested window", file=sys.stderr)
+        return 2
 
     ensure_dir(DUCKDB_PATH.parent)
     con = duckdb.connect(str(DUCKDB_PATH))
@@ -85,19 +107,19 @@ def main() -> int:
 
     total_rows = 0
     total_inserted = 0
-    for source in args.sources:
+    for segment in segments:
         run_id = str(uuid.uuid4())
         started = datetime.now(UTC)
-        chunks = day_chunks(start, end)
-        source_rows = 0
-        source_inserted = 0
+        chunks = day_chunks(segment.start, segment.end)
+        segment_rows = 0
+        segment_inserted = 0
         requests_before = client.request_count
 
         for chunk_start, span in chunks:
-            text = client.area_csv(source, BBOX_PARAM, chunk_start, span)
-            detections = parse_csv(text, source)
-            source_rows += len(detections)
-            source_inserted += insert_detections(con, detections, run_id)
+            text = client.area_csv(segment.source, BBOX_PARAM, chunk_start, span)
+            detections = parse_csv(text, segment.source)
+            segment_rows += len(detections)
+            segment_inserted += insert_detections(con, detections, run_id)
 
         con.execute(
             "INSERT INTO ingest_runs (ingest_run_id, source, bbox, window_start, window_end, "
@@ -105,23 +127,23 @@ def main() -> int:
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 run_id,
-                source,
+                segment.source,
                 BBOX_PARAM,
-                start,
-                end,
+                segment.start,
+                segment.end,
                 client.request_count - requests_before,
-                source_rows,
-                source_inserted,
+                segment_rows,
+                segment_inserted,
                 started,
                 datetime.now(UTC),
-                None,
+                f"sensor {segment.sensor}",
             ),
         )
-        total_rows += source_rows
-        total_inserted += source_inserted
+        total_rows += segment_rows
+        total_inserted += segment_inserted
         print(
-            f"{source}: {len(chunks)} requests, {source_rows} rows parsed, "
-            f"{source_inserted} inserted"
+            f"{segment.source}: {len(chunks)} requests, {segment_rows} rows parsed, "
+            f"{segment_inserted} inserted"
         )
 
     print(f"\ntotal parsed {total_rows}, total inserted {total_inserted}")

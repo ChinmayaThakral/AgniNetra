@@ -94,6 +94,11 @@ def insert_detections(
                 f"written to detections. First identifier: {offenders[0]}"
             )
 
+    # A chunk covering a quiet window legitimately returns no rows, and
+    # executemany rejects an empty parameter list.
+    if not detections:
+        return 0
+
     before = con.execute("SELECT count(*) FROM detections").fetchone()
     before_count = int(before[0]) if before else 0
 

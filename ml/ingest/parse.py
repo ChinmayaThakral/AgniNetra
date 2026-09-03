@@ -6,7 +6,7 @@ from datetime import datetime
 from io import StringIO
 from typing import Final
 
-from ml.ingest.columns import columns_for, family_for
+from ml.ingest.columns import family_for, required_columns_for
 from ml.ingest.confidence import band_ordinal, normalise
 from ml.ingest.identity import detection_id
 from ml.ingest.timeutil import parse_acq_timestamp, to_ist
@@ -64,12 +64,13 @@ def in_india_bbox(latitude: float, longitude: float) -> bool:
 def parse_csv(text: str, source: str, restrict_to_bbox: bool = True) -> list[Detection]:
     """Parse a FIRMS CSV response for one source into Detection rows.
 
-    The expected header is the documented column set for the source. A response
-    whose header does not contain every documented column is rejected rather than
+    A response whose header is missing a required column is rejected rather than
     parsed partially, because a silently shortened row set is worse than a stop.
+    Columns in OPTIONAL_COLUMNS may be absent: the documented MODIS set includes
+    country_id but the live area endpoint does not return it. D18.
     """
     family = family_for(source)
-    expected = columns_for(source)
+    expected = required_columns_for(source)
 
     reader = csv.DictReader(StringIO(text))
     header = reader.fieldnames or []

@@ -168,3 +168,9 @@ class TestClient:
             client.area_csv("MODIS_SP", "68,6.5,97.5,37.5", date(2026, 1, 1), 5)
         assert "super-secret-key" not in str(caught.value)
         assert "MAP_KEY_REDACTED" in str(caught.value)
+
+
+def test_empty_chunk_inserts_nothing_without_raising(con: duckdb.DuckDBPyConnection) -> None:
+    """A quiet window returns no rows, and executemany rejects an empty list."""
+    assert insert_detections(con, [], "run-empty", allow_fixture_rows=True) == 0
+    assert con.execute("SELECT count(*) FROM detections").fetchone()[0] == 0
