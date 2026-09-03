@@ -1,0 +1,40 @@
+# Data and derived artifacts
+data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+ml/artifacts/
+
+# Figures are generated. Commit one deliberately with git add -f.
+docs/figures/*.png
+docs/figures/*.pdf
+!docs/figures/.gitkeep
+
+# Credentials
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# uv regenerates this on every run and it tracks pyproject dependencies,
+# which are empty here. requirements.txt is the source of truth for pins.
+uv.lock
+
+# Node
+node_modules/
+.next/
+out/
+.vercel/
+
+# OS and editor
+.DS_Store
+.idea/
+*.swp
