@@ -1,0 +1,4 @@
+country_id,latitude,longitude,brightness,scan,track,acq_date,acq_time,satellite,instrument,confidence,version,bright_t31,frp,daynight
+IND,23.10000,80.20000,335.5,1.1,1.0,2026-01-15,2000,Terra,MODIS,85,SYNTHETIC_FIXTURE,295.2,12.4,N
+IND,24.05500,82.67000,310.2,1.2,1.0,2026-01-15,0138,Aqua,MODIS,45,SYNTHETIC_FIXTURE,289.9,5.1,N
+IND,25.00000,81.00000,305.0,1.0,1.0,2026-01-16,0745,Terra,MODIS,12,SYNTHETIC_FIXTURE,284.0,2.0,D
