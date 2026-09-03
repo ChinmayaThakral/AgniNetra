@@ -18,6 +18,10 @@ check_conventions = importlib.util.module_from_spec(spec)
 sys.modules["check_conventions"] = check_conventions
 spec.loader.exec_module(check_conventions)
 
+# Taken from the checker rather than written out, so this file never contains a
+# banned phrase literally and cannot drift from the definition it tests.
+PROBE_PHRASE = check_conventions.FILLER_PHRASES[0]
+
 EXPECTED = {
     "INNOVATION_DOSSIER.md",
     "PROJECT_KICKOFF.md",
@@ -62,7 +66,7 @@ def test_pragma_suppresses_phrases_but_never_characters() -> None:
     try:
         probe.write_text(
             "<!-- check-conventions: off -->\n"
-            "seamlessly and an " + chr(0x2014) + " dash\n"
+            f"{PROBE_PHRASE} and an " + chr(0x2014) + " dash\n"
             "<!-- check-conventions: on -->\n"
         )
         findings, regions = check_conventions.scan("_probe_pragma.md")
@@ -76,7 +80,7 @@ def test_pragma_suppresses_phrases_but_never_characters() -> None:
 def test_indented_pragma_example_does_not_open_a_region() -> None:
     probe = ROOT / "_probe_indented.md"
     try:
-        probe.write_text("    <!-- check-conventions: off -->\nseamlessly\n")
+        probe.write_text(f"    <!-- check-conventions: off -->\n{PROBE_PHRASE}\n")
         findings, regions = check_conventions.scan("_probe_indented.md")
         assert regions == 0
         assert any("filler" in f for f in findings)
