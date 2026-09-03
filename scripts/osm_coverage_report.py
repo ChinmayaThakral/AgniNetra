@@ -67,17 +67,17 @@ FROM ref_osm_industrial GROUP BY 1 ORDER BY 2 DESC
 
 DISTRICT_SQL = """
 WITH districts AS (
-    SELECT coalesce(nullif(name_en, ''), name) AS district_name, geom
+    SELECT coalesce(nullif(name_en, ''), name) AS subdistrict_name, geom
     FROM ref_osm_admin WHERE admin_level = '6'
 ),
 hits AS (
-    SELECT d.district_name, count(i.osm_id) AS features
+    SELECT d.subdistrict_name, count(i.osm_id) AS features
     FROM districts d
     LEFT JOIN ref_osm_industrial i
       ON ST_Contains(d.geom, ST_Point(i.longitude, i.latitude))
-    GROUP BY d.district_name
+    GROUP BY d.subdistrict_name
 )
-SELECT district_name, features FROM hits ORDER BY features DESC
+SELECT subdistrict_name, features FROM hits ORDER BY features DESC
 """
 
 
@@ -126,15 +126,22 @@ def main() -> int:
     for name, features, area, density in states:
         lines.append(f"| {ascii_only(str(name))} | {features} | {area} | {density} |")
     lines.append("")
-    lines.append("## Top 25 districts by feature count")
+    lines.append("## Top 25 sub districts by feature count")
     lines.append("")
-    lines.append("| District | Features |")
+    lines.append("| Sub district | Features |")
     lines.append("|---|---|")
     for name, features in districts[:25]:
         lines.append(f"| {ascii_only(str(name))} | {features} |")
     lines.append("")
     lines.append(
-        f"Districts with zero industrial features: "
+        "admin_level 6 in this extract is the sub district tier, tehsil, taluk or "
+        "mandal, not the district tier. India has roughly 780 districts and the "
+        f"extract carries {len(districts)} level 6 areas, so calling them districts "
+        "would overstate the denominator by roughly eight times."
+    )
+    lines.append("")
+    lines.append(
+        f"Sub districts with zero industrial features: "
         f"{sum(1 for _, f in districts if f == 0)} of {len(districts)}"
     )
     lines.append("")
@@ -146,7 +153,8 @@ def main() -> int:
     print(f"unassigned to any state: {unassigned}")
     print(f"states reported: {len(states)}")
     print(
-        f"districts reported: {len(districts)}, {sum(1 for _, f in districts if f == 0)} with zero"
+        f"sub districts reported: {len(districts)}, "
+        f"{sum(1 for _, f in districts if f == 0)} with zero"
     )
     print(f"\nwritten to {OUT}")
     print("\ntop 10 by density:")
