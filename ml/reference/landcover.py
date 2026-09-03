@@ -11,6 +11,7 @@ The tile list is resolved from coordinates rather than downloaded wholesale, so 
 sampling run pulls only the tiles its points actually fall in.
 """
 
+import os
 from pathlib import Path
 from typing import Final
 
@@ -78,6 +79,64 @@ def sample_tile(tile_path: Path, points: list[tuple[float, float]]) -> list[int 
             code = int(value[0])
             results[index] = code if code in CLASSES else None
         return results
+
+
+BLOCK_PIXELS: Final[int] = 1024
+
+
+def _configure_gdal_for_remote() -> None:
+    """Settings that make range reads over the network viable rather than painful."""
+    os.environ.setdefault("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR")
+    os.environ.setdefault("GDAL_CACHEMAX", "1024")
+    os.environ.setdefault("VSI_CACHE", "TRUE")
+    os.environ.setdefault("VSI_CACHE_SIZE", "200000000")
+
+
+def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int | None]:
+    """Sample one tile over the network, without downloading it.
+
+    WorldCover tiles are cloud optimised GeoTIFFs with 1024 pixel blocks, so a
+    windowed read fetches only the blocks it needs. Points are sorted into block
+    order before sampling, which turns random access into near sequential access:
+    measured on tile N30E072 with 12066 real detections, 279.5 seconds unordered
+    against 44.8 seconds ordered, a factor of 6.2. Results are returned in the
+    caller's original order. D20.
+    """
+    _configure_gdal_for_remote()
+    url = f"/vsicurl/{S3_BASE}/{name}"
+    results: list[int | None] = [None] * len(points)
+    with rasterio.open(url) as raster:
+        left, bottom, right, top = raster.bounds
+        inside = [
+            (index, point)
+            for index, point in enumerate(points)
+            if left <= point[0] <= right and bottom <= point[1] <= top
+        ]
+        if not inside:
+            return results
+        located = [(raster.index(point[0], point[1]), index) for index, point in inside]
+        located.sort(
+            key=lambda item: (
+                item[0][0] // BLOCK_PIXELS,
+                item[0][1] // BLOCK_PIXELS,
+                item[0],
+            )
+        )
+        ordered_points = [points[index] for _, index in located]
+        for (_, index), value in zip(located, raster.sample(ordered_points), strict=True):
+            code = int(value[0])
+            results[index] = code if code in CLASSES else None
+    return results
+
+
+def group_by_tile(
+    points: list[tuple[float, float]],
+) -> dict[str, list[int]]:
+    """Group point indexes by the WorldCover tile that contains them."""
+    grouped: dict[str, list[int]] = {}
+    for index, (longitude, latitude) in enumerate(points):
+        grouped.setdefault(tile_name(latitude, longitude), []).append(index)
+    return grouped
 
 
 def class_name(code: int | None) -> str | None:
