@@ -86,3 +86,56 @@ def test_indented_pragma_example_does_not_open_a_region() -> None:
         assert any("filler" in f for f in findings)
     finally:
         probe.unlink(missing_ok=True)
+
+
+# Taken from the checker so this file never names a guarded function literally.
+PROBE_CALL = check_conventions.BANNED_CALLS[0]
+
+CALL_EXEMPT_EXPECTED = {
+    "ml/reference/geo.py",
+    "tests/test_geo_distance.py",
+}
+
+
+class TestSpatialCallGuard:
+    """The axis order footgun returns a plausible wrong number, so a direct call
+    has to fail the check rather than rely on anyone remembering D10."""
+
+    def test_exempt_list_is_exactly_the_recorded_two(self) -> None:
+        assert set(check_conventions.CALL_EXEMPT) == CALL_EXEMPT_EXPECTED
+
+    def test_no_exemption_is_a_glob(self) -> None:
+        for entry in check_conventions.CALL_EXEMPT:
+            assert "*" not in entry and "?" not in entry
+
+    def test_every_exemption_exists_on_disk(self) -> None:
+        for entry in check_conventions.CALL_EXEMPT:
+            assert (ROOT / entry).is_file()
+
+    def test_a_direct_call_in_code_is_flagged(self) -> None:
+        probe = ROOT / "_probe_call.py"
+        try:
+            probe.write_text(f"q = 'SELECT {PROBE_CALL}(a, b)'\n")
+            findings, _ = check_conventions.scan("_probe_call.py")
+            assert any(PROBE_CALL in f for f in findings)
+        finally:
+            probe.unlink(missing_ok=True)
+
+    def test_the_same_call_in_prose_is_not_flagged(self) -> None:
+        probe = ROOT / "_probe_call.md"
+        try:
+            probe.write_text(f"D10 explains why {PROBE_CALL} is wrapped.\n")
+            findings, _ = check_conventions.scan("_probe_call.md")
+            assert not any(PROBE_CALL in f for f in findings)
+        finally:
+            probe.unlink(missing_ok=True)
+
+    def test_every_guarded_function_is_actually_guarded(self) -> None:
+        probe = ROOT / "_probe_call.py"
+        for call in check_conventions.BANNED_CALLS:
+            try:
+                probe.write_text(f"q = '{call}(a, b)'\n")
+                findings, _ = check_conventions.scan("_probe_call.py")
+                assert any(call in f for f in findings), f"{call} not guarded"
+            finally:
+                probe.unlink(missing_ok=True)

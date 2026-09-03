@@ -62,6 +62,28 @@ FILLER_PHRASES: tuple[str, ...] = (
 PRAGMA_OFF_LINE = "<!-- check-conventions: off -->"
 PRAGMA_ON_LINE = "<!-- check-conventions: on -->"
 
+# Spatial functions that read ST_Point(latitude, longitude), the reverse of the
+# storage order. Called directly they return a plausible wrong number or NaN, with
+# no error. Everything goes through the macros in ml/reference/geo.py. See D10.
+BANNED_CALLS: tuple[str, ...] = (
+    "ST_Distance_Sphere",
+    "ST_Distance_Spheroid",
+    "ST_Area_Spheroid",
+)
+
+# Exact paths allowed to name those functions: the macro definitions, and the
+# tests that deliberately pin the broken behaviour.
+CALL_EXEMPT: frozenset[str] = frozenset(
+    {
+        "ml/reference/geo.py",
+        "tests/test_geo_distance.py",
+    }
+)
+
+# The call check applies to code, not prose. A decision entry describing the trap
+# must be able to name the function it is about.
+CODE_SUFFIXES: frozenset[str] = frozenset({".py", ".ts", ".tsx", ".sql"})
+
 # Attribution footers and co-author trailers. Authorship is the bracketed name
 # on each commit subject, so neither belongs in a tracked file.
 ATTRIBUTION_MARKERS: tuple[str, ...] = (
@@ -107,6 +129,7 @@ def scan(relpath: str) -> tuple[list[str], int]:
     findings: list[str] = []
     suppressed_regions = 0
     suppressed = False
+    is_code = Path(relpath).suffix in CODE_SUFFIXES
 
     for lineno, line in enumerate(text.splitlines(), start=1):
         if line.startswith(PRAGMA_OFF_LINE):
@@ -128,6 +151,16 @@ def scan(relpath: str) -> tuple[list[str], int]:
             continue
 
         lowered = line.lower()
+
+        if is_code and relpath not in CALL_EXEMPT:
+            for call in BANNED_CALLS:
+                if call.lower() in lowered:
+                    findings.append(
+                        f"{relpath}:{lineno}: calls {call} directly. It reads "
+                        f"ST_Point(latitude, longitude), the reverse of storage order, and "
+                        f"returns a plausible wrong number. Use the geo_ macros. See D10."
+                    )
+
         for phrase in FILLER_PHRASES:
             if phrase in lowered:
                 findings.append(f"{relpath}:{lineno}: banned filler phrase '{phrase}'")
@@ -156,6 +189,7 @@ def main() -> int:
     print(f"scanned {scanned} tracked files")
     print(f"excluded {len(EXCLUDED)} by exact path: {', '.join(sorted(EXCLUDED))}")
     print(f"suppressed regions honoured: {regions}")
+    print(f"spatial call exemptions: {', '.join(sorted(CALL_EXEMPT))}")
 
     if findings:
         print(f"\n{len(findings)} violations:")
