@@ -52,3 +52,37 @@ def test_both_refusals_state_their_cost() -> None:
     """A refusal without a price is indistinguishable from a shortfall."""
     assert "39 tiles" in CARD and "46 GB" in CARD
     assert "no price" in CARD or "carries none" in CARD
+
+
+def test_the_evidence_is_not_described_as_four_independent_findings() -> None:
+    """Three of the four were consequences of one measurement. Counting them
+    separately inflates one result into three, which is the thing this project
+    keeps catching itself doing."""
+    import re
+
+    pattern = re.compile(r"four\s+(independent\s+)?(findings|measurements|tests)", re.IGNORECASE)
+    for name, text in (
+        ("PHASE_6.md", PHASE_6),
+        ("results.md", RESULTS),
+        ("model_card.md", CARD),
+        ("DECISIONS.md", DECISIONS),
+    ):
+        for line in text.splitlines():
+            if pattern.search(line) and "not four independent findings" not in line:
+                raise AssertionError(f"{name} counts the evidence as four: {line.strip()[:90]}")
+
+
+def test_b1_independence_is_measured_not_asserted() -> None:
+    assert "b1_recurrence_ablation" in RESULTS
+    assert "## D60." in DECISIONS
+    assert "mean_gap_days" in RESULTS, "the overlap must be named, not glossed"
+
+
+def test_the_thread_determinism_finding_is_recorded() -> None:
+    assert "## D59." in DECISIONS
+    assert "OMP_NUM_THREADS" in DECISIONS
+
+
+def test_flare_kernel_status_reaches_the_model_card() -> None:
+    assert "unresolved, not confirmed" in CARD
+    assert "D42" in CARD

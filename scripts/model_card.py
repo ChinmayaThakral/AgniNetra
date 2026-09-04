@@ -185,9 +185,15 @@ def main() -> None:
         "Baseline B3 waits on a MOSDAC order approval.",
         "",
         "KAALCHAKRA against B1 and B2 is **not measured**, and the evidence for that "
-        "is measured: four findings say the excitation half of the model is not "
+        "is measured: one observability measurement, with three consequences for the "
+        "excitation term and one corroboration, says the excitation half of the model is not "
         "testable in a polar orbiting record. D58. Unlike B4 this refusal has no "
         "price, because no quantity of polar orbiting data lifts it.",
+        "",
+        "The flare kernel family is **unresolved, not confirmed**. Three tests failed "
+        "to settle it, each for a different reason, and corrected burstiness of -0.056 "
+        "in the cleanest stratum is consistent with a near homogeneous Poisson family "
+        "and equally consistent with the industrial family. D42.",
         "",
         "No field verification of any detection exists, and no gold set exists to build one from.",
         "",
