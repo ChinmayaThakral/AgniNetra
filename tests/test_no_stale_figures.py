@@ -21,6 +21,8 @@ from ml.paths import ROOT
 STALE = (
     (r"\b296\b", "persistent source count before re-clustering"),
     (r"\b39\b", "unregistered source count before re-clustering"),
+    (r"\b94\b", "persistent source count withdrawn by the D61 rebuild"),
+    (r"\b21\b", "unregistered source count withdrawn by the D61 rebuild"),
 )
 
 # A line may state an old number if it is visibly describing the correction.
@@ -30,10 +32,16 @@ HISTORICAL_MARKERS = (
     "before re",
     "corrected",
     "D53",
+    "D56",
+    "D61",
+    "D65",
     "was wrong",
     "against 21",
     "become 94",
     "inflated",
+    "withdrawn",
+    "rebuild",
+    "previously published",
 )
 
 SOURCE_CONTEXT = re.compile(r"(source|registry|unregistered|recurring|persistent)", re.IGNORECASE)
@@ -44,6 +52,8 @@ EXEMPT = {
     "context/DECISIONS.md",
     "tests/test_no_stale_figures.py",
     "docs/paper_outline.md",
+    # Exists precisely to show the withdrawn value beside the rebuilt one.
+    "docs/refit_comparison.md",
 }
 
 SCANNED = sorted(
@@ -71,18 +81,22 @@ def test_no_stale_source_count_stated_as_current(path) -> None:
 
 
 def test_the_corrected_values_are_the_ones_published() -> None:
+    """94 was withdrawn by the D61 rebuild, which restored the prior counts the
+    persistence rule depends on. Pinning it would pin a withdrawn number."""
     results = (ROOT / "docs" / "results.md").read_text()
-    assert "94 persistent sources" in results
+    assert "263 persistent sources" in results
 
 
 def test_the_unregistered_claim_is_published_as_retracted() -> None:
-    """This test previously pinned the claim that 21 sources were unregistered.
-    That claim was retracted, D56, so the test now pins the retraction. A test
-    asserting a withdrawn result is worse than no test."""
+    """This pinned the claim that 21 sources were unregistered, then the D56
+    retraction of it. The D61 rebuild changed the arithmetic again: eight sources
+    now survive a 5 km search where none did. The retraction stands anyway, because
+    it rested on the instrument being wrong rather than on the count, so that is
+    what this pins."""
     results = (ROOT / "docs" / "results.md").read_text()
-    assert "retracted" in results.lower()
-    assert "none of the 21 is in a place no registry knows about" in results.lower()
-    assert "not established" in results
+    assert "stays retracted" in results.lower()
+    assert "still not established" in results.lower()
+    assert "no mining tags" in results.lower()
 
 
 def test_exported_console_data_matches_the_published_count() -> None:
@@ -91,8 +105,8 @@ def test_exported_console_data_matches_the_published_count() -> None:
     data = ROOT / "apps" / "console" / "public" / "data"
     sources = json.loads((data / "sources.json").read_text())
     unregistered = sum(1 for s in sources if not s["registered"])
-    assert len(sources) == 94, f"exported {len(sources)}, results.md says 94"
-    assert unregistered == 21, f"exported {unregistered}, results.md says 21"
+    assert len(sources) == 263, f"exported {len(sources)}, results.md says 263"
+    assert unregistered == 53, f"exported {unregistered}, results.md says 53"
 
 
 def test_the_manifest_describes_clustering_not_rounding() -> None:
