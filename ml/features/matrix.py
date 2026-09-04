@@ -17,6 +17,15 @@ cannot help it and can only encourage it to memorise belts that do not transfer.
 
 from typing import Final
 
+# A missing recurrence row means the feature was not computed for that detection.
+# It does not mean the location had zero prior detections. An earlier version wrote
+# `coalesce(r.prior_count_90d, 0)`, which asserted the second, and because
+# `detection_recurrence` had not been rebuilt after the seasonal ingest that
+# fabricated a zero for 92.1 percent of training rows at a rate that differed by
+# class. HistGradientBoosting handles NULL natively, so the honest value is passed
+# through and the model is told the feature is missing rather than told it is zero.
+# D61.
+
 # Deterministic inputs to the weak label rule. Never features. D43.
 LEAKING_COLUMNS: Final[tuple[str, ...]] = (
     "flare_m",
@@ -82,8 +91,8 @@ SELECT
     sin(2 * pi() * CAST(strftime(d.acq_date_ist, '%j') AS INTEGER) / 366.0) AS doy_sin,
     cos(2 * pi() * CAST(strftime(d.acq_date_ist, '%j') AS INTEGER) / 366.0) AS doy_cos,
     CASE WHEN d.daynight = 'N' THEN 1 ELSE 0 END AS is_night,
-    coalesce(r.prior_count_90d, 0) AS prior_count_90d,
-    coalesce(r.prior_count_30d, 0) AS prior_count_30d,
+    r.prior_count_90d,
+    r.prior_count_30d,
     r.night_fraction_90d,
     r.frp_variance_90d,
     r.mean_gap_days,
