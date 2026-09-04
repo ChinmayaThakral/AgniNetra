@@ -11,6 +11,7 @@ from ml.labels.weak import (
     CLASSES,
     FLARE_RADIUS_M,
     INDUSTRIAL_RADIUS_M,
+    TRAINED_CLASSES,
     LabelShareError,
     WeakLabel,
     assert_label_share,
@@ -34,9 +35,27 @@ class TestPrecedence:
         result = label_from_distances(flare_m=None, industrial_m=None, landcover_class="cropland")
         assert result.label == CLASS_AGRICULTURAL
 
-    def test_vegetated_gives_wildfire(self) -> None:
+    def test_vegetated_is_unlabelled_not_wildfire(self) -> None:
+        """D33. The land cover wildfire rule measured 0.17x lift, anti correlated
+        rather than weak, so it now yields unlabelled and carries zero confidence."""
         for cover in ("tree_cover", "shrubland", "grassland"):
-            assert label_from_distances(None, None, cover).label == CLASS_WILDFIRE
+            result = label_from_distances(None, None, cover)
+            assert result.label == CLASS_UNLABELLED, cover
+            assert result.confidence == 0.0
+            assert "D33" in result.rule
+
+    def test_no_rule_produces_wildfire_any_more(self) -> None:
+        """The baselines structurally cannot recover wildfire. Stated, not implied."""
+        probes = [
+            (100.0, None, None),
+            (None, 100.0, None),
+            (None, None, "cropland"),
+            (None, None, "tree_cover"),
+            (None, None, "built_up"),
+            (None, None, None),
+        ]
+        assert all(label_from_distances(*probe).label != CLASS_WILDFIRE for probe in probes)
+        assert CLASS_WILDFIRE not in TRAINED_CLASSES
 
     def test_built_up_alone_is_unlabelled(self) -> None:
         """Built up land is not a source type. It must not become industrial."""

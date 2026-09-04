@@ -22,6 +22,16 @@ CLASS_AGRICULTURAL: Final[str] = "agricultural"
 CLASS_WILDFIRE: Final[str] = "wildfire"
 CLASS_UNLABELLED: Final[str] = "unlabelled"
 
+# Classes a baseline is trained on. Wildfire is deliberately absent: no weak label
+# rule produces it any more, so the baselines structurally cannot recover it. That
+# is a stated limitation and the motivation for the temporal model, not an
+# oversight. D33.
+TRAINED_CLASSES: Final[tuple[str, ...]] = (
+    CLASS_FLARE,
+    CLASS_INDUSTRIAL,
+    CLASS_AGRICULTURAL,
+)
+
 CLASSES: Final[tuple[str, ...]] = (
     CLASS_FLARE,
     CLASS_INDUSTRIAL,
@@ -103,11 +113,29 @@ def label_from_distances(
             confidence=0.5,
         )
     if landcover_class in ("tree_cover", "shrubland", "grassland"):
+        # Vegetated land cover with nothing else matching was a wildfire label
+        # until 2026-09-04. It is now unlabelled, and the rule is kept here rather
+        # than deleted so the reason stays attached to the code.
+        #
+        # Measured lift against a uniformly placed detection inside India: 0.78x in
+        # monsoon, 0.20x in the 2023 burning season, 0.17x after the GEM assets
+        # were added. Below 1 in every window and worst where fire is most common.
+        # That is anti correlated, not weak. Training on it and reporting recall
+        # would measure agreement with a rule proven to point the wrong way.
+        #
+        # The cause is compositional: the rule fires only where nothing else
+        # matched, so it is a residue rather than a class. Land cover cannot
+        # separate a wildfire from stubble burning because both occur on
+        # vegetation. D33.
         return WeakLabel(
-            label=CLASS_WILDFIRE,
+            label=CLASS_UNLABELLED,
             source="esa_worldcover",
-            rule="land cover is vegetated and no industrial reference matched",
-            confidence=0.4,
+            rule=(
+                "vegetated land cover with no industrial or flare match, formerly "
+                "the wildfire rule, now unlabelled: measured lift below 1 in every "
+                "window. D33"
+            ),
+            confidence=0.0,
         )
     return UNLABELLED
 
