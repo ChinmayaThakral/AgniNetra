@@ -48,6 +48,8 @@ def main() -> None:
     sources = load("persistent_sources.json")
     b4_path = ARTIFACT_DIR / "b4_results.json"
     b4 = json.loads(b4_path.read_text()) if b4_path.is_file() else None
+    support_path = ARTIFACT_DIR / "b4_support.json"
+    support = json.loads(support_path.read_text()) if support_path.is_file() else None
 
     option_a = b1["option_a"]
     macro = [option_a[g]["macro avg"]["f1-score"] for g in STATE_GROUPS]
@@ -166,15 +168,37 @@ def main() -> None:
             "class cell fell below the support floor and is reported as its support "
             "rather than as a number. D57.",
         ]
+        if support is not None:
+            lines += [
+                "",
+                f"**The cost of lifting the refusal is stated rather than left open.** "
+                f"Reaching 80 percent of the trained class detections in the three held "
+                f"out groups needs {support['tiles_for_80_percent']} tiles, about "
+                f"{support['gb_for_80_percent']:.0f} GB for one date each. 95 percent "
+                f"needs {support['tiles_for_95_percent']}.",
+            ]
 
     lines += [
         "",
         "## Not measured",
         "",
-        "Baseline B3 waits on a MOSDAC order approval. KAALCHAKRA against B1 and B2 is "
-        "not estimable from a polar orbiting record, on four measurements, D58. No "
-        "field verification of any detection exists, and no gold set exists to build "
-        "one from.",
+        "Baseline B3 waits on a MOSDAC order approval.",
+        "",
+        "KAALCHAKRA against B1 and B2 is **not measured**, and the evidence for that "
+        "is measured: four findings say the excitation half of the model is not "
+        "testable in a polar orbiting record. D58. Unlike B4 this refusal has no "
+        "price, because no quantity of polar orbiting data lifts it.",
+        "",
+        "No field verification of any detection exists, and no gold set exists to build one from.",
+        "",
+        "## Two of these are refusals, not gaps",
+        "",
+        "B4 and phase 6 are both reported as not measured. In each case the system was "
+        "run and the evidence was measured to be insufficient, so the number was "
+        "withheld rather than produced. Reading them as two missing rows misses what "
+        "they share. B4's refusal carries a stated price; phase 6's carries none, "
+        "which is why it is a result about the observation record rather than a "
+        "shortfall in the dataset.",
         "",
     ]
     destination = ROOT / "docs" / "model_card.md"

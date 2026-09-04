@@ -8,6 +8,7 @@ product is downloaded and before an account exists.
 Writes docs/b4_support.md.
 """
 
+import json
 import math
 import sys
 from collections import Counter, defaultdict
@@ -20,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from ml.imagery.catalogue import search_l2a
 from ml.labels.splits import HELD_OUT_GROUPS
-from ml.paths import DUCKDB_PATH, ROOT
+from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 from ml.reference.geo import GEO_MACROS
 
 PROBE_LON = 82.6757
@@ -29,6 +30,7 @@ WINDOW_START = datetime(2024, 10, 1, tzinfo=UTC)
 WINDOW_END = datetime(2024, 12, 1, tzinfo=UTC)
 TRAINED_CLASSES = ("flare", "industrial", "agricultural")
 OUTPUT = ROOT / "docs" / "b4_support.md"
+_FIELDS = ("rows", "tiles_touched", "tiles_for_80", "tiles_for_95")
 
 # The Sentinel-2 tiling grid is MGRS, which is a UTM construct and not expressible
 # in degrees. Approximating it by a degree grid aligned to the measured T44QPM
@@ -106,6 +108,27 @@ def main() -> None:
 
     OUTPUT.write_text(_render(scene, by_group, tiles_needed))
     print(f"wrote {OUTPUT.relative_to(ROOT)}")
+
+    tiles_for_80 = sum(entry[2] for entry in tiles_needed.values())
+    artifact = ensure_dir(ARTIFACT_DIR) / "b4_support.json"
+    artifact.write_text(
+        json.dumps(
+            {
+                "scene": scene.name,
+                "cloud_cover_pct": scene.cloud_cover_pct,
+                "scene_size_gb": round(scene.size_gb, 3),
+                "tiles_for_80_percent": tiles_for_80,
+                "tiles_for_95_percent": sum(entry[3] for entry in tiles_needed.values()),
+                "gb_for_80_percent": round(tiles_for_80 * scene.size_gb, 1),
+                "per_group": {
+                    g: dict(zip(_FIELDS, v, strict=True)) for g, v in tiles_needed.items()
+                },
+            },
+            indent=2,
+            allow_nan=False,
+        )
+    )
+    print(f"wrote {artifact.relative_to(ROOT)}")
     held_out = sum(
         counts.get(c, 0)
         for group, counts in by_group.items()
