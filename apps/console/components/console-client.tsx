@@ -118,8 +118,14 @@ export function ConsoleClient({
       instance = new maplibregl.Map({
         container: node,
         style: STYLE,
-        center: [80.5, 22.5],
-        zoom: 3.9,
+        // The India bounding box the detections were requested for. Fitting to it
+        // rather than setting a centre and zoom keeps the frame on India at any
+        // container size; a fixed zoom opened on Kazakhstan to Indonesia.
+        bounds: [
+          [68.0, 6.5],
+          [97.5, 37.5],
+        ],
+        fitBoundsOptions: { padding: 24 },
       });
     } catch (error) {
       // Without this the throw propagates out of the effect and React unmounts
@@ -209,10 +215,30 @@ export function ConsoleClient({
         type: "circle",
         source: "detections",
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 2.4, 10, 6],
+          // Radius and opacity both scale with zoom. At country zoom a fixed
+          // radius made Punjab a solid dark polygon that reads as a choropleth
+          // rather than as thousands of overlapping points. Small and translucent
+          // at low zoom lets overlap accumulate into visible density instead.
+          "circle-radius": [
+            "interpolate", ["linear"], ["zoom"],
+            3, 1.1,
+            5, 1.8,
+            7, 3.2,
+            10, 5.5,
+            13, 8,
+          ],
           "circle-color": ["get", "colour"],
-          "circle-opacity": 0.85,
-          "circle-stroke-width": ["case", ["==", ["get", "abstains"], 1], 1.4, 0],
+          "circle-opacity": [
+            "interpolate", ["linear"], ["zoom"], 3, 0.42, 7, 0.68, 11, 0.88,
+          ],
+          // A zoom expression must sit at the top level of a paint property, so
+          // the interpolate wraps the case rather than the other way round.
+          // MapLibre rejects the nested form outright.
+          "circle-stroke-width": [
+            "interpolate", ["linear"], ["zoom"],
+            3, ["case", ["==", ["get", "abstains"], 1], 0.5, 0],
+            8, ["case", ["==", ["get", "abstains"], 1], 1.4, 0],
+          ],
           "circle-stroke-color": "#1b1b1a",
         },
       });
@@ -286,6 +312,9 @@ export function ConsoleClient({
               </span>
             </div>
             <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
+              <strong>Scope:</strong> {manifest.persistentSourceScope}
+            </p>
+            <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
               {manifest.persistentSourceRule}
             </p>
             <div className="srlist">
@@ -300,7 +329,8 @@ export function ConsoleClient({
                     {s.state ?? "unassigned"} {s.lat.toFixed(3)}, {s.lon.toFixed(3)}
                   </span>
                   <span>
-                    {s.detections} det, nearest {metres(s.nearestAssetM)}
+                    {s.detections} det, spread {metres(s.spreadM)}, nearest{" "}
+                    {metres(s.nearestAssetM)}
                   </span>
                 </button>
               ))}
@@ -355,11 +385,13 @@ export function ConsoleClient({
           value={dayIndex}
         />
         <span style={{ fontSize: "0.78rem", color: "var(--muted)" }}>
-          {count(visible.length)} of {count(detections.length)} shown
+          <strong>Dots</strong>: {count(visible.length)} of {count(detections.length)}{" "}
+          sampled detections, <strong>group_a held out states only</strong>. Black
+          outline is an abstention.
           {" | "}
-          circles outlined in black are abstentions
-          {" | "}
-          red rings are persistent sources with no registry match
+          <strong>Rings</strong>: {sources.length} persistent sources,{" "}
+          <strong>computed over all of India</strong>. Red means no registry match.
+          The two layers have different scopes.
         </span>
       </div>
     </>

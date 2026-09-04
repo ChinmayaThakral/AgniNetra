@@ -28,8 +28,10 @@ export default async function Page() {
           </div>
         </div>
         <div className="sub" style={{ textAlign: "right" }}>
-          Held out group <strong>{manifest.heldOutGroup}</strong>:{" "}
+          Detections: held out group <strong>{manifest.heldOutGroup}</strong>,{" "}
           {manifest.heldOutStates.join(", ")}
+          <br />
+          Persistent sources: all of India, whole record
           <br />
           Windows: {manifest.windows.join(" | ")}
         </div>

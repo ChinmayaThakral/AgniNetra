@@ -37,6 +37,7 @@ export const sourceSchema = z.object({
   nightFraction: z.number(),
   nearestAssetM: z.number().nullable(),
   registered: z.boolean(),
+  spreadM: z.number(),
 });
 
 const classMetricSchema = z.object({
@@ -95,6 +96,9 @@ export const manifestSchema = z.object({
   conformalNominal: z.number(),
   applicabilityQuantile: z.number(),
   persistentSourceRule: z.string(),
+  persistentSourceScope: z.string(),
+  detectionScope: z.string(),
+  clusterRadiusSweep: z.array(z.array(z.number())),
   attribution: z.array(
     z.object({ name: z.string(), detail: z.string(), url: z.string() }),
   ),

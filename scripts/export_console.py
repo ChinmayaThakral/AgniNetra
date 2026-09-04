@@ -130,44 +130,12 @@ def main() -> int:
         )
     print(f"detections exported: {len(records)}", flush=True)
 
-    # Persistent sources: recurring locations, flagged by whether any registry
-    # knows about them. The unregistered ones are the product.
-    persistent = con.execute(
-        f"""
-        SELECT round(d.longitude, 3) AS lon, round(d.latitude, 3) AS lat,
-               c.state_name,
-               count(*) AS detections,
-               max(r.prior_count_90d) AS max_priors,
-               avg(coalesce(r.night_fraction_90d, 0)) AS night_fraction,
-               min(coalesce(c.industrial_m, 1e12)) AS nearest_osm_m,
-               min(coalesce(g.gem_m_temporal, 1e12)) AS nearest_gem_m,
-               min(coalesce(c.flare_m, 1e12)) AS nearest_flare_m
-        FROM detections d
-        JOIN detection_context c USING (detection_id)
-        LEFT JOIN detection_recurrence r USING (detection_id)
-        LEFT JOIN detection_gem g USING (detection_id)
-        WHERE c.state_name IS NOT NULL AND r.prior_count_90d >= {PERSISTENT_MIN_PRIORS}
-        GROUP BY 1, 2, 3
-        HAVING count(*) >= 5
-        ORDER BY detections DESC
-        LIMIT 400
-        """
-    ).fetchall()
-    sources = []
-    for lon, lat, state, detections, max_priors, night, osm_m, gem_m, flare_m in persistent:
-        nearest = min(float(osm_m), float(gem_m), float(flare_m))
-        sources.append(
-            {
-                "lon": float(lon),
-                "lat": float(lat),
-                "state": state,
-                "detections": int(detections),
-                "maxPriors": int(max_priors),
-                "nightFraction": round(float(night), 3),
-                "nearestAssetM": None if nearest > 1e11 else round(nearest),
-                "registered": bool(nearest <= 1000),
-            }
-        )
+    # Persistent sources come from scripts/persistent_sources.py, which clusters by
+    # great circle distance rather than rounding coordinates. Rounding to three
+    # decimal places is about 110 m, smaller than a VIIRS pixel, so it fragmented
+    # single sites and inflated the unregistered count from 21 to 39. D53.
+    source_artifact = json.loads((ARTIFACT_DIR / "persistent_sources.json").read_text())
+    sources = source_artifact["sources"]
     unregistered = sum(1 for s in sources if not s["registered"])
     print(f"persistent sources: {len(sources)}, unregistered {unregistered}", flush=True)
 
@@ -246,11 +214,22 @@ def main() -> int:
         "applicabilityQuantile": AOA_QUANTILE,
         "persistentSourceRule": (
             f"Locations with at least {PERSISTENT_MIN_PRIORS} prior detections in a trailing "
-            "90 days and at least 5 detections in the record, grouped to 3 decimal places of "
-            "coordinate, roughly 110 m. Registered means within 1 km "
-            "of an OSM industrial feature, a GEM asset operating on the date, or a "
-            "catalogued flare."
+            "90 days and at least 5 detections, clustered by great circle distance at a "
+            f"{source_artifact['chosen_radius_m']:.0f} m radius. A VIIRS detection is 375 m "
+            "across, so that allows about one pixel of positional spread without merging "
+            "separate sites. Registered means within 1 km of an OSM industrial feature, a GEM "
+            "asset operating on the detection date, or a catalogued flare."
         ),
+        "persistentSourceScope": (
+            "Computed over the whole record, all Indian states and all three windows, not "
+            "only the held out group. The detections layer is a group_a sample. The two "
+            "layers therefore have different scopes and the legend says so."
+        ),
+        "detectionScope": (
+            "Stratified sample from the group_a held out states only: Karnataka, Meghalaya, "
+            "Odisha and Punjab."
+        ),
+        "clusterRadiusSweep": source_artifact["sweep"],
         "attribution": [
             {
                 "name": "NASA FIRMS",
