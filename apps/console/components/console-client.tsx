@@ -10,19 +10,33 @@ import { EvidencePanel } from "./evidence-panel";
 
 const CLASSES = ["flare", "industrial", "agricultural"] as const;
 
-/** Basemap without an API key, so the console runs with no credential. */
+/**
+ * Basemap without an API key, so the console runs with no credential.
+ *
+ * Carto's basemaps served without a key but now stamp every tile with an
+ * "API KEY REQUIRED" watermark, which is unusable in a demonstration. The
+ * OpenStreetMap standard tile layer needs no key and is already attributed here
+ * under ODbL, which the project uses for its industrial features anyway.
+ */
 const STYLE = {
   version: 8 as const,
   sources: {
-    carto: {
+    osm: {
       type: "raster" as const,
-      tiles: ["https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
+      tiles: [
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      ],
       tileSize: 256,
+      maxzoom: 19,
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ODbL 1.0',
     },
   },
-  layers: [{ id: "carto", type: "raster" as const, source: "carto" }],
+  layers: [
+    { id: "osm", type: "raster" as const, source: "osm", paint: { "raster-opacity": 0.72 } },
+  ],
 };
 
 function toCsv(rows: Detection[]): string {
@@ -56,6 +70,7 @@ export function ConsoleClient({
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Detection | null>(null);
   const [active, setActive] = useState<Set<string>>(new Set(CLASSES));
   const [abstainOnly, setAbstainOnly] = useState(false);
@@ -76,15 +91,69 @@ export function ConsoleClient({
   }, [detections, active, abstainOnly, dayIndex, dates]);
 
   useEffect(() => {
-    if (!container.current || map.current) return;
-    map.current = new maplibregl.Map({
-      container: container.current,
-      style: STYLE,
-      center: [80.5, 22.5],
-      zoom: 3.9,
+    const node = container.current;
+    if (!node || map.current) return;
+
+    // MapLibre 5 needs a WebGL 2 context and no longer ships a supported()
+    // helper, so the check is direct. Done before construction so an unsupported
+    // browser gets a sentence rather than a blank rectangle.
+    const probe = document.createElement("canvas");
+    const hasWebgl2 = (() => {
+      try {
+        return probe.getContext("webgl2") !== null;
+      } catch {
+        return false;
+      }
+    })();
+    if (!hasWebgl2) {
+      setMapError(
+        "This browser could not create a WebGL context, which MapLibre requires. " +
+          "Every panel below still works; only the map is unavailable.",
+      );
+      return;
+    }
+
+    let instance: maplibregl.Map;
+    try {
+      instance = new maplibregl.Map({
+        container: node,
+        style: STYLE,
+        center: [80.5, 22.5],
+        zoom: 3.9,
+      });
+    } catch (error) {
+      // Without this the throw propagates out of the effect and React unmounts
+      // the whole subtree, taking the panels with it. Measured: a headless run
+      // with no GPU lost .mapwrap and .aside together.
+      setMapError(
+        `The map failed to initialise: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      return;
+    }
+
+    map.current = instance;
+    instance.addControl(new maplibregl.NavigationControl({}), "top-right");
+    instance.addControl(new maplibregl.ScaleControl({ unit: "metric" }));
+    instance.on("error", (event) => {
+      const message = event.error?.message ?? "unknown map error";
+      if (message.includes("tile")) return; // a missing tile is not a failure
+      setMapError(message);
     });
-    map.current.addControl(new maplibregl.NavigationControl({}), "top-right");
-    map.current.addControl(new maplibregl.ScaleControl({ unit: "metric" }));
+
+    // MapLibre sizes its canvas at construction. If the container is still zero
+    // height at that moment, which happens when a grid row has not resolved, the
+    // canvas stays 0 by 0 and the map renders nothing with no error anywhere.
+    const observer = new ResizeObserver(() => instance.resize());
+    observer.observe(node);
+    instance.once("load", () => instance.resize());
+
+    return () => {
+      observer.disconnect();
+      instance.remove();
+      map.current = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -188,6 +257,18 @@ export function ConsoleClient({
       <div className="body">
         <div className="mapwrap">
           <div className="map" ref={container} />
+          {mapError ? (
+            <div className="maperror">
+              <strong>Map unavailable</strong>
+              <p>{mapError}</p>
+              <p>
+                The detections are still loaded and every panel, filter and export
+                works. This message replaces the map rather than hiding it, for the
+                same reason an unmeasured value reads {"not measured"} rather than
+                being omitted.
+              </p>
+            </div>
+          ) : null}
         </div>
         <aside className="aside">
           <EvidencePanel detection={selected} />
