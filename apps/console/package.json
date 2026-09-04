@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint"
+    "lint": "next lint",
+    "shots": "node scripts/screenshot.mjs"
   },
   "dependencies": {
     "next": "15.5.4",
@@ -20,6 +21,7 @@
     "@types/node": "22.15.3",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "puppeteer-core": "23.11.1"
   }
 }

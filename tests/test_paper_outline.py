@@ -59,5 +59,7 @@ def test_assertions_are_counted_honestly() -> None:
     prose and the number of marked claims must agree, or the honesty is decorative."""
     marked = TEXT.count("ASSERTION")
     listed = len(re.findall(r"^\d+\. Section", TEXT, flags=re.M))
-    # One occurrence is the explanation of the marker itself, one is the heading.
-    assert marked - 1 == listed, f"{marked - 1} marked, {listed} listed"
+    # One occurrence explains the marker itself. A claim resolved by retraction
+    # loses its inline marker, because it is no longer an open assertion, and is
+    # recorded under its own heading instead. So the arithmetic stays simple.
+    assert marked - 1 == listed, f"{marked - 1} marked, {listed} listed outstanding"
