@@ -20,6 +20,14 @@ Usage:
     uv run python scripts/conformal_aoa_b2.py
 """
 
+import os
+
+# Pinned before any estimator library loads. Thread count changes the floating
+# point reduction order inside sklearn's histogram builders, and random_state does
+# not constrain it, so a fixed seed alone does not reproduce a fit. D59.
+os.environ.setdefault("OMP_NUM_THREADS", "4")
+
+
 import json
 import sys
 from pathlib import Path

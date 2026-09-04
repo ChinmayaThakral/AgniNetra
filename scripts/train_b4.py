@@ -10,6 +10,14 @@ detections, so this script is expected to refuse most cells. That refusal is the
 result, not a failure to run. D57.
 """
 
+import os
+
+# Pinned before any estimator library loads. Thread count changes the floating
+# point reduction order inside sklearn's histogram builders, and random_state does
+# not constrain it, so a fixed seed alone does not reproduce a fit. D59.
+os.environ.setdefault("OMP_NUM_THREADS", "4")
+
+
 import argparse
 import json
 import os
