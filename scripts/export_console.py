@@ -223,13 +223,24 @@ def main() -> int:
             group: uncertainty[group] for group in uncertainty if group.startswith("group")
         },
         "b2Industrial": uncertainty["b2_industrial"],
+        # These are published in the interface, so they drift the moment a phase
+        # closes and nobody rereads them. Three of the five were stale here: B4 now
+        # runs end to end, phase 6 is decided rather than not started, and the
+        # applicability domain is assessed on observed rows only.
         "notMeasured": {
-            "B3 INSAT-3DS contextual thresholds": "blocked on MOSDAC access",
-            "B4 foundation model probe": "encoder verified, 768 dimensional embedding; "
-            "imagery blocked on Copernicus registration",
-            "KAALCHAKRA against B1 and B2": "phase 6, not started",
-            "diurnal shift 2020 to 2024": "2020 not ingested",
-            "flare kernel family": "unresolved, not confirmed. D42",
+            "B3 INSAT-3DS contextual thresholds": "not measured, waiting on a MOSDAC "
+            "order approval",
+            "B4 foundation model probe": "not measured, support below floor. The "
+            "pipeline runs end to end on real imagery; one scene reaches 7 held out "
+            "detections and no flare at all. Lifting it needs 39 tiles",
+            "KAALCHAKRA against B1 and B2": "not measured, and not estimable from a "
+            "polar orbiting record. Phase 6 ships as specification, prototype and "
+            "observability argument",
+            "diurnal shift 2020 to 2024": "not measured, 2020 not ingested",
+            "flare kernel family": "unresolved, not confirmed. Three tests failed "
+            "for three different reasons",
+            "reference coverage propensity model": "not built. Coverage is measured "
+            "and reported, not modelled",
         },
     }
 
