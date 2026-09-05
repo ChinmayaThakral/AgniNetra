@@ -8,6 +8,8 @@ one of them is named in CONVENTIONS.md.
 import importlib.util
 import sys
 
+import pytest
+
 from ml.paths import ROOT
 
 spec = importlib.util.spec_from_file_location(
@@ -44,9 +46,18 @@ def test_every_exclusion_exists_on_disk() -> None:
 
 
 def test_every_exclusion_is_named_in_conventions() -> None:
-    conventions = (ROOT / "context" / "CONVENTIONS.md").read_text()
+    """An exclusion nobody wrote down is an absence rather than a decision.
+
+    The conventions document is kept with the team, so a clean clone cannot check
+    this and skips. It still runs during development, which is where an exclusion
+    would actually be added.
+    """
+    conventions = ROOT / "context" / "CONVENTIONS.md"
+    if not conventions.is_file():
+        pytest.skip("the conventions document is kept outside the repository")
+    text = conventions.read_text()
     for entry in check_conventions.EXCLUDED:
-        assert entry in conventions, f"exclusion not documented in CONVENTIONS.md: {entry}"
+        assert entry in text, f"exclusion not documented in the conventions: {entry}"
 
 
 def test_checker_flags_a_banned_character() -> None:
