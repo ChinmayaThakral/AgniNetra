@@ -45,6 +45,11 @@ REGISTERED_M = 1000.0
 CHOSEN_RADIUS_M = 500.0
 SWEEP_M = (110.0, 250.0, 375.0, 500.0, 750.0, 1000.0, 1500.0)
 
+# Ordered because DBSCAN assigns border points according to the order it sees them,
+# so an unordered result gives different cluster centroids run to run. Three
+# consecutive runs returned three different sets of centroids before this, at a
+# stable count of 263. Same defect as D66, in a script the D66 fix did not reach.
+# D75.
 CANDIDATES_SQL = f"""
 SELECT d.longitude, d.latitude, c.state_name,
        r.prior_count_90d,
@@ -59,6 +64,7 @@ JOIN detection_context c USING (detection_id)
 JOIN detection_recurrence r USING (detection_id)
 LEFT JOIN detection_gem g USING (detection_id)
 WHERE c.state_name IS NOT NULL AND r.prior_count_90d >= {MIN_PRIORS}
+ORDER BY d.detection_id
 """
 
 
@@ -80,7 +86,7 @@ def cluster(rows: list, radius_m: float) -> list[dict]:
             {
                 "lon": round(float(np.mean([m[0] for m in members])), 5),
                 "lat": round(float(np.mean([m[1] for m in members])), 5),
-                "state": max(set(states), key=states.count) if states else None,
+                "state": max(sorted(set(states)), key=states.count) if states else None,
                 "detections": len(members),
                 "maxPriors": int(max(int(m[3]) for m in members)),
                 "nightFraction": round(float(np.mean([int(m[4]) for m in members])), 3),

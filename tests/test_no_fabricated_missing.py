@@ -60,9 +60,9 @@ ALLOWED: dict[str, str] = {
     # never published as a distance and never averaged.
     "scripts/lift_with_gem.py:40": "Distance sentinel for absent asset, discarded by least.",
     "scripts/lift_with_gem.py:42": "Distance sentinel for absent asset, discarded by least.",
-    "scripts/persistent_sources.py:53": "Distance sentinel, converted to None above 1e11.",
-    "scripts/persistent_sources.py:54": "Distance sentinel, converted to None above 1e11.",
-    "scripts/persistent_sources.py:55": "Distance sentinel, converted to None above 1e11.",
+    "scripts/persistent_sources.py:58": "Distance sentinel, converted to None above 1e11.",
+    "scripts/persistent_sources.py:59": "Distance sentinel, converted to None above 1e11.",
+    "scripts/persistent_sources.py:60": "Distance sentinel, converted to None above 1e11.",
 }
 
 

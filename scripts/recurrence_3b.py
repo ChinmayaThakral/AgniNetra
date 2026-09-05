@@ -100,7 +100,15 @@ def main() -> int:
                 print(f"  LeakageError on {detection_id}: {exc}", file=sys.stderr)
             continue
         payload.append((detection_id, cell[0], cell[1], count_90, count_30, nights, variance, gap))
-        pending.append((cell, Event(when=when, frp=float(frp or 0.0), is_night=(daynight == "N"))))
+        # `float(frp or 0.0)` turned a missing radiative power into a measured zero.
+        # It is inert on the present record, where frp is never null, and it is the
+        # D61 defect waiting for a source that does not report it. Refused instead.
+        if frp is None:
+            raise ValueError(
+                f"detection at {when.isoformat()} has no radiative power. A missing "
+                "value is not zero. Handle the absence rather than defaulting it."
+            )
+        pending.append((cell, Event(when=when, frp=float(frp), is_night=(daynight == "N"))))
     flush_pending()
 
     if leak_failures:

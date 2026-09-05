@@ -104,6 +104,7 @@ def detections_in_scene(footprint_wkt: str) -> list[tuple]:
         FROM a.detections d JOIN a.detection_context c USING (detection_id)
         WHERE c.weak_label IN ('flare', 'industrial', 'agricultural')
           AND ST_Within(geo_point(d.longitude, d.latitude), ST_GeomFromText(?))
+        ORDER BY d.detection_id
         """,
         [footprint_wkt],
     ).fetchall()

@@ -104,7 +104,13 @@ def main() -> int:
         if len(events) < 4:
             continue
         labels = [e[0] for e in events]
-        cell_class = max(set(labels), key=labels.count)
+        # A tie is broken by label name, not by set iteration order. `set()` iterates in an
+        # order that varies between processes because Python randomises string hashing, so
+        # `max(set(x), key=x.count)` returned a different winner run to run whenever the top
+        # two counts were equal. Measured on Gujarat: 26 of 621 cells with four or more
+        # detections tie, 4.2 percent, and each flipped class between runs. Same class of
+        # defect as D66. D75.
+        cell_class = max(sorted(set(labels)), key=labels.count)
         if cell_class not in stats:
             continue
         bucket = stats[cell_class]
