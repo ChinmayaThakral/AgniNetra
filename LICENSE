@@ -37,20 +37,61 @@ wherever they are published. Attribution to Chinmaya Thakral.
 https://creativecommons.org/licenses/by/4.0/
 
 
-DATASET: BHARATTHERMAL-1, NOT YET LICENSED FOR REDISTRIBUTION
+DATASET: BHARATTHERMAL-1, RELEASED AS A COLLECTIVE DATABASE
 
-The dataset is not covered by either licence above and is not released. It is held
-for a research publication in preparation.
+The dataset is held for a research publication in preparation and is not yet
+distributed. When it is, it will be released in three parts under two licences,
+joined on the detection identifier.
 
-The reason is specific rather than procedural. The feature set contains a column
-copied from an OpenStreetMap attribute and a column computed against OpenStreetMap
-geometry. OpenStreetMap is licensed ODbL 1.0, which requires share alike on a
-Derivative Database but only attribution on a Produced Work. Which of the two this
-dataset constitutes has not been determined, and the answer decides whether it can
-be released under CC BY 4.0 at all.
+  Part A, thermal record and features         CC BY 4.0
+    Detection identifier, location, time, brightness temperatures, radiative
+    power, scan and track, sensor, confidence, the cyclic time encodings, and the
+    five recurrence features computed from the detection record itself.
 
-The position is stated here rather than assumed in either direction, and the
-dataset stays unreleased until it is settled with qualified advice.
+    This is the entire model feature set. All eighteen columns the baselines fit
+    on are derived from NASA FIRMS and from the detection record's own history.
+    None is derived from OpenStreetMap.
+
+  Part B, land cover and asset context        CC BY 4.0
+    Land cover class at the detection, from ESA WorldCover, and the distance to
+    the nearest Global Energy Monitor asset valid on the detection date. Both
+    upstream sources are CC BY 4.0 and require attribution only.
+
+  Part C, OpenStreetMap context               ODbL 1.0
+    Detection identifier, the state name, the distance to the nearest mapped
+    industrial feature, and the weak label. Three columns.
+
+    The weak label sits here because it is computed from the industrial distance
+    among other inputs, so it is downstream of OpenStreetMap. Placing it on the
+    permissive side would be the loosest reading available rather than the
+    defensible one.
+
+  Not distributed
+    The distance to the nearest catalogued gas flare, from the EOG catalogue,
+    which permits attribution but does not confirm redistribution.
+
+The reason for the split is ODbL section 4.5, which provides that incorporating a
+database into a Collective Database does not require the collection to be licensed
+under ODbL, while the incorporated database remains under it. A Collective Database
+is defined as a collection of independent databases that are databases in
+themselves.
+
+That definition is the condition, and it drives the structure. Part C is a separate
+file with its own licence and its own attribution, joinable on the detection
+identifier but not merged into the others. Shipped as one table the parts would
+form a single Derivative Database under section 4.4, and share alike would apply to
+the whole of it.
+
+A practical consequence worth stating plainly. Part A alone is the complete feature
+set and carries no share alike, so a reader can fit every baseline in this project
+under CC BY 4.0. The labels are in Part C, so supervised use of the published
+labels inherits ODbL. Anyone labelling the detections by another route uses Part A
+freely.
+
+This structure has not been confirmed with qualified advice and is stated as the
+intended release rather than as a settled position. Whether these parts are
+independent databases in themselves, or one database presented in several files, is
+the question that decides it.
 
 Separately, the EOG gas flare catalogue used during construction permits
 attribution but does not confirm redistribution. Values derived from it are
