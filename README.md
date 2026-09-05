@@ -83,11 +83,13 @@ reproduced in `docs/dataset_card.md` and in the console footer as well.
 ## Licence
 
 See `LICENSE`. In short: the code is MIT, the written results are CC BY 4.0, and
-**the BharatThermal-1 dataset is not released yet.**
+**the BharatThermal-1 dataset is not released.**
 
-The dataset is withheld because the feature set contains columns derived from
-OpenStreetMap geometry, and whether that makes it a Derivative Database under ODbL
-section 4.4, which carries share alike, or a Produced Work under section 4.5, which
-does not, has not been decided. The licensing audit sets out both readings with the licence text quoted and is
-held with the team. That decision is outstanding and it is the
-only thing standing between this repository and a dataset release.
+The dataset is withheld for a specific reason rather than a procedural one. Its
+feature set contains a column copied from an OpenStreetMap attribute and a column
+computed against OpenStreetMap geometry. OpenStreetMap is ODbL 1.0, which requires
+share alike on a Derivative Database but only attribution on a Produced Work.
+Which of the two this dataset constitutes decides whether it can be released under
+CC BY 4.0 at all, and it has not been settled with qualified advice.
+
+A paper is in preparation and the dataset is expected to accompany it.
