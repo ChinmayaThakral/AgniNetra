@@ -35,7 +35,6 @@ modelling them directly is the research contribution.
 
 ## Layout
 
-    context/    project brief, roadmap, per phase specs, live state, decisions
     ml/         Python package: ingestion, features, labels, models, evaluation
     apps/console/  Next.js console
     scripts/    entry point scripts for backfills and exports
@@ -57,8 +56,8 @@ reports itself as blocked rather than producing data.
 
 ## Status
 
-See `context/STATE.md`. It is the single source of truth for where the work
-stands.
+Project state, decisions and phase specifications are kept with the team rather
+than in this repository.
 
 ## Attribution
 
@@ -89,6 +88,6 @@ See `LICENSE`. In short: the code is MIT, the written results are CC BY 4.0, and
 The dataset is withheld because the feature set contains columns derived from
 OpenStreetMap geometry, and whether that makes it a Derivative Database under ODbL
 section 4.4, which carries share alike, or a Produced Work under section 4.5, which
-does not, has not been decided. `docs/audit/audit-licensing.md` sets out both
-readings with the licence text quoted. That decision is outstanding and it is the
+does not, has not been decided. The licensing audit sets out both readings with the licence text quoted and is
+held with the team. That decision is outstanding and it is the
 only thing standing between this repository and a dataset release.

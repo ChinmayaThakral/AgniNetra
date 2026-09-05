@@ -25,8 +25,6 @@ from ml.paths import ROOT
 EXCLUDED: frozenset[str] = frozenset(
     {
         # Imported documents that predate the conventions. Decision D5.
-        "INNOVATION_DOSSIER.md",
-        "PROJECT_KICKOFF.md",
         # This file holds the banned phrase list by definition.
         "scripts/check_conventions.py",
     }

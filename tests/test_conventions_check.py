@@ -23,8 +23,6 @@ spec.loader.exec_module(check_conventions)
 PROBE_PHRASE = check_conventions.FILLER_PHRASES[0]
 
 EXPECTED = {
-    "INNOVATION_DOSSIER.md",
-    "PROJECT_KICKOFF.md",
     "scripts/check_conventions.py",
 }
 
