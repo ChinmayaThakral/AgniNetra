@@ -238,6 +238,56 @@ def check_registry() -> list[tuple[str, str, float, float, bool]]:
     return rows
 
 
+# A figure is a claim like any other, and it is the one kind that cannot be checked
+# by re-deriving a value: the number in the document and the number in the artifact
+# can agree while the picture shows neither. That is the shape D61 had. A checker
+# cannot read the picture, but it can insist the picture is not older than what it
+# depicts.
+FIGURE_SOURCES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("b1_pr_confusion.png", ("b1_results.json", "b1_confusion_group_a.npy")),
+    ("conformal_aoa.png", ("conformal_aoa_b2.json",)),
+    ("console_country.png", ("persistent_sources.json", "b1_results.json")),
+    ("console_jharkhand.png", ("persistent_sources.json", "b1_results.json")),
+    ("diurnal_comparison.png", ()),
+    ("lift_by_window.png", ()),
+    ("m1_intensity_signatures.png", ()),
+    ("osm_coverage_density.png", ()),
+)
+
+
+def check_figure_freshness() -> list[tuple[str, str, str]]:
+    """Report figures older than an artifact they depict.
+
+    A figure with no listed artifact is derived from the database rather than from a
+    fitted model, and is reported as unchecked rather than as passing, because a
+    silent pass would be the same defect one level up.
+    """
+    findings = []
+    for name, artifacts in FIGURE_SOURCES:
+        figure = ROOT / "docs" / "figures" / name
+        if not figure.is_file():
+            findings.append(
+                (name, "missing", "the document references a figure that is absent")
+            )
+            continue
+        if not artifacts:
+            findings.append(
+                (name, "unchecked", "no artifact registered, derived from the database")
+            )
+            continue
+        drawn = figure.stat().st_mtime
+        for artifact in artifacts:
+            path = ARTIFACT_DIR / artifact
+            if not path.is_file():
+                findings.append((name, "unchecked", f"{artifact} absent"))
+                continue
+            if path.stat().st_mtime > drawn:
+                findings.append(
+                    (name, "STALE", f"older than {artifact}, which was rewritten after it")
+                )
+    return findings
+
+
 def main() -> int:
     derived = derive_from_database() + derive_from_artifacts() + derive_from_generated_docs()
     print(
@@ -274,12 +324,25 @@ def main() -> int:
     for name, count in counts.items():
         print(f"  {name:12s} {count:5d}  {count / total:.1%}" if total else f"  {name}: 0")
 
-    OUTPUT.write_text(render(findings, counts, total, derived))
+    figures = check_figure_freshness()
+    stale = [f for f in figures if f[1] == "STALE"]
+    print(f"\nfigures: {len(FIGURE_SOURCES)} referenced, {len(stale)} stale")
+    for name, status, detail in figures:
+        if status != "unchecked":
+            print(f"  {status}: {name}, {detail}")
+
+    OUTPUT.write_text(render(findings, counts, total, derived, figures))
     print(f"\nwrote {OUTPUT.relative_to(ROOT)}")
     return 0
 
 
-def render(findings: list[Finding], counts: dict, total: int, derived: list[Derived]) -> str:
+def render(
+    findings: list[Finding],
+    counts: dict,
+    total: int,
+    derived: list[Derived],
+    figures: list[tuple[str, str, str]],
+) -> str:
     lines = [
         "# Can every published number be re-derived?",
         "",
@@ -323,6 +386,25 @@ def render(findings: list[Finding], counts: dict, total: int, derived: list[Deri
             f"| {label} | `{source}` | {published} | {shown} | {'yes' if agrees else '**no**'} |"
         )
     lines += [
+        "",
+        "## Figure freshness",
+        "",
+        "A figure is the one kind of claim that cannot be checked by re-deriving a",
+        "value: the document and the artifact can agree while the picture shows",
+        "neither. This does not read the picture. It insists the picture is not older",
+        "than the artifact it depicts, which is the only part of that failure a checker",
+        "can catch.",
+        "",
+        "| Figure | Status | Detail |",
+        "|---|---|---|",
+    ]
+    for name, status, detail in figures:
+        lines.append(f"| `{name}` | {status} | {detail} |")
+    lines += [
+        "",
+        "`unchecked` is reported rather than silently passed. A figure with no",
+        "registered artifact is drawn from the database, and a checker that called that",
+        "a pass would be the same defect one level up.",
         "",
         "## Unbacked",
         "",

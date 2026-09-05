@@ -53,6 +53,20 @@ if (state.mapError) {
   await browser.close();
   process.exit(1);
 }
+// A null canvas means MapLibre never rendered. This once exited zero and wrote a
+// screenshot of an unstyled page with no map, because only mapError was treated as
+// fatal and the field that said the map was absent was merely printed. D67.
+if (!state.canvas) {
+  console.error("no map canvas: the page rendered without MapLibre. Refusing to write a figure.");
+  console.error("Usually a stale dev server on port 3000. Check the Local: line in the dev log.");
+  await browser.close();
+  process.exit(1);
+}
+if (!state.sourceRows) {
+  console.error("the persistent source panel is empty. Refusing to write a figure.");
+  await browser.close();
+  process.exit(1);
+}
 await page.screenshot({ path: `${OUT}/console_country.png` });
 
 // Jharkhand, where the largest unregistered persistent sources sit.
