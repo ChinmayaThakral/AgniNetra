@@ -37,66 +37,44 @@ wherever they are published. Attribution to Chinmaya Thakral.
 https://creativecommons.org/licenses/by/4.0/
 
 
-DATASET: BHARATTHERMAL-1, RELEASED AS A COLLECTIVE DATABASE
+DATASET: BHARATTHERMAL-1, ODbL 1.0
 
-The dataset is held for a research publication in preparation and is not yet
-distributed. When it is, it will be released in three parts under two licences,
-joined on the detection identifier.
+The dataset is licensed under the Open Database License 1.0, in full and as one
+database. It is held for a research publication in preparation and is not yet
+distributed.
 
-  Part A, thermal record and features         CC BY 4.0
-    Detection identifier, location, time, brightness temperatures, radiative
-    power, scan and track, sensor, confidence, the cyclic time encodings, and the
-    five recurrence features computed from the detection record itself.
+https://opendatacommons.org/licenses/odbl/1-0/
 
-    This is the entire model feature set. All eighteen columns the baselines fit
-    on are derived from NASA FIRMS and from the detection record's own history.
-    None is derived from OpenStreetMap.
+The feature set contains a column copied from an OpenStreetMap attribute and a
+column computed against OpenStreetMap geometry. OpenStreetMap is ODbL 1.0, which
+requires share alike on a derivative database. Rather than argue whether this
+dataset is a derivative database or a produced work, it is released under the same
+licence as the source, which is correct under either reading.
 
-  Part B, land cover and asset context        CC BY 4.0
-    Land cover class at the detection, from ESA WorldCover, and the distance to
-    the nearest Global Energy Monitor asset valid on the detection date. Both
-    upstream sources are CC BY 4.0 and require attribution only.
+What that means for anyone using it. You may copy, distribute, adapt and build on
+the dataset, including commercially. If you publicly use an adapted version of the
+database you must release that adaptation under ODbL 1.0 as well, and you must
+attribute this dataset and the upstream sources listed below.
 
-  Part C, OpenStreetMap context               ODbL 1.0
-    Detection identifier, the state name, the distance to the nearest mapped
-    industrial feature, and the weak label. Three columns.
+The cost of this choice is stated plainly: share alike propagates to your work. It
+is the price of a licence position that needs no legal argument to defend, and it
+was chosen deliberately over a split release that would have left the model
+features permissive and the labels share alike.
 
-    The weak label sits here because it is computed from the industrial distance
-    among other inputs, so it is downstream of OpenStreetMap. Placing it on the
-    permissive side would be the loosest reading available rather than the
-    defensible one.
+Two consequences worth naming.
 
-  Not distributed
-    The distance to the nearest catalogued gas flare, from the EOG catalogue,
-    which permits attribution but does not confirm redistribution.
+The NASA FIRMS, Global Energy Monitor and ESA WorldCover material in this dataset
+is more permissively licensed upstream than ODbL requires. Distributing it here
+under ODbL is allowed, and it does not restrict anyone from obtaining that material
+from its original source under its original terms.
 
-The reason for the split is ODbL section 4.5, which provides that incorporating a
-database into a Collective Database does not require the collection to be licensed
-under ODbL, while the incorporated database remains under it. A Collective Database
-is defined as a collection of independent databases that are databases in
-themselves.
+The distance to the nearest catalogued gas flare, derived from the EOG catalogue,
+is not distributed in any form beyond coarse bands. That catalogue permits
+attribution but does not confirm redistribution, and no choice of licence here
+changes what its terms allow.
 
-That definition is the condition, and it drives the structure. Part C is a separate
-file with its own licence and its own attribution, joinable on the detection
-identifier but not merged into the others. Shipped as one table the parts would
-form a single Derivative Database under section 4.4, and share alike would apply to
-the whole of it.
-
-A practical consequence worth stating plainly. Part A alone is the complete feature
-set and carries no share alike, so a reader can fit every baseline in this project
-under CC BY 4.0. The labels are in Part C, so supervised use of the published
-labels inherits ODbL. Anyone labelling the detections by another route uses Part A
-freely.
-
-This structure has not been confirmed with qualified advice and is stated as the
-intended release rather than as a settled position. Whether these parts are
-independent databases in themselves, or one database presented in several files, is
-the question that decides it.
-
-Separately, the EOG gas flare catalogue used during construction permits
-attribution but does not confirm redistribution. Values derived from it are
-published only as coarse distance bands, because exact distances from many known
-points can be trilaterated back to the catalogue.
+The console data feed under apps/console/public/data is a subset of this dataset
+and carries the same terms.
 
 
 UPSTREAM SOURCES AND THEIR TERMS

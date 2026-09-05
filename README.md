@@ -82,14 +82,19 @@ reproduced in `docs/dataset_card.md` and in the console footer as well.
 
 ## Licence
 
-See `LICENSE`. In short: the code is MIT, the written results are CC BY 4.0, and
-**the BharatThermal-1 dataset is not released.**
+See `LICENSE`. Three things, licensed separately.
 
-The dataset is withheld for a specific reason rather than a procedural one. Its
-feature set contains a column copied from an OpenStreetMap attribute and a column
-computed against OpenStreetMap geometry. OpenStreetMap is ODbL 1.0, which requires
-share alike on a Derivative Database but only attribution on a Produced Work.
-Which of the two this dataset constitutes decides whether it can be released under
-CC BY 4.0 at all, and it has not been settled with qualified advice.
+- **Code** is MIT. `ml/`, `scripts/`, `tests/`, `apps/console/`.
+- **Written results** are CC BY 4.0.
+- **The BharatThermal-1 dataset is ODbL 1.0**, in full and as one database.
 
-A paper is in preparation and the dataset is expected to accompany it.
+The dataset takes ODbL because its feature set contains a column copied from an
+OpenStreetMap attribute and a column computed against OpenStreetMap geometry, and
+OpenStreetMap is ODbL. Releasing under the same licence as the source is correct
+whether the dataset counts as a derivative database or a produced work, so no
+argument is needed either way. Share alike propagates: if you publicly use an
+adapted version of the database, release the adaptation under ODbL and attribute
+the sources.
+
+The dataset is held for a research publication in preparation and is not yet
+distributed.
