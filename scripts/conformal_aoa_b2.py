@@ -139,7 +139,14 @@ def main() -> int:
 
     # B2, spatiotemporal density clustering, scored on industrial alone.
     print("\n=== B2, spatiotemporal density clustering ===", flush=True)
-    b2_rows = con.execute(FEATURE_SQL + " ORDER BY random() LIMIT " + str(B2_SAMPLE)).df()
+    # Two problems with the previous form, `FEATURE_SQL + " ORDER BY random() LIMIT n"`.
+    # FEATURE_SQL now carries its own ORDER BY, so appending a second one is a parse
+    # error. And `random()` without a seed drew a different sample on every run, so
+    # the B2 numbers were never reproducible either. Seeded and ordered instead. D66.
+    con.execute(f"SELECT setseed({SEED % 1000 / 1000.0});")
+    b2_rows = con.execute(
+        f"SELECT * FROM ({FEATURE_SQL}) ORDER BY random() LIMIT {B2_SAMPLE}"
+    ).df()
     b2_rows = b2_rows[b2_rows["weak_label"].isin(TRAINED_CLASSES)].copy()
     day = pd.to_datetime(b2_rows["acq_date_ist"]).astype("int64") / 86_400_000_000_000
     # Scale time so one day is comparable to about 1 km of space at these latitudes.

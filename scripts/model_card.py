@@ -180,6 +180,12 @@ def main() -> None:
 
     lines += [
         "",
+        "## Reproducibility",
+        "",
+        "Every number in this card is regenerable digit for digit from the recorded "
+        "seed. That was not true before 2026-09-05: `FEATURE_SQL` carried no `ORDER "
+        "BY`, so row order varied between runs and each fit differed. D66.",
+        "",
         "## Not measured",
         "",
         "Baseline B3 waits on a MOSDAC order approval.",

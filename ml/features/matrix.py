@@ -103,6 +103,7 @@ JOIN detection_context c USING (detection_id)
 LEFT JOIN detection_gem g USING (detection_id)
 LEFT JOIN detection_recurrence r USING (detection_id)
 WHERE c.state_name IS NOT NULL
+ORDER BY d.detection_id
 """
 
 EXTERNAL_SQL: Final[str] = FEATURE_SQL.replace(
