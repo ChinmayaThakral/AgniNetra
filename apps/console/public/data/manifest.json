@@ -94,6 +94,11 @@
    "url": "https://esa-worldcover.org/"
   },
   {
+   "name": "Copernicus Sentinel-2",
+   "detail": "Contains modified Copernicus Sentinel data 2024, processed by the AgniNetra team. Used for the B4 site embedding",
+   "url": "https://dataspace.copernicus.eu/"
+  },
+  {
    "name": "EOG",
    "detail": "VIIRS global gas flaring catalogue, Earth Observation Group, Colorado School of Mines",
    "url": "https://eogdata.mines.edu/products/vnf/"

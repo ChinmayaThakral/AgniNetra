@@ -19,7 +19,13 @@ def test_model_card_exists() -> None:
 
 
 def test_thin_support_is_annotated() -> None:
-    b1 = json.loads((ARTIFACT_DIR / "b1_results.json").read_text())["option_a"]
+    # ml/artifacts/ is never committed, so a clean clone has no b1_results.json and
+    # the README quickstart would fail here. The test below already guarded the same
+    # read; this one did not. D70.
+    artifact = ARTIFACT_DIR / "b1_results.json"
+    if not artifact.is_file():
+        pytest.skip("b1_results.json absent, run scripts/train_b1.py first")
+    b1 = json.loads(artifact.read_text())["option_a"]
     for group, entry in b1.items():
         for klass in ("flare", "industrial", "agricultural"):
             support = int(entry[klass]["support"])

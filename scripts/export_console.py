@@ -308,6 +308,15 @@ def main() -> int:
                 "url": "https://esa-worldcover.org/",
             },
             {
+                # Absent from every attribution surface until 2026-09-05, despite a
+                # scene having been downloaded, embedded and its derived metrics
+                # published in section 10. D70.
+                "name": "Copernicus Sentinel-2",
+                "detail": "Contains modified Copernicus Sentinel data 2024, "
+                "processed by the AgniNetra team. Used for the B4 site embedding",
+                "url": "https://dataspace.copernicus.eu/",
+            },
+            {
                 "name": "EOG",
                 "detail": "VIIRS global gas flaring catalogue, Earth "
                 "Observation Group, Colorado School of Mines",

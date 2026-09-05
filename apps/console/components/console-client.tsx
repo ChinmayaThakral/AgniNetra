@@ -318,11 +318,20 @@ export function ConsoleClient({
           <div className="map" ref={container} />
           {BASEMAP_CONFIGURED ? null : (
             <div className="basemapnotice">
-              No basemap configured. The detections and persistent sources below are
-              real; the ground beneath them is blank because
-              <code> NEXT_PUBLIC_BASEMAP_TILES </code>
-              is unset. Tiles were previously taken from openstreetmap.org, which
-              its usage policy does not permit for a distributed application. D69.
+              <strong>No basemap configured. This is not a bug.</strong> The
+              detections and persistent sources on this map are real; the ground
+              beneath them is blank because{" "}
+              <code>NEXT_PUBLIC_BASEMAP_TILES</code> is unset.
+              <br />
+              To add a basemap, set that variable to a comma separated list of tile
+              URL templates from a provider whose terms allow it, and set{" "}
+              <code>NEXT_PUBLIC_BASEMAP_ATTRIBUTION</code> to their required notice.
+              MapTiler and Stadia Maps both work and both need a free account.
+              <br />
+              There is no default because tiles were previously taken straight from
+              openstreetmap.org, which its usage policy does not permit for a
+              distributed application, and a silent fallback would ship that
+              violation rather than surface it. See D69.
             </div>
           )}
           {mapError ? (

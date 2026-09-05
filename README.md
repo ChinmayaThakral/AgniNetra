@@ -60,6 +60,35 @@ reports itself as blocked rather than producing data.
 See `context/STATE.md`. It is the single source of truth for where the work
 stands.
 
+## Attribution
+
+This project builds on six external data sources. Four of them require attribution
+as a licence condition rather than as a courtesy, so the notices below are
+reproduced in `docs/dataset_card.md` and in the console footer as well.
+
+- **NASA FIRMS.** MODIS and VIIRS active fire data from NASA FIRMS, part of NASA's
+  Earth Science Data and Information System. <https://firms.modaps.eosdis.nasa.gov/>
+- **OpenStreetMap.** Industrial features and administrative boundaries, copyright
+  OpenStreetMap contributors, licensed ODbL 1.0.
+  <https://www.openstreetmap.org/copyright>
+- **Global Energy Monitor.** Power, coal mine, iron and steel and cement trackers,
+  licensed CC BY 4.0. <https://globalenergymonitor.org/>
+- **ESA WorldCover.** ESA WorldCover 10 m 2021 v200, licensed CC BY 4.0.
+  <https://esa-worldcover.org/>
+- **Copernicus Sentinel-2.** Contains modified Copernicus Sentinel data 2024,
+  processed by the AgniNetra team. <https://dataspace.copernicus.eu/>
+- **EOG, Colorado School of Mines.** VIIRS global gas flaring catalogue. Attribution
+  required, redistribution not confirmed, so values derived from it are published
+  only as coarse bands. See D69. <https://eogdata.mines.edu/>
+
 ## Licence
 
-Not yet chosen. The intended release for BharatThermal-1 is CC BY 4.0.
+See `LICENSE`. In short: the code is MIT, the written results are CC BY 4.0, and
+**the BharatThermal-1 dataset is not released yet.**
+
+The dataset is withheld because the feature set contains columns derived from
+OpenStreetMap geometry, and whether that makes it a Derivative Database under ODbL
+section 4.4, which carries share alike, or a Produced Work under section 4.5, which
+does not, has not been decided. `docs/audit/audit-licensing.md` sets out both
+readings with the licence text quoted. That decision is outstanding and it is the
+only thing standing between this repository and a dataset release.

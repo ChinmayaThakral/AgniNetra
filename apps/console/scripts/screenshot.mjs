@@ -12,6 +12,12 @@
  * fetched at all. If you configure a provider, check that provider's terms before
  * running this, because this script is the thing their terms are about. D69.
  *
+ * DEPENDENCY: if NEXT_PUBLIC_BASEMAP_TILES is ever set, recheck this script against
+ * that provider's terms before running it. The policy question is dormant only
+ * because no tiles are fetched while the variable is unset. Configuring a provider
+ * reactivates it, and the person configuring one will not be the person who read
+ * the policy. D69, D70.
+ *
  * Requires the dev server on port 3000 and a Chromium binary. Usage:
  *   npm run dev
  *   npm run shots
