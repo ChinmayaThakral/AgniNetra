@@ -46,12 +46,21 @@ def test_no_figure_is_uncited() -> None:
     assert on_disk == cited, f"uncited: {sorted(on_disk - cited)}"
 
 
-def test_every_referenced_decision_exists() -> None:
-    decisions = (ROOT / "context" / "DECISIONS.md").read_text()
-    numbered = set(re.findall(r"^## (D\d+)\.", decisions, flags=re.M))
-    cited = set(re.findall(r"\bD(\d+)\b", TEXT))
-    missing = {f"D{n}" for n in cited} - numbered
-    assert not missing, f"outline cites decisions that do not exist: {sorted(missing)}"
+def test_the_outline_is_self_contained() -> None:
+    """The outline must not depend on the team's internal documents.
+
+    It cited decision numbers and context/ paths for provenance, which meant a
+    reader needed a second document to check a claim, and that document is not
+    tracked and carries process notes that do not belong in a submission. The
+    reasoning is inlined instead, and this keeps it that way.
+    """
+    decisions = re.findall(r"\bD\d{1,2}\b", TEXT)
+    assert not decisions, (
+        "the outline cites decision numbers, which a reader cannot resolve: "
+        f"{sorted(set(decisions))}"
+    )
+    internal = re.findall(r"context/[A-Za-z_]+\.md", TEXT)
+    assert not internal, f"the outline references untracked internal documents: {sorted(set(internal))}"
 
 
 def test_assertions_are_counted_honestly() -> None:
