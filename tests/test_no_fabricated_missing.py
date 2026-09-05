@@ -43,9 +43,7 @@ ALLOWED: dict[str, str] = {
         "legible. No live substitution."
     ),
     "tests/test_no_fabricated_missing.py:0": "This file names the patterns by definition.",
-    "scripts/verify_published_numbers.py:0": (
-        "Reports on substitutions, does not perform one."
-    ),
+    "scripts/verify_published_numbers.py:0": ("Reports on substitutions, does not perform one."),
     # Name fallbacks. `coalesce(nullif(name_en, ''), name)` chooses between two
     # observed values, the English name and the local one. Nothing is invented: if
     # both are absent the result is NULL and the row is filtered explicitly.

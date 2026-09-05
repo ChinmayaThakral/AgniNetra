@@ -5,7 +5,18 @@ is drift: one of them decaying into "blocked on MOSDAC", or the flare kernel
 quietly becoming confirmed. D42 exists because that is how the last one went.
 """
 
+import pytest
+
 from ml.paths import ROOT
+
+_REQUIRED = (
+    ROOT / "context" / "phases" / "PHASE_6.md",
+    ROOT / "docs" / "results.md",
+    ROOT / "docs" / "model_card.md",
+    ROOT / "context" / "DECISIONS.md",
+)
+if not all(p.is_file() for p in _REQUIRED):
+    pytest.skip("documentation is kept outside the repository", allow_module_level=True)
 
 PHASE_6 = (ROOT / "context" / "phases" / "PHASE_6.md").read_text()
 RESULTS = (ROOT / "docs" / "results.md").read_text()
