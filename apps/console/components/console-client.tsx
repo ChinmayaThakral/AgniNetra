@@ -1,6 +1,7 @@
 "use client";
 
 import maplibregl from "maplibre-gl";
+import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -18,25 +19,57 @@ const CLASSES = ["flare", "industrial", "agricultural"] as const;
  * OpenStreetMap standard tile layer needs no key and is already attributed here
  * under ODbL, which the project uses for its industrial features anyway.
  */
-const STYLE = {
-  version: 8 as const,
-  sources: {
-    osm: {
-      type: "raster" as const,
-      tiles: [
-        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-      maxzoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ODbL 1.0',
-    },
-  },
-  layers: [
-    { id: "osm", type: "raster" as const, source: "osm", paint: { "raster-opacity": 0.72 } },
-  ],
+// The basemap tile source is configuration, not a constant.
+//
+// This previously pointed at a.tile.openstreetmap.org directly. The OSM Foundation
+// tile usage policy forbids distributing an application that uses those tiles
+// without permission, and separately prohibits bots that pan and zoom to force
+// rendering, which the screenshot script does. Both applied here. D69.
+//
+// Every compliant provider requires an account, which is the team's to create, so
+// there is deliberately no default. With the variable unset the map renders the
+// data over an empty ground and says why, because shipping a working map that
+// breaches somebody's terms is worse than shipping an obviously unconfigured one.
+//
+// Set NEXT_PUBLIC_BASEMAP_TILES to a comma separated list of tile URL templates,
+// and NEXT_PUBLIC_BASEMAP_ATTRIBUTION to the provider's required notice. The
+// OpenStreetMap attribution below is kept regardless, because the underlying data
+// is still ODbL whoever serves the tiles.
+const OSM_NOTICE =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ODbL 1.0';
+
+const BASEMAP_TILES = (process.env.NEXT_PUBLIC_BASEMAP_TILES ?? "")
+  .split(",")
+  .map((t) => t.trim())
+  .filter(Boolean);
+
+export const BASEMAP_CONFIGURED = BASEMAP_TILES.length > 0;
+
+const PROVIDER_NOTICE = process.env.NEXT_PUBLIC_BASEMAP_ATTRIBUTION ?? "";
+
+const STYLE: StyleSpecification = {
+  version: 8,
+  sources: BASEMAP_CONFIGURED
+    ? {
+        basemap: {
+          type: "raster",
+          tiles: BASEMAP_TILES,
+          tileSize: 256,
+          maxzoom: 19,
+          attribution: [PROVIDER_NOTICE, OSM_NOTICE].filter(Boolean).join(" | "),
+        },
+      }
+    : {},
+  layers: BASEMAP_CONFIGURED
+    ? [
+        {
+          id: "basemap",
+          type: "raster",
+          source: "basemap",
+          paint: { "raster-opacity": 0.72 },
+        },
+      ]
+    : [],
 };
 
 function toCsv(rows: Detection[]): string {
@@ -51,7 +84,7 @@ function toCsv(rows: Detection[]): string {
       d.isNight, d.weakLabel, d.predicted, d.predictionSet.join(" "),
       d.outsideApplicability ?? "not assessable", d.priorCount90d,
       d.nightFraction90d ?? "not measured",
-      d.nearestFlareM ?? "not measured",
+      d.nearestFlareBand ?? "not measured",
       d.nearestIndustrialM ?? "not measured",
       d.nearestGemM ?? "not measured",
     ].join(","),
@@ -283,6 +316,15 @@ export function ConsoleClient({
       <div className="body">
         <div className="mapwrap">
           <div className="map" ref={container} />
+          {BASEMAP_CONFIGURED ? null : (
+            <div className="basemapnotice">
+              No basemap configured. The detections and persistent sources below are
+              real; the ground beneath them is blank because
+              <code> NEXT_PUBLIC_BASEMAP_TILES </code>
+              is unset. Tiles were previously taken from openstreetmap.org, which
+              its usage policy does not permit for a distributed application. D69.
+            </div>
+          )}
           {mapError ? (
             <div className="maperror">
               <strong>Map unavailable</strong>

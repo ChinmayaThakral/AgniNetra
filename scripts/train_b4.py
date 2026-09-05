@@ -35,7 +35,12 @@ from sklearn.metrics import precision_recall_fscore_support
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from ml.imagery.catalogue import search_l2a
-from ml.imagery.cdse import MissingCredentialsError, access_token, download_product
+from ml.imagery.cdse import (
+    DownloadError,
+    MissingCredentialsError,
+    access_token,
+    download_product,
+)
 from ml.imagery.chips import ChipError, band_paths_in_safe, read_chip
 from ml.imagery.embed import embed_chips, load_backbone
 from ml.labels.splits import HELD_OUT_GROUPS
@@ -53,6 +58,31 @@ SEED = 20260905
 # that spans most of the unit range, so the number carries no information the
 # support does not already give. Chosen before any metric was computed.
 MIN_CLASS_SUPPORT = 30
+
+
+def _extract_within(archive: Path, destination: Path) -> None:
+    """Extract an archive, refusing any member that escapes the destination.
+
+    The archive arrives from a remote API, so a crafted product with parent
+    traversal or an absolute path in a member name would be a write primitive
+    anywhere the process can reach.
+
+    Note that `filter="data"`, the usual advice for this, is a `tarfile` parameter.
+    `ZipFile.extractall` does not accept it and raises TypeError if given it. The
+    protection here is the explicit resolve check: every member is resolved against
+    the destination and refused if it lands outside, before anything is written.
+    D69.
+    """
+    destination = destination.resolve()
+    with zipfile.ZipFile(archive) as handle:
+        for member in handle.namelist():
+            target = (destination / member).resolve()
+            if not target.is_relative_to(destination):
+                raise DownloadError(
+                    f"archive member {member!r} resolves outside the destination. "
+                    "Refusing to extract."
+                )
+        handle.extractall(destination)
 
 
 def parse_args() -> argparse.Namespace:
@@ -115,8 +145,7 @@ def main() -> int:
 
     safe_root = archive.parent / f"{scene.name}"
     if not safe_root.exists():
-        with zipfile.ZipFile(archive) as handle:
-            handle.extractall(archive.parent)
+        _extract_within(archive, archive.parent)
     bands = band_paths_in_safe(safe_root)
     print(f"bands located: {len(bands)}")
 

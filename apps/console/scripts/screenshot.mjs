@@ -6,6 +6,12 @@
  * HTTP 200, and every artifact value appeared in the served HTML. None of them
  * looked at the rendered result. D51.
  *
+ * The OSM Foundation tile usage policy prohibits bots that pan and zoom to force
+ * tile rendering, which is exactly what this does. It is compliant only because the
+ * basemap is now configuration: with NEXT_PUBLIC_BASEMAP_TILES unset no tiles are
+ * fetched at all. If you configure a provider, check that provider's terms before
+ * running this, because this script is the thing their terms are about. D69.
+ *
  * Requires the dev server on port 3000 and a Chromium binary. Usage:
  *   npm run dev
  *   npm run shots

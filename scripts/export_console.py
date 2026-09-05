@@ -49,6 +49,33 @@ AOA_QUANTILE = 0.95
 PERSISTENT_MIN_PRIORS = 20
 
 
+# The EOG flare catalogue is recorded in `reference_layers` as
+# redistributable=False, "attribution required, redistribution not confirmed".
+#
+# Publishing an exact distance to the nearest flare for every detection does not
+# merely derive from that layer, it partially reconstructs it: distances from many
+# known points to a common unknown point are trilaterable, and the export carries
+# thousands of them. Coarse bands keep the analytical meaning, which is whether a
+# detection sits on or near a catalogued flare, while destroying the geometry that
+# makes reconstruction possible. D69.
+FLARE_BANDS: tuple[tuple[float, str], ...] = (
+    (1000.0, "under 1 km"),
+    (5000.0, "1 to 5 km"),
+    (20000.0, "5 to 20 km"),
+)
+
+
+def distance_band(value) -> str | None:
+    """Return the coarse band for a distance in metres, or None if unmeasured."""
+    number = optional_number(value)
+    if number is None:
+        return None
+    for edge, label in FLARE_BANDS:
+        if number < edge:
+            return label
+    return "over 20 km"
+
+
 def optional_number(value: object, digits: int = 0) -> float | int | None:
     """Round a value, returning None for a missing one.
 
@@ -149,7 +176,7 @@ def main() -> int:
                 "priorCount30d": int(row["prior_count_30d"]),
                 "nightFraction90d": optional_number(row["night_fraction_90d"], 3),
                 "meanGapDays": optional_number(row["mean_gap_days"], 2),
-                "nearestFlareM": optional_number(row["flare_m"]),
+                "nearestFlareBand": distance_band(row["flare_m"]),
                 "nearestIndustrialM": optional_number(row["industrial_m"]),
                 "nearestGemM": optional_number(row["gem_m_temporal"]),
             }

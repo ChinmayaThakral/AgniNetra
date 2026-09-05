@@ -106,3 +106,20 @@ th:first-child, td:first-child { text-align: left; }
 }
 .maperror strong { color: #b00020; font-size: 0.9rem; }
 .maperror p { margin: 0; max-width: 34rem; }
+
+/* Shown when no basemap provider is configured. Deliberately visible: an
+   unconfigured map should look unconfigured rather than merely empty. D69. */
+.basemapnotice {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: 1rem;
+  z-index: 2;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--muted);
+}

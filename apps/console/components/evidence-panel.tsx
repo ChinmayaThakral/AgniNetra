@@ -134,8 +134,8 @@ export function EvidencePanel({ detection }: { detection: Detection | null }) {
       <h3 style={{ marginTop: "0.8rem" }}>Nearest reference</h3>
       <div className="row">
         <span className="k">catalogued flare</span>
-        <span className={detection.nearestFlareM === null ? "v notmeasured" : "v"}>
-          {metres(detection.nearestFlareM)}
+        <span className={detection.nearestFlareBand === null ? "v notmeasured" : "v"}>
+          {detection.nearestFlareBand ?? "not measured"}
         </span>
       </div>
       <div className="row">

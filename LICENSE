@@ -1,0 +1,66 @@
+AgniNetra
+
+This repository contains two kinds of work under two different licences. The
+distinction matters because the code is ours to license and much of the data is
+not.
+
+CODE: MIT License
+
+Applies to all source code in this repository: `ml/`, `scripts/`, `tests/`,
+`apps/console/` source, and configuration.
+
+Copyright 2026 Chinmaya Thakral
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+DOCUMENTATION AND WRITTEN RESULTS: CC BY 4.0
+
+Applies to `docs/` and `context/`. Attribution to the AgniNetra team.
+
+DATA: NOT YET DETERMINED
+
+**The BharatThermal-1 dataset is not released under this file and must not be
+redistributed until the question below is settled.**
+
+The feature matrix contains columns derived from OpenStreetMap, which is licensed
+ODbL 1.0 and carries share alike on derivative databases. Whether the dataset as
+constructed is a Derivative Database under ODbL section 4.4, which would require
+share alike, or a Produced Work under section 4.5, which would not, has not been
+resolved. `docs/audit/audit-licensing.md` sets out both readings with the licence
+text quoted and states the four options. `context/DECISIONS.md` has no entry
+resolving it because no human has decided.
+
+Until it is decided, the dataset is not published and the intended CC BY 4.0
+release is stated as an intention rather than a grant.
+
+Separately, the EOG gas flare catalogue is recorded in this project's own
+provenance table as redistribution not confirmed. Values derived from it are
+coarsened to bands in the console export rather than published as distances,
+because exact distances from many points are trilaterable back to the catalogue.
+See D69.
+
+UPSTREAM SOURCES AND THEIR TERMS
+
+  NASA FIRMS               active fire detections, free and open, attribution requested
+  OpenStreetMap            ODbL 1.0, attribution and share alike on derivative databases
+  Global Energy Monitor    CC BY 4.0
+  ESA WorldCover           CC BY 4.0
+  EOG, Colorado School of Mines   attribution required, redistribution not confirmed
+  Copernicus Sentinel-2    Copernicus data, free with attribution
+
+Full attribution text is in README.md.

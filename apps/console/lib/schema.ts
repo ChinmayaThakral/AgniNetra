@@ -25,7 +25,10 @@ export const detectionSchema = z.object({
   priorCount30d: z.number(),
   nightFraction90d: z.number().nullable(),
   meanGapDays: z.number().nullable(),
-  nearestFlareM: z.number().nullable(),
+  // Coarse band, not a distance. The EOG layer is not redistributable and
+  // thousands of exact distances are trilaterable back to the flare positions.
+  // D69.
+  nearestFlareBand: z.enum(["under 1 km", "1 to 5 km", "5 to 20 km", "over 20 km"]).nullable(),
   nearestIndustrialM: z.number().nullable(),
   nearestGemM: z.number().nullable(),
 });

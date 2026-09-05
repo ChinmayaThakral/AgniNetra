@@ -1,0 +1,163 @@
+{
+ "source": "ml/artifacts/b1_results.json and conformal_aoa_b2.json, phase 4",
+ "seed": 20260904,
+ "resampling": "option A, no class weighting, fitted on the true prior. D32",
+ "trainedClasses": [
+  "flare",
+  "industrial",
+  "agricultural"
+ ],
+ "wildfire": "not measured. No weak label rule produces it; the baselines structurally cannot recover it. D33",
+ "leakageMacroF1": 0.9995553971098422,
+ "cleanMacroF1": 0.6609146164222457,
+ "perGroup": {
+  "group_a": {
+   "macroF1": 0.6609146164222457,
+   "classes": {
+    "flare": {
+     "precision": 0.12244897959183673,
+     "recall": 0.17073170731707318,
+     "f1": 0.14261460101867574,
+     "support": 246
+    },
+    "industrial": {
+     "precision": 0.9388720850814714,
+     "recall": 0.8048260287721646,
+     "f1": 0.8666966899346994,
+     "support": 23912
+    },
+    "agricultural": {
+     "precision": 0.9585786839393493,
+     "recall": 0.9887540215049682,
+     "f1": 0.9734325583133622,
+     "support": 105371
+    }
+   }
+  },
+  "group_b": {
+   "macroF1": 0.6118921945565972,
+   "classes": {
+    "flare": {
+     "precision": 0.4567901234567901,
+     "recall": 0.03500473036896878,
+     "f1": 0.06502636203866433,
+     "support": 2114
+    },
+    "industrial": {
+     "precision": 0.7811582790464601,
+     "recall": 0.8899037677377263,
+     "f1": 0.8319926804163014,
+     "support": 12262
+    },
+    "agricultural": {
+     "precision": 0.9333701200165541,
+     "recall": 0.9440052088177844,
+     "f1": 0.9386575412148258,
+     "support": 21502
+    }
+   }
+  },
+  "group_c": {
+   "macroF1": 0.6508631674480503,
+   "classes": {
+    "flare": {
+     "precision": 0.23529411764705882,
+     "recall": 0.06254653760238273,
+     "f1": 0.0988235294117647,
+     "support": 1343
+    },
+    "industrial": {
+     "precision": 0.912548656163114,
+     "recall": 0.9008600182982617,
+     "f1": 0.9066666666666666,
+     "support": 27325
+    },
+    "agricultural": {
+     "precision": 0.9299302559092513,
+     "recall": 0.9649142567510489,
+     "f1": 0.9470993062657196,
+     "support": 35513
+    }
+   }
+  },
+  "group_d_external": {
+   "macroF1": 0.37206502817920467,
+   "classes": {
+    "flare": {
+     "precision": 0.21821036106750394,
+     "recall": 0.09266666666666666,
+     "f1": 0.13008890968647638,
+     "support": 1500
+    },
+    "industrial": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "support": 4
+    },
+    "agricultural": {
+     "precision": 0.9990471864301621,
+     "recall": 0.9734961350779462,
+     "f1": 0.9861061748511376,
+     "support": 92628
+    }
+   }
+  }
+ },
+ "uncertainty": {
+  "group_a": {
+   "coverage": 0.9304171266666152,
+   "nominal": 0.9,
+   "mean_set_size": 0.9667950806383127,
+   "singleton_fraction": 0.9667950806383127,
+   "empty_fraction": 0.033204919361687346,
+   "outside_aoa_fraction": 0.09692410696703556,
+   "accuracy_inside_aoa": 0.9617967727867422,
+   "accuracy_outside_aoa": 0.9349857781389679,
+   "aoa_assessable_rows": 25391,
+   "aoa_not_assessable_rows": 104138,
+   "aoa_assessable_fraction": 0.196
+  },
+  "group_b": {
+   "coverage": 0.8099113662968951,
+   "nominal": 0.9,
+   "mean_set_size": 0.8913540331122136,
+   "singleton_fraction": 0.8913540331122136,
+   "empty_fraction": 0.10864596688778638,
+   "outside_aoa_fraction": 0.06746779767514922,
+   "accuracy_inside_aoa": 0.8131895898256548,
+   "accuracy_outside_aoa": 0.6845168800931315,
+   "aoa_assessable_rows": 12732,
+   "aoa_not_assessable_rows": 23146,
+   "aoa_assessable_fraction": 0.3549
+  },
+  "group_c": {
+   "coverage": 0.8472289306804195,
+   "nominal": 0.9,
+   "mean_set_size": 0.8899674358454994,
+   "singleton_fraction": 0.8899674358454994,
+   "empty_fraction": 0.11003256415450055,
+   "outside_aoa_fraction": 0.1029726996966633,
+   "accuracy_inside_aoa": 0.9234861806213085,
+   "accuracy_outside_aoa": 0.8982717989002357,
+   "aoa_assessable_rows": 24725,
+   "aoa_not_assessable_rows": 39456,
+   "aoa_assessable_fraction": 0.3852
+  }
+ },
+ "b2Industrial": {
+  "precision": 0.3834328491221816,
+  "recall": 0.7416185469275187,
+  "f1": 0.505507416654428,
+  "sample": 50164,
+  "clusters": 662,
+  "persistent_clusters": 244
+ },
+ "notMeasured": {
+  "B3 INSAT-3DS contextual thresholds": "blocked on MOSDAC access",
+  "B4 foundation model probe": "encoder verified, 768 dimensional embedding; imagery blocked on Copernicus registration",
+  "KAALCHAKRA against B1 and B2": "phase 6, not started",
+  "diurnal shift 2020 to 2024": "2020 not ingested",
+  "flare kernel family": "unresolved, not confirmed. D42"
+ }
+}

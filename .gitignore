@@ -1,5 +1,10 @@
 # Data and derived artifacts
 data/
+# The console reads this at request time and Vercel builds from the repository, so
+# an ignored export means the deployment fails at build rather than rendering
+# empty. Negated after the broad data/ rule, which caught it as collateral. D69.
+!apps/console/public/data/
+!apps/console/public/data/**
 *.duckdb
 *.duckdb.wal
 *.parquet

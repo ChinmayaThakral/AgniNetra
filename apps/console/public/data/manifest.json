@@ -1,0 +1,116 @@
+{
+ "generatedBy": "scripts/export_console.py",
+ "heldOutGroup": "group_a",
+ "heldOutStates": [
+  "Karnataka",
+  "Meghalaya",
+  "Odisha",
+  "Punjab"
+ ],
+ "samplingRule": "Stratified sample of up to 4000 detections per class from the group_a held out states. Flare is 1.16 percent of the record, so an unstratified sample would show almost none. This is a sample, not the whole record.",
+ "totalDetectionsInStore": 601941,
+ "indiaAssignedDetections": 469430,
+ "sampledDetections": 8246,
+ "windows": [
+  "2023-10-01 to 2023-11-30",
+  "2024-10-01 to 2024-11-30",
+  "2026-06-06 to 2026-09-03"
+ ],
+ "snapshots": {
+  "FIRMS": "VIIRS S-NPP, NOAA-20, NOAA-21 and MODIS, standard processing and near real time as availability dictated",
+  "OpenStreetMap": "Geofabrik India extract 2026-09-02T20:20:51Z, sequence 4895",
+  "Global Energy Monitor": "power and coal August 2026, cement July 2026, steel June 2026",
+  "ESA WorldCover": "v200, 2021",
+  "EOG flare catalogue": "annual, 2019 to 2024"
+ },
+ "conformalNominal": 0.9,
+ "applicabilityQuantile": 0.95,
+ "persistentSourceRule": "Locations with at least 20 prior detections in a trailing 90 days and at least 5 detections, clustered by great circle distance at a 500 m radius. A VIIRS detection is 375 m across, so that allows about one pixel of positional spread without merging separate sites. Registered means within 1 km of an OSM industrial feature, a GEM asset operating on the detection date, or a catalogued flare.",
+ "persistentSourceScope": "Computed over the whole record, all Indian states and all three windows, not only the held out group. The detections layer is a group_a sample. The two layers therefore have different scopes and the legend says so.",
+ "detectionScope": "Stratified sample from the group_a held out states only: Karnataka, Meghalaya, Odisha and Punjab.",
+ "clusterRadiusSweep": [
+  [
+   110.0,
+   305,
+   58,
+   2327
+  ],
+  [
+   250.0,
+   275,
+   58,
+   2829
+  ],
+  [
+   375.0,
+   268,
+   55,
+   2829
+  ],
+  [
+   500.0,
+   263,
+   53,
+   3649
+  ],
+  [
+   750.0,
+   249,
+   50,
+   8025
+  ],
+  [
+   1000.0,
+   244,
+   47,
+   8025
+  ],
+  [
+   1500.0,
+   222,
+   37,
+   9821
+  ]
+ ],
+ "attribution": [
+  {
+   "name": "NASA FIRMS",
+   "detail": "MODIS and VIIRS active fire data from NASA FIRMS, part of NASA's Earth Science Data and Information System",
+   "url": "https://firms.modaps.eosdis.nasa.gov/"
+  },
+  {
+   "name": "Global Energy Monitor",
+   "detail": "Power, coal mine, iron and steel and cement trackers, licensed CC BY 4.0",
+   "url": "https://globalenergymonitor.org/"
+  },
+  {
+   "name": "OpenStreetMap",
+   "detail": "Industrial features and administrative boundaries, copyright OpenStreetMap contributors, licensed ODbL 1.0",
+   "url": "https://www.openstreetmap.org/copyright"
+  },
+  {
+   "name": "ESA WorldCover",
+   "detail": "ESA WorldCover 10 m 2021 v200, licensed CC BY 4.0",
+   "url": "https://esa-worldcover.org/"
+  },
+  {
+   "name": "EOG",
+   "detail": "VIIRS global gas flaring catalogue, Earth Observation Group, Colorado School of Mines",
+   "url": "https://eogdata.mines.edu/products/vnf/"
+  }
+ ],
+ "externalExtents": {
+  "Pakistan": [
+   60.8,
+   23.6,
+   77.9,
+   37.1
+  ],
+  "Sri Lanka": [
+   79.6,
+   5.8,
+   82.0,
+   10.0
+  ]
+ }
+}
