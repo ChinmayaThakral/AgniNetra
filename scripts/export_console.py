@@ -83,8 +83,13 @@ def main() -> int:
     level = min(1.0, np.ceil((len(scores) + 1) * NOMINAL) / len(scores))
     threshold = float(np.quantile(scores, level))
 
-    scaler = StandardScaler().fit(fit_set[columns].fillna(0.0))
-    fit_scaled = scaler.transform(fit_set[columns].fillna(0.0))
+    # Fitted only on rows whose features are observed. Filling nulls with zero put
+    # every such row at one artificial coordinate in standardised space, which made
+    # the mask report missingness rather than distance. D68.
+    fit_observed = fit_set[columns].notna().all(axis=1)
+    fit_rows = fit_set.loc[fit_observed, columns]
+    scaler = StandardScaler().fit(fit_rows)
+    fit_scaled = scaler.transform(fit_rows)
     index = rng.choice(len(fit_scaled), size=min(40000, len(fit_scaled)), replace=False)
     neighbours = NearestNeighbors(n_neighbors=2).fit(fit_scaled[index])
     train_distance, _ = neighbours.kneighbors(fit_scaled[index])
@@ -104,9 +109,20 @@ def main() -> int:
 
     probs = model.predict_proba(sample[columns])
     included = probs >= (1.0 - threshold)
-    sample_scaled = scaler.transform(sample[columns].fillna(0.0))
-    distance, _ = neighbours.kneighbors(sample_scaled, n_neighbors=1)
-    outside = distance[:, 0] > aoa_threshold
+    # A row with an unobserved feature is not assessable, and the console must say
+    # so rather than show it as inside or outside the domain. None, not a boolean.
+    sample_observed = sample[columns].notna().all(axis=1).to_numpy()
+    outside: list[bool | None] = [None] * len(sample)
+    if sample_observed.any():
+        sample_scaled = scaler.transform(sample.loc[sample_observed, columns])
+        distance, _ = neighbours.kneighbors(sample_scaled, n_neighbors=1)
+        flags = distance[:, 0] > aoa_threshold
+        for position, index_of_row in enumerate(np.flatnonzero(sample_observed)):
+            outside[index_of_row] = bool(flags[position])
+    print(
+        f"applicability assessed on {int(sample_observed.sum())} of {len(sample)} "
+        f"exported rows, {len(sample) - int(sample_observed.sum())} not assessable"
+    )
 
     records = []
     for i in range(len(sample)):
@@ -126,7 +142,9 @@ def main() -> int:
                 "predicted": classes[int(probs[i].argmax())],
                 "posterior": posterior,
                 "predictionSet": prediction_set,
-                "outsideApplicability": bool(outside[i]),
+                # None where the row is not assessable. Coercing that to False
+                # would publish "inside the domain" for a row never assessed. D68.
+                "outsideApplicability": None if outside[i] is None else bool(outside[i]),
                 "priorCount90d": int(row["prior_count_90d"]),
                 "priorCount30d": int(row["prior_count_30d"]),
                 "nightFraction90d": optional_number(row["night_fraction_90d"], 3),

@@ -92,7 +92,9 @@ export function EvidencePanel({ detection }: { detection: Detection | null }) {
       <div className="row">
         <span className="k">applicability domain</span>
         <span className="v">
-          {detection.outsideApplicability ? (
+          {detection.outsideApplicability === null ? (
+            <span>not assessable, a feature is unobserved</span>
+          ) : detection.outsideApplicability ? (
             <span style={{ color: "#b00020" }}>outside, treat with caution</span>
           ) : (
             "inside"

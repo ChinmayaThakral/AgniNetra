@@ -93,27 +93,50 @@ def main() -> int:
         set_sizes = included.sum(axis=1)
 
         # Applicability domain in standardised feature space.
-        scaler = StandardScaler().fit(fit_set[columns].fillna(0.0))
-        fit_scaled = scaler.transform(fit_set[columns].fillna(0.0))
-        sample_index = rng.choice(len(fit_scaled), size=min(40000, len(fit_scaled)), replace=False)
-        neighbours = NearestNeighbors(n_neighbors=2).fit(fit_scaled[sample_index])
-        train_distance, _ = neighbours.kneighbors(fit_scaled[sample_index])
-        aoa_threshold = float(np.quantile(train_distance[:, 1], AOA_QUANTILE))
-        test_scaled = scaler.transform(test[columns].fillna(0.0))
-        test_distance, _ = neighbours.kneighbors(test_scaled, n_neighbors=1)
-        outside = test_distance[:, 0] > aoa_threshold
-        outside_fraction = float(outside.mean())
+        #
+        # This previously called `.fillna(0.0)` on both the fit set and the test set.
+        # A zero in a standardised space is a coordinate, not a neutral, so every row
+        # with an unobserved recurrence feature was moved to one artificial point
+        # before its distance to the training distribution was measured. On the
+        # current data 60 to 73 percent of rows carry at least one such null, so the
+        # mask was substantially reporting missingness rather than distance. D68.
+        #
+        # The applicability domain is a statement about whether a row can be
+        # assessed at all, which makes imputing it self defeating. Rows with an
+        # unobserved feature are not assessed and are counted instead.
+        fit_observed = fit_set[columns].notna().all(axis=1).to_numpy()
+        test_observed = test[columns].notna().all(axis=1).to_numpy()
+        assessable = int(test_observed.sum())
 
-        inside_correct = None
-        if (~outside).sum() > 0:
-            predicted = np.array(classes)[test_probs.argmax(axis=1)]
-            inside_correct = float(
-                (predicted[~outside] == test["weak_label"].to_numpy()[~outside]).mean()
+        if fit_observed.sum() < 2 or assessable == 0:
+            outside_fraction = None
+            inside_correct = None
+            outside_correct = None
+            aoa_threshold = None
+        else:
+            fit_rows = fit_set.loc[fit_observed, columns]
+            scaler = StandardScaler().fit(fit_rows)
+            fit_scaled = scaler.transform(fit_rows)
+            sample_index = rng.choice(
+                len(fit_scaled), size=min(40000, len(fit_scaled)), replace=False
+            )
+            neighbours = NearestNeighbors(n_neighbors=2).fit(fit_scaled[sample_index])
+            train_distance, _ = neighbours.kneighbors(fit_scaled[sample_index])
+            aoa_threshold = float(np.quantile(train_distance[:, 1], AOA_QUANTILE))
+            test_scaled = scaler.transform(test.loc[test_observed, columns])
+            test_distance, _ = neighbours.kneighbors(test_scaled, n_neighbors=1)
+            outside = test_distance[:, 0] > aoa_threshold
+            outside_fraction = float(outside.mean())
+
+            predicted = np.array(classes)[test_probs.argmax(axis=1)][test_observed]
+            truth = test["weak_label"].to_numpy()[test_observed]
+            inside_correct = (
+                float((predicted[~outside] == truth[~outside]).mean())
+                if (~outside).sum()
+                else None
             )
             outside_correct = (
-                float((predicted[outside] == test["weak_label"].to_numpy()[outside]).mean())
-                if outside.sum()
-                else None
+                float((predicted[outside] == truth[outside]).mean()) if outside.sum() else None
             )
 
         print(f"\n{group}")
@@ -123,9 +146,18 @@ def main() -> int:
             f"  singleton sets {float((set_sizes == 1).mean()):.2%}, "
             f"empty sets {float((set_sizes == 0).mean()):.2%}"
         )
-        print(f"  outside the applicability domain: {outside_fraction:.2%}")
+        not_assessable = len(test) - assessable
+        print(
+            f"  applicability assessed on {assessable} of {len(test)} rows, "
+            f"{not_assessable} not assessable because a feature is unobserved"
+        )
+        if outside_fraction is None:
+            print("  outside the applicability domain: not measured, no assessable rows")
+        else:
+            print(f"  outside the applicability domain: {outside_fraction:.2%} of assessable")
+        inside_text = "n/a" if inside_correct is None else f"{inside_correct:.3f}"
         outside_text = "n/a" if outside_correct is None else f"{outside_correct:.3f}"
-        print(f"  accuracy inside the domain {inside_correct:.3f}, outside {outside_text}")
+        print(f"  accuracy inside the domain {inside_text}, outside {outside_text}")
         summary[group] = {
             "coverage": coverage,
             "nominal": NOMINAL,
@@ -135,17 +167,28 @@ def main() -> int:
             "outside_aoa_fraction": outside_fraction,
             "accuracy_inside_aoa": inside_correct,
             "accuracy_outside_aoa": outside_correct,
+            "aoa_assessable_rows": assessable,
+            "aoa_not_assessable_rows": len(test) - assessable,
+            "aoa_assessable_fraction": round(assessable / len(test), 4) if len(test) else None,
         }
 
     # B2, spatiotemporal density clustering, scored on industrial alone.
     print("\n=== B2, spatiotemporal density clustering ===", flush=True)
-    # Two problems with the previous form, `FEATURE_SQL + " ORDER BY random() LIMIT n"`.
-    # FEATURE_SQL now carries its own ORDER BY, so appending a second one is a parse
-    # error. And `random()` without a seed drew a different sample on every run, so
-    # the B2 numbers were never reproducible either. Seeded and ordered instead. D66.
-    con.execute(f"SELECT setseed({SEED % 1000 / 1000.0});")
+    # Database side randomness is not reproducible here, and the seeded form that
+    # replaced the unseeded one was not either. `setseed()` plus `ORDER BY random()`
+    # returned a different 60000 row sample on roughly one run in four: three
+    # identical digests then a fourth that differed. It is flaky rather than
+    # deterministic, which is why a small check passed and the claim was wrong. D68.
+    #
+    # Sampled by a stable hash of the detection identifier instead. No RNG state, no
+    # ordering ambiguity, identical across machines and DuckDB versions, and the
+    # selection is a pure function of the identifier and the sample size.
     b2_rows = con.execute(
-        f"SELECT * FROM ({FEATURE_SQL}) ORDER BY random() LIMIT {B2_SAMPLE}"
+        f"""
+        SELECT * FROM ({FEATURE_SQL})
+        ORDER BY md5(detection_id)
+        LIMIT {B2_SAMPLE}
+        """
     ).df()
     b2_rows = b2_rows[b2_rows["weak_label"].isin(TRAINED_CLASSES)].copy()
     day = pd.to_datetime(b2_rows["acq_date_ist"]).astype("int64") / 86_400_000_000_000

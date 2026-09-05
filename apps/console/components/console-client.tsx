@@ -49,7 +49,7 @@ function toCsv(rows: Detection[]): string {
     [
       d.id, d.lon, d.lat, d.date, d.state ?? "", d.frpMw ?? "not measured",
       d.isNight, d.weakLabel, d.predicted, d.predictionSet.join(" "),
-      d.outsideApplicability, d.priorCount90d,
+      d.outsideApplicability ?? "not assessable", d.priorCount90d,
       d.nightFraction90d ?? "not measured",
       d.nearestFlareM ?? "not measured",
       d.nearestIndustrialM ?? "not measured",

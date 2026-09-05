@@ -54,6 +54,17 @@ EXEMPT = {
     "docs/paper_outline.md",
     # Exists precisely to show the withdrawn value beside the rebuilt one.
     "docs/refit_comparison.md",
+    # Audit reports are findings about this repository rather than claims by it.
+    # They quote historical values and cite line numbers, and "line 39" is not a
+    # source count. Listed by exact path so a new report forces a decision rather
+    # than inheriting an exemption.
+    "docs/audit/SUMMARY.md",
+    "docs/audit/audit-code.md",
+    "docs/audit/audit-deploy.md",
+    "docs/audit/audit-licensing.md",
+    "docs/audit/audit-logic.md",
+    "docs/audit/audit-repo.md",
+    "docs/audit/audit-secrets.md",
 }
 
 SCANNED = sorted(

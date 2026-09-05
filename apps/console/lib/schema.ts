@@ -18,7 +18,9 @@ export const detectionSchema = z.object({
   predicted: z.string(),
   posterior: z.record(z.string(), z.number()),
   predictionSet: z.array(z.string()),
-  outsideApplicability: z.boolean(),
+  // Null where a feature is unobserved, so the row was never assessed. Parsing
+  // this as a plain boolean would read "not assessed" as "inside". D68.
+  outsideApplicability: z.boolean().nullable(),
   priorCount90d: z.number(),
   priorCount30d: z.number(),
   nightFraction90d: z.number().nullable(),
