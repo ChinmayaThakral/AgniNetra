@@ -4,6 +4,34 @@ version = "0.1.0"
 description = "Thermal source attribution over India"
 requires-python = ">=3.11,<3.12"
 
+# Declared so a fresh clone can install and run the suite. This was empty until
+# 2026-09-05, which meant `uv run pytest` in a new checkout created an empty
+# environment and failed to find pytest at all. Pinned to what the project was
+# developed and measured against.
+dependencies = [
+    "duckdb==1.5.5",
+    "matplotlib==3.11.1",
+    "numpy==2.4.6",
+    "openpyxl==3.1.5",
+    "osmium==4.3.1",
+    "pandas==3.0.5",
+    "python-dotenv==1.2.3",
+    "rasterio==1.4.4",
+    "requests==2.34.2",
+    "scikit-learn==1.9.0",
+]
+
+[project.optional-dependencies]
+# The B4 imagery path only. Heavy, and nothing else in the project imports them.
+imagery = [
+    "terratorch==1.2.11",
+    "torch==2.14.0",
+]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.16.6",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
