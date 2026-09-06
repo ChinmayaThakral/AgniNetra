@@ -76,7 +76,11 @@ def cluster(rows: list, radius_m: float) -> list[dict]:
     ).fit_predict(coords)
 
     sources: list[dict] = []
-    for label in set(labels):
+    # Sorted because the insertion order decides the tie break in the final sort by
+    # detection count. Integer sets happen to iterate deterministically, since small
+    # integers hash to themselves, but relying on that is the same bet that failed
+    # for strings in D75. Made explicit rather than assumed.
+    for label in sorted(set(labels)):
         members = [rows[i] for i in range(len(rows)) if labels[i] == label]
         if len(members) < MIN_DETECTIONS:
             continue
