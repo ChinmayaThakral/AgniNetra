@@ -38,15 +38,20 @@ WINDOW_DEG = 0.06
 
 RADII_M = (100.0, 250.0, 500.0, 1000.0, 2000.0, 5000.0)
 
+# Ordered by the generation index for the reason recorded in
+# scripts/landcover_background.py: the LIMIT sits over a filtered result and the
+# ordering makes reproducibility a guarantee rather than a property of the current
+# planner. Verified to select the identical sample. D77.
 PROBES_SQL = f"""
 CREATE OR REPLACE TEMP TABLE probes AS
 WITH box AS (
     SELECT 68.0 AS w, 6.5 AS s, 97.5 AS e, 37.5 AS n
 ),
 candidates AS (
-    SELECT w + (e - w) * random() AS lon,
+    SELECT r.range AS i,
+           w + (e - w) * random() AS lon,
            s + (n - s) * random() AS lat
-    FROM box, range(0, {PROBE_COUNT * 6})
+    FROM box, range(0, {PROBE_COUNT * 6}) r
 )
 SELECT c.lon, c.lat
 FROM candidates c
@@ -54,6 +59,7 @@ WHERE EXISTS (
     SELECT 1 FROM ref_osm_admin a
     WHERE a.admin_level = '4' AND ST_Contains(a.geom, ST_Point(c.lon, c.lat))
 )
+ORDER BY c.i
 LIMIT {PROBE_COUNT};
 """
 

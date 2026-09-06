@@ -35,18 +35,26 @@ OUT = ROOT / "docs" / "landcover_background.md"
 SEED = 20260904
 PROBE_COUNT = 4000
 
+# The LIMIT sits over a filtered result with no ordering, which is the shape D66
+# found returning different rows run to run. Measured here across ten runs it is
+# stable, because `random()` fills rows from a sequential `range()` rather than
+# acting as a sort key over a parallel scan, which is what made the D68 sample
+# flaky. Ordering by the generation index makes that a guarantee instead of a
+# property of the current planner. Verified to select the identical sample. D77.
 PROBES_SQL = f"""
 CREATE OR REPLACE TEMP TABLE probes AS
 WITH box AS (SELECT 68.0 AS w, 6.5 AS s, 97.5 AS e, 37.5 AS n),
 candidates AS (
-    SELECT w + (e - w) * random() AS lon, s + (n - s) * random() AS lat
-    FROM box, range(0, {PROBE_COUNT * 6})
+    SELECT r.range AS i,
+           w + (e - w) * random() AS lon, s + (n - s) * random() AS lat
+    FROM box, range(0, {PROBE_COUNT * 6}) r
 )
 SELECT c.lon, c.lat FROM candidates c
 WHERE EXISTS (
     SELECT 1 FROM ref_osm_admin a
     WHERE a.admin_level = '4' AND ST_Contains(a.geom, ST_Point(c.lon, c.lat))
 )
+ORDER BY c.i
 LIMIT {PROBE_COUNT};
 """
 
