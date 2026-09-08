@@ -28,6 +28,10 @@ SEARCH_URL: Final[str] = "https://mosdac.gov.in/apios/datasets.json"
 # INSAT-3DS Imager, Level 1B standard, six channels at a half hour cadence.
 INSAT_3DS_L1B: Final[str] = "3SIMG_L1B_STD"
 
+# The product this pipeline uses. Already on a Mercator grid containing India, and
+# 24 MB a granule against L1B's 438. D78.
+INSAT_3DS_L1C_ASIA: Final[str] = "3SIMG_L1C_ASIA_MER"
+
 CHUNK_BYTES: Final[int] = 8 * 1024 * 1024
 REQUEST_TIMEOUT_S: Final[float] = 120.0
 
