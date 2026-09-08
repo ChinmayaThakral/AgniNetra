@@ -28,7 +28,7 @@ from ml.fusion.mosdac import (
     INSAT_3DS_L1C_ASIA,
     MissingCredentialsError,
     MosdacError,
-    access_token,
+    TokenSource,
     download,
     search,
 )
@@ -53,7 +53,8 @@ def main() -> int:
     days = [first + timedelta(days=n) for n in range(args.days)]
 
     try:
-        token = access_token(os.environ.get("MOSDAC_USERNAME"), os.environ.get("MOSDAC_PASSWORD"))
+        tokens = TokenSource(os.environ.get("MOSDAC_USERNAME"), os.environ.get("MOSDAC_PASSWORD"))
+        tokens.get()
     except (MissingCredentialsError, MosdacError) as exc:
         print(f"BLOCKED: {exc}", file=sys.stderr)
         return 2
@@ -79,7 +80,7 @@ def main() -> int:
             local = staging / granule.identifier
             try:
                 if not local.exists():
-                    download(granule.granule_id, token, local)
+                    download(granule.granule_id, tokens, local)
                 window = read_india(local)
                 found = detect(window)
                 np.savez_compressed(

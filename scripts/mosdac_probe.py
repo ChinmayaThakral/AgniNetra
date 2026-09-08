@@ -24,7 +24,7 @@ from ml.fusion.mosdac import (
     INSAT_3DS_L1B,
     MissingCredentialsError,
     MosdacError,
-    access_token,
+    TokenSource,
     download,
     search,
 )
@@ -56,7 +56,7 @@ def main() -> int:
         print(f"already present, {destination.stat().st_size / 1e6:.0f} MB")
     else:
         try:
-            token = access_token(
+            tokens = TokenSource(
                 os.environ.get("MOSDAC_USERNAME"), os.environ.get("MOSDAC_PASSWORD")
             )
         except MissingCredentialsError as exc:
@@ -65,8 +65,8 @@ def main() -> int:
         except MosdacError as exc:
             print(f"BLOCKED: {exc}", file=sys.stderr)
             return 2
-        print("token acquired, downloading")
-        written = download(granule.granule_id, token, destination)
+        print("downloading")
+        written = download(granule.granule_id, tokens, destination)
         print(f"wrote {written / 1e6:.0f} MB")
 
     import h5py

@@ -120,7 +120,35 @@ def access_token(username: str | None, password: str | None) -> str:
     return str(token)
 
 
-def download(granule_id: str, token: str, destination: Path, attempts: int = 6) -> int:
+class TokenSource:
+    """Holds credentials and hands out a token, re-acquiring when one expires.
+
+    A token was acquired once at the start of a run and the run takes hours. It
+    expired after roughly fifteen minutes and every subsequent granule returned
+    HTTP 401, so a three day pull produced one file and sixty two failures. The
+    failures were loud, which is why this was caught, but the job had to be
+    restarted from nothing. D80.
+
+    The credentials are held for the lifetime of the run because that is what
+    re-acquiring requires. They are never logged, printed or written to disk.
+    """
+
+    def __init__(self, username: str | None, password: str | None) -> None:
+        if not username:
+            raise MissingCredentialsError("MOSDAC_USERNAME is not set in the environment")
+        if not password:
+            raise MissingCredentialsError("MOSDAC_PASSWORD is not set in the environment")
+        self._username = username
+        self._password = password
+        self._token: str | None = None
+
+    def get(self, refresh: bool = False) -> str:
+        if refresh or self._token is None:
+            self._token = access_token(self._username, self._password)
+        return self._token
+
+
+def download(granule_id: str, tokens: TokenSource, destination: Path, attempts: int = 6) -> int:
     """Stream one granule to disk, resuming a partial transfer, and return its size.
 
     The link drops. A first attempt at a 438 MB granule stopped at 188 MB, and the
@@ -143,7 +171,7 @@ def download(granule_id: str, token: str, destination: Path, attempts: int = 6) 
             break
 
         request = urllib.request.Request(url)
-        request.add_header("Authorization", f"Bearer {token}")
+        request.add_header("Authorization", f"Bearer {tokens.get()}")
         if have:
             request.add_header("Range", f"bytes={have}-")
 
@@ -167,7 +195,21 @@ def download(granule_id: str, token: str, destination: Path, attempts: int = 6) 
                             break
                         handle.write(chunk)
                         have += len(chunk)
-        except (OSError, urllib.error.HTTPError) as exc:
+        except urllib.error.HTTPError as exc:
+            if exc.code in (401, 403):
+                # Expired rather than wrong: the same credentials worked minutes
+                # ago. Re-acquire and retry immediately, skipping the backoff, but
+                # still spending an attempt so bad credentials cannot loop forever.
+                tokens.get(refresh=True)
+                continue
+            if attempt == attempts:
+                raise MosdacError(
+                    f"transfer of {granule_id} failed after {attempt} attempts with "
+                    f"{have} of {expected} bytes: {exc}"
+                ) from exc
+            time.sleep(min(120, 10 * attempt))
+            continue
+        except OSError as exc:
             if attempt == attempts:
                 raise MosdacError(
                     f"transfer of {granule_id} failed after {attempt} attempts with "
