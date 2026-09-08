@@ -20,6 +20,29 @@
 set -u
 cd "$(dirname "$0")/.."
 
+LOCK="data/.pull.lock"
+
+# Started twice by accident once, which left two runners and six pull processes
+# racing for the same part files. A partial written by one and resumed by the other
+# is a corrupt granule that still opens. One runner at a time.
+if [ -e "$LOCK" ] && kill -0 "$(cat "$LOCK" 2>/dev/null)" 2>/dev/null; then
+  echo "already running as PID $(cat "$LOCK"). Nothing started." >&2
+  exit 1
+fi
+mkdir -p data && echo $$ > "$LOCK"
+trap 'rm -f "$LOCK"' EXIT INT TERM
+
+# Caffeinate stops idle sleep, not a flat battery. Refuse to begin an overnight run
+# on a charge that will not survive it.
+if pmset -g batt 2>/dev/null | grep -q "Battery Power"; then
+  charge=$(pmset -g batt | grep -oE "[0-9]+%" | head -1 | tr -d "%")
+  if [ "${charge:-0}" -lt 30 ]; then
+    echo "on battery at ${charge}%. Plug in and rerun: an overnight pull will not finish." >&2
+    exit 1
+  fi
+  echo "warning: running on battery at ${charge}%. Plug in." >&2
+fi
+
 START="${1:-2024-11-01}"
 DAYS="${2:-3}"
 EXPECTED=$((47 * DAYS))
