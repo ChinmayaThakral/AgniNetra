@@ -40,7 +40,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start", default="2024-11-01", help="first date, YYYY-MM-DD")
     parser.add_argument("--days", type=int, default=3, help="consecutive days to pull")
     parser.add_argument("--keep", action="store_true", help="do not delete granules")
+    parser.add_argument(
+        "--slots",
+        default=None,
+        help="comma separated UTC HHMM slots to process; other slots found by search are "
+        "skipped without a network call",
+    )
+    parser.add_argument(
+        "--refetch-raw",
+        action="store_true",
+        help="download the raw granule even when its npz already exists, without rerunning "
+        "detection or touching the npz; combine with --keep and --slots to retain specific "
+        "raw granules for inspection",
+    )
     return parser.parse_args()
+
+
+def _slot(identifier: str) -> str:
+    """Return the UTC HHMM slot embedded in a granule identifier."""
+    return identifier.split("_")[2]
 
 
 def main() -> int:
@@ -59,6 +77,13 @@ def main() -> int:
         print(f"BLOCKED: {exc}", file=sys.stderr)
         return 2
 
+    requested_slots: set[str] | None = set(args.slots.split(",")) if args.slots else None
+
+    # Retaining the raw granule is the whole point of refetching one whose npz already
+    # exists. Without this the finally clause below deletes it the moment it lands, and
+    # the "raw retained" line prints for a file that is already gone.
+    args.keep = args.keep or args.refetch_raw
+
     total, kept, failed = 0, 0, 0
     for day in days:
         stamp = day.isoformat()
@@ -71,9 +96,12 @@ def main() -> int:
         print(f"{stamp}: {len(granules)} granules")
 
         for granule in granules:
+            if requested_slots is not None and _slot(granule.identifier) not in requested_slots:
+                continue
             total += 1
             target = out / f"{granule.identifier.replace('.h5', '')}.npz"
-            if target.exists():
+            raw_only = target.exists() and args.refetch_raw
+            if target.exists() and not raw_only:
                 kept += 1
                 continue
 
@@ -81,6 +109,10 @@ def main() -> int:
             try:
                 if not local.exists():
                     download(granule.granule_id, tokens, local)
+                if raw_only:
+                    kept += 1
+                    print(f"  {granule.identifier[:34]}  raw retained, npz already present")
+                    continue
                 window = read_india(local)
                 found = detect(window)
                 np.savez_compressed(
@@ -89,6 +121,7 @@ def main() -> int:
                     latitude=found.latitude,
                     mir=found.mir,
                     diff=found.diff,
+                    solar_zenith=found.solar_zenith,
                     valid_pixels=np.int64(found.valid_pixels),
                     acquired_utc=np.str_(window.acquired_utc.isoformat()),
                     hour_ist=np.int64(window.hour_ist),
