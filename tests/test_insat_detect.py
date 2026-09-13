@@ -6,12 +6,17 @@ show a large mid wave minus thermal difference through solar reflection, so a pu
 relative test cannot separate it from combustion. D79.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 import numpy as np
 import pytest
 
 from ml.fusion.detect import MIR_FLOOR_K, detect
+
+# Large enough that the TIR1 condition can never bind, so a test can isolate one
+# guard at a time. Without this, a scene rejected by two guards proves neither.
+TIR1_TEST_OFF = 1.0e6
 
 
 @dataclass
@@ -20,15 +25,14 @@ class SyntheticWindow:
     tir1: np.ndarray
     longitude: np.ndarray
     latitude: np.ndarray
+    acquired_utc: datetime = field(default_factory=lambda: datetime(2024, 11, 1, 6, 0, tzinfo=UTC))
 
 
 def _scene(size: int = 40) -> SyntheticWindow:
     """A uniform warm surface with no fire in it."""
     mir = np.full((size, size), 300.0, dtype=np.float32)
     tir1 = np.full((size, size), 295.0, dtype=np.float32)
-    lon, lat = np.meshgrid(
-        np.linspace(70.0, 90.0, size), np.linspace(10.0, 30.0, size)
-    )
+    lon, lat = np.meshgrid(np.linspace(70.0, 90.0, size), np.linspace(10.0, 30.0, size))
     return SyntheticWindow(mir, tir1, lon.astype(np.float32), lat.astype(np.float32))
 
 
@@ -81,8 +85,57 @@ def test_the_floor_is_load_bearing() -> None:
     the work and removing it reintroduces the defect.
     """
     scene = _cloud_field()
-    assert len(detect(scene, mir_floor=0.0)) == 1
-    assert len(detect(scene, mir_floor=MIR_FLOOR_K)) == 0
+    assert len(detect(scene, mir_floor=0.0, max_tir1_deficit=TIR1_TEST_OFF)) == 1
+    assert len(detect(scene, mir_floor=MIR_FLOOR_K, max_tir1_deficit=TIR1_TEST_OFF)) == 0
+
+
+def test_the_tir1_condition_catches_the_cloud_independently_of_the_floor() -> None:
+    """Two guards now reject the cloud pixel and each must be shown to do it alone.
+
+    The cloud pixel sits 32 K below its own TIR1 background, so the new condition
+    rejects it with the floor switched off entirely. That the floor would also have
+    caught it is not a reason to leave either untested.
+    """
+    scene = _cloud_field()
+    assert len(detect(scene, mir_floor=0.0, max_tir1_deficit=TIR1_TEST_OFF)) == 1
+    assert len(detect(scene, mir_floor=0.0)) == 0
+
+
+def test_a_pixel_colder_than_its_thermal_background_is_not_a_fire() -> None:
+    """The solar artifact shape, and the defect this condition exists for.
+
+    Reflected sunlight in the mid wave band lifts MIR above the background and widens
+    the MIR minus TIR1 difference, so the two original tests both pass. What gives it
+    away is the thermal channel running cold against its surroundings, which no fire
+    can do. Measured on real granules, the midday artifacts had a median TIR1 excess
+    of -3.37 K against +0.13 K for the afternoon fires. D81.
+    """
+    scene = _scene()
+    scene.mir[20, 20] = 312.0
+    scene.tir1[20, 20] = 291.0
+    assert len(detect(scene, max_tir1_deficit=TIR1_TEST_OFF)) == 1
+    assert len(detect(scene)) == 0
+
+
+def test_a_fire_warms_the_thermal_channel_slightly_and_survives() -> None:
+    """The counterpart: the condition must not reject combustion.
+
+    A sub pixel fire raises the 11 micron channel a little while raising the mid wave
+    channel a lot, so its TIR1 excess is small and positive, not negative.
+    """
+    scene = _scene()
+    scene.mir[20, 20] = 312.0
+    scene.tir1[20, 20] = 295.5
+    assert len(detect(scene)) == 1
+
+
+def test_the_tir1_condition_never_adds_detections_as_it_tightens() -> None:
+    scene = _scene()
+    for row, col, tir1 in ((8, 8, 296.0), (12, 12, 294.5), (30, 30, 293.0)):
+        scene.mir[row, col] = 315.0
+        scene.tir1[row, col] = tir1
+    counts = [len(detect(scene, max_tir1_deficit=d)) for d in (5.0, 2.0, 1.0, 0.5, 0.1)]
+    assert counts == sorted(counts, reverse=True), counts
 
 
 def test_unobserved_pixels_are_never_flagged() -> None:
