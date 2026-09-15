@@ -76,27 +76,41 @@ def main() -> int:
     con = duckdb.connect(str(DATA_DIR / "agninetra.duckdb"), read_only=True)
     con.execute("install spatial; load spatial;")
     con.register("insat", frame)
+    # The name fallback matches scripts/build_features_3b.py so INSAT and the polar
+    # record name a state the same way. `inside` is asked separately because a point
+    # in no polygon and a point inside an unnamed polygon are different facts, and
+    # five level 4 polygons carry neither name: collapsing them into one bucket would
+    # report a detection in India as a detection outside it.
     rows = con.execute(
         """
         select p.hour,
-               (select coalesce(s.name_en, s.name)
+               (select coalesce(nullif(s.name_en, ''), s.name)
                   from ref_osm_admin s
                  where s.admin_level = '4'
                    and ST_Contains(s.geom, ST_Point(p.lon, p.lat))
-                 limit 1) as state
+                 limit 1) as state,
+               exists(select 1
+                        from ref_osm_admin s
+                       where s.admin_level = '4'
+                         and ST_Contains(s.geom, ST_Point(p.lon, p.lat))) as inside
         from insat p
         """
     ).fetchall()
     con.close()
 
     per_state: dict[str, dict[int, int]] = defaultdict(lambda: defaultdict(int))
-    offshore = 0
-    for hour, state in rows:
+    outside = 0
+    unnamed = 0
+    for hour, state, inside in rows:
+        if not inside:
+            outside += 1
+            continue
         if state is None:
-            offshore += 1
+            unnamed += 1
             continue
         per_state[state][int(hour)] += 1
-    print(f"detections outside any state polygon: {offshore}")
+    print(f"detections outside any state polygon: {outside}")
+    print(f"detections inside a polygon that carries no name: {unnamed}")
     print()
 
     def shares(counts: dict[int, int]) -> tuple[float, float, float, int]:

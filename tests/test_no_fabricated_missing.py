@@ -48,6 +48,7 @@ ALLOWED: dict[str, str] = {
     # observed values, the English name and the local one. Nothing is invented: if
     # both are absent the result is NULL and the row is filtered explicitly.
     "scripts/build_features_3b.py:60": "Name fallback between two observed values.",
+    "scripts/diurnal_by_region.py:87": "Name fallback between two observed values.",
     "scripts/figure_coverage_density.py:42": "Name fallback between two observed values.",
     "scripts/figure_coverage_density.py:49": "Name fallback between two observed values.",
     "scripts/osm_coverage_report.py:30": "Name fallback between two observed values.",
