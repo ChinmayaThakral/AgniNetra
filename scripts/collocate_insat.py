@@ -38,6 +38,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start", default="2024-11-01")
     parser.add_argument("--end", default="2024-11-03")
+    parser.add_argument(
+        "--source",
+        default="insat",
+        help="subdirectory under data/derived holding the reduced granules",
+    )
     return parser.parse_args()
 
 
@@ -63,7 +68,7 @@ def _load_insat(source: Path) -> list[tuple[datetime, np.ndarray, np.ndarray]]:
 
 def main() -> int:
     args = parse_args()
-    source = DATA_DIR / "derived" / "insat"
+    source = DATA_DIR / "derived" / args.source
     granules = _load_insat(source)
     if not granules:
         print(f"BLOCKED: no reduced granules in {source}", file=sys.stderr)
