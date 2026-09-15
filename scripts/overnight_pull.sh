@@ -52,7 +52,10 @@ EXPECTED=$((47 * DAYS))
 LOG="data/insat_pull.log"
 RUNLOG="data/overnight.log"
 
-count_done() { ls data/derived/insat/*.npz 2>/dev/null | wc -l | tr -d ' '; }
+# Set OUT_SUBDIR to pull a second season without the two sharing a directory. The
+# count and the pull must agree on it, or the loop watches one place and fills another.
+OUT_SUBDIR="${OUT_SUBDIR:-insat}"
+count_done() { ls "data/derived/$OUT_SUBDIR"/*.npz 2>/dev/null | wc -l | tr -d ' '; }
 stamp() { date "+%Y-%m-%d %H:%M:%S"; }
 
 echo "$(stamp)  starting, target ${EXPECTED} granules from ${START} over ${DAYS} day(s)" | tee -a "$RUNLOG"
@@ -86,7 +89,8 @@ while true; do
   # -i prevents idle sleep, -s prevents system sleep while on mains, -m keeps the
   # disk awake. The assertion lives exactly as long as the command it wraps.
   caffeinate -ims uv run python -u scripts/mosdac_pull.py \
-    --start "$START" --days "$DAYS" ${PASS[@]+"${PASS[@]}"} >> "$LOG" 2>&1
+    --start "$START" --days "$DAYS" --out "$OUT_SUBDIR" \
+    ${PASS[@]+"${PASS[@]}"} >> "$LOG" 2>&1
 
   after=$(count_done)
   echo "$(stamp)  pass ${attempt} ended, ${after} of ${EXPECTED} reduced" | tee -a "$RUNLOG"

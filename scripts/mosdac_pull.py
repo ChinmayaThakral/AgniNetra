@@ -41,6 +41,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--days", type=int, default=3, help="consecutive days to pull")
     parser.add_argument("--keep", action="store_true", help="do not delete granules")
     parser.add_argument(
+        "--out",
+        default="insat",
+        help="subdirectory under data/derived to write npz into; use a separate one "
+        "per season so an analysis cannot glob two windows into one profile",
+    )
+    parser.add_argument(
         "--slots",
         default=None,
         help="comma separated UTC HHMM slots to process; other slots found by search are "
@@ -65,7 +71,7 @@ def main() -> int:
     args = parse_args()
     load_dotenv(ENV_PATH)
 
-    out = ensure_dir(DATA_DIR / "derived" / "insat")
+    out = ensure_dir(DATA_DIR / "derived" / args.out)
     staging = ensure_dir(RAW_DIR / "mosdac")
     first = date.fromisoformat(args.start)
     days = [first + timedelta(days=n) for n in range(args.days)]

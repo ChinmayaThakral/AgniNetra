@@ -16,6 +16,7 @@ Usage:
     uv run python scripts/diurnal_by_region.py
 """
 
+import argparse
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -45,8 +46,15 @@ EVENING_START, EVENING_END = 15, 20
 MIN_DETECTIONS = 25
 
 
+def _source_name() -> str:
+    """Which derived subdirectory to read, so one season cannot be read as another."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", default="insat", help="subdirectory under data/derived")
+    return str(parser.parse_args().source)
+
+
 def main() -> int:
-    source = DATA_DIR / "derived" / "insat"
+    source = DATA_DIR / "derived" / _source_name()
     files = sorted(source.glob("*.npz"))
     if not files:
         print(f"BLOCKED: no reduced granules in {source}", file=sys.stderr)
