@@ -9,7 +9,8 @@ Reports coverage before any fraction, because a diurnal histogram built from a
 partial day understates exactly the hours that are missing, and that is the number
 this figure exists to produce.
 
-Writes docs/figures/insat_diurnal.png and docs/insat_diurnal.md.
+Writes docs/figures/insat_diurnal<window>.png and docs/insat_diurnal<window>.md,
+where <window> is empty for the default source and _<name> otherwise.
 """
 
 import argparse
@@ -36,6 +37,16 @@ POLAR_HOURS: tuple[int, ...] = (1, 2, 13, 14)
 EVENING_START, EVENING_END = 15, 20
 
 
+def _suffix(source: str) -> str:
+    """Output names carry the window when it is not the default one.
+
+    Both scripts wrote fixed filenames. Running either on a second season would have
+    replaced the first season's figure and table in place, under the names the paper
+    outline cites, with nothing in the output saying so.
+    """
+    return "" if source == "insat" else f"_{source.removeprefix('insat_')}"
+
+
 def _source_name() -> str:
     """Which derived subdirectory to read, so one season cannot be read as another."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -44,7 +55,9 @@ def _source_name() -> str:
 
 
 def main() -> int:
-    source = DATA_DIR / "derived" / _source_name()
+    name = _source_name()
+    window_tag = _suffix(name)
+    source = DATA_DIR / "derived" / name
     files = sorted(source.glob("*.npz"))
     if not files:
         print(f"BLOCKED: no reduced granules in {source}", file=sys.stderr)
@@ -120,7 +133,7 @@ def main() -> int:
         )
     fig.tight_layout()
     ensure_dir(FIGURE_DIR)
-    fig.savefig(FIGURE_DIR / "insat_diurnal.png", dpi=150)
+    fig.savefig(FIGURE_DIR / f"insat_diurnal{window_tag}.png", dpi=150)
     plt.close(fig)
 
     payload = {
@@ -137,7 +150,7 @@ def main() -> int:
         "evening_share": (evening / total) if total > 0 else None,
         "polar_overpass_share": (polar / total) if total > 0 else None,
     }
-    ensure_dir(ARTIFACT_DIR).joinpath("insat_diurnal.json").write_text(
+    ensure_dir(ARTIFACT_DIR).joinpath(f"insat_diurnal{window_tag}.json").write_text(
         json.dumps(payload, indent=2, allow_nan=False)
     )
 
@@ -170,8 +183,10 @@ def main() -> int:
         )
         lines.append(f"| {h:02d} | {mean_by_hour[h]:.1f} | {tag} |")
     lines.append("")
-    (ROOT / "docs" / "insat_diurnal.md").write_text("\n".join(lines))
-    print("\nwrote docs/figures/insat_diurnal.png and docs/insat_diurnal.md")
+    (ROOT / "docs" / f"insat_diurnal{window_tag}.md").write_text("\n".join(lines))
+    print(
+        f"\nwrote docs/figures/insat_diurnal{window_tag}.png and docs/insat_diurnal{window_tag}.md"
+    )
     return 0
 
 

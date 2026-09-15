@@ -46,6 +46,16 @@ EVENING_START, EVENING_END = 15, 20
 MIN_DETECTIONS = 25
 
 
+def _suffix(source: str) -> str:
+    """Output names carry the window when it is not the default one.
+
+    Both scripts wrote fixed filenames. Running either on a second season would have
+    replaced the first season's figure and table in place, under the names the paper
+    outline cites, with nothing in the output saying so.
+    """
+    return "" if source == "insat" else f"_{source.removeprefix('insat_')}"
+
+
 def _source_name() -> str:
     """Which derived subdirectory to read, so one season cannot be read as another."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -54,7 +64,9 @@ def _source_name() -> str:
 
 
 def main() -> int:
-    source = DATA_DIR / "derived" / _source_name()
+    name = _source_name()
+    window_tag = _suffix(name)
+    source = DATA_DIR / "derived" / name
     files = sorted(source.glob("*.npz"))
     if not files:
         print(f"BLOCKED: no reduced granules in {source}", file=sys.stderr)
@@ -187,10 +199,10 @@ def main() -> int:
     )
     fig.tight_layout()
     ensure_dir(FIGURE_DIR)
-    fig.savefig(FIGURE_DIR / "insat_diurnal_by_state.png", dpi=150)
+    fig.savefig(FIGURE_DIR / f"insat_diurnal_by_state{window_tag}.png", dpi=150)
     plt.close(fig)
 
-    out = ROOT / "docs" / "insat_diurnal_by_state.md"
+    out = ROOT / "docs" / f"insat_diurnal_by_state{window_tag}.md"
     out.write_text(
         "# INSAT-3DS diurnal activity by state\n\n"
         "Produced by `uv run python scripts/diurnal_by_region.py` over "
@@ -199,7 +211,7 @@ def main() -> int:
         f"{MIN_DETECTIONS} detections are omitted.\n\n" + "\n".join(lines) + "\n"
     )
     print()
-    print(f"wrote {FIGURE_DIR / 'insat_diurnal_by_state.png'} and {out}")
+    print(f"wrote {FIGURE_DIR / f'insat_diurnal_by_state{window_tag}.png'} and {out}")
     return 0
 
 
