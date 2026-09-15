@@ -91,9 +91,13 @@ def main() -> int:
     ax.set_xlabel("hour, IST")
     ax.set_ylabel("mean INSAT-3DS detections per granule")
     ax.set_xticks(range(0, 24, 2))
+    # One line does not fit a 9 inch canvas and tight_layout cannot wrap a title, so
+    # the colour legend goes on a second line. A newline in the title stacks the two
+    # properly; a separate text call at the same height just overlaps it.
     ax.set_title(
-        f"Diurnal activity over India, INSAT-3DS, {len(days)} day(s). "
-        f"Red is the window the polar record never sees, blue is its overpass hours."
+        f"Diurnal activity over India, INSAT-3DS, {len(days)} day(s)\n"
+        f"red is the window the polar record never sees, blue is its overpass hours",
+        fontsize=11,
     )
     if not complete:
         ax.text(
