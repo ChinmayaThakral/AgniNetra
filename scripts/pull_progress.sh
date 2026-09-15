@@ -10,7 +10,14 @@ set -u
 cd "$(dirname "$0")/.."
 
 DAYS="${1:-3}"
-TARGET=$((47 * DAYS))
+
+# 47 a day was a guess at the nominal schedule and it is wrong: MOSDAC published 47,
+# 45 and 38 granules for 1 to 3 November 2024, so a bar drawn against 141 could never
+# reach its end. The pull prints the real count for each day it searches, so read the
+# target from there and fall back to the guess only when the log has nothing to say.
+TARGET=$(grep -Eo '^[0-9]{4}-[0-9]{2}-[0-9]{2}: [0-9]+ granules' data/insat_pull.log 2>/dev/null |
+  tail -n "$DAYS" | awk '{sum += $2} END {print sum + 0}')
+[ "${TARGET:-0}" -gt 0 ] || TARGET=$((47 * DAYS))
 WIDTH=34
 START_COUNT=$(ls data/derived/insat/*.npz 2>/dev/null | wc -l | tr -d " ")
 START_TIME=$(date +%s)
