@@ -34,43 +34,69 @@ SUBSTITUTIONS = (
 
 SCANNED_SUFFIXES = (".py", ".sql", ".ts", ".tsx")
 
-# Exact location, reason. A substitution is allowed only where the value being
-# supplied is genuinely known rather than invented, and the reason has to say why.
-# `location` is `path:line`, pinned so the exemption cannot drift onto another line.
+# Exemptions are keyed by file and by the exact expression, not by line number.
+# `location` is `path:0` to exempt a whole file, or `path::<expression>` where the
+# expression is the matched line with leading and trailing space stripped and internal
+# runs of whitespace collapsed. It was `path:line` and that broke four times in one
+# working session: every edit above an exempted line moved it and failed the build
+# while nothing about the substitution had changed. Keying on the expression keeps what
+# the pinning was for, since an exemption still covers one specific expression rather
+# than the file around it, and survives the line moving. The cost is that the same
+# expression twice in one file takes one exemption for both; no current entry does
+# that, and the guard prints the expression so a second occurrence is visible.
 ALLOWED: dict[str, str] = {
     "ml/features/matrix.py:0": (
-        "The module documents the removed coalesce in prose so the defect stays "
-        "legible. No live substitution."
+        "The module documents the removed coalesce in prose so the defect stays legible. No live substitution."
     ),
     "tests/test_no_fabricated_missing.py:0": "This file names the patterns by definition.",
-    "scripts/verify_published_numbers.py:0": ("Reports on substitutions, does not perform one."),
-    # Name fallbacks. `coalesce(nullif(name_en, ''), name)` chooses between two
-    # observed values, the English name and the local one. Nothing is invented: if
-    # both are absent the result is NULL and the row is filtered explicitly.
-    "scripts/build_features_3b.py:60": "Name fallback between two observed values.",
-    "scripts/diurnal_by_region.py:107": "Name fallback between two observed values.",
-    "scripts/figure_coverage_density.py:42": "Name fallback between two observed values.",
-    "scripts/figure_coverage_density.py:49": "Name fallback between two observed values.",
-    "scripts/osm_coverage_report.py:30": "Name fallback between two observed values.",
-    "scripts/osm_coverage_report.py:35": "Name fallback between two observed values.",
-    "scripts/osm_coverage_report.py:70": "Name fallback between two observed values.",
-    # Distance sentinels. 1e12 metres stands for "no such asset" inside a `least`,
-    # so it is discarded whenever any real distance exists and survives only when
-    # none does. It is then compared against a radius, where it correctly reads as
-    # not near, or checked against 1e11 and rendered as absent. The sentinel is
-    # never published as a distance and never averaged.
-    "scripts/lift_with_gem.py:40": "Distance sentinel for absent asset, discarded by least.",
-    "scripts/lift_with_gem.py:42": "Distance sentinel for absent asset, discarded by least.",
-    "scripts/persistent_sources.py:58": "Distance sentinel, converted to None above 1e11.",
-    "scripts/persistent_sources.py:59": "Distance sentinel, converted to None above 1e11.",
-    "scripts/persistent_sources.py:60": "Distance sentinel, converted to None above 1e11.",
+    "scripts/verify_published_numbers.py:0": "Reports on substitutions, does not perform one.",
+    "scripts/build_features_3b.py::(SELECT coalesce(nullif(s.name_en, ''), s.name)": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/diurnal_by_region.py::(select coalesce(nullif(s.name_en, ''), s.name)": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/figure_coverage_density.py::SELECT coalesce(nullif(s.name_en, ''), s.name) AS state_name,": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/figure_coverage_density.py::AND coalesce(nullif(s.name_en, ''), s.name) IS NOT NULL": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/osm_coverage_report.py::coalesce(nullif(name_en, ''), name) AS state_name,": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/osm_coverage_report.py::AND coalesce(nullif(name_en, ''), name) IS NOT NULL": (
+        "Name fallback between two observed values."
+    ),
+    "scripts/osm_coverage_report.py::SELECT coalesce(nullif(name_en, ''), name) AS subdistrict_name, geom": (
+        "Name fallback between two observed values."
+    ),
+    'scripts/lift_with_gem.py::"least(coalesce(c.industrial_m, 1e12), coalesce(g.gem_m_temporal, 1e12))"': (
+        "Distance sentinel for absent asset, discarded by least."
+    ),
+    'scripts/lift_with_gem.py::else "coalesce(c.industrial_m, 1e12)"': (
+        "Distance sentinel for absent asset, discarded by least."
+    ),
+    "scripts/persistent_sources.py::coalesce(c.industrial_m, 1e12),": (
+        "Distance sentinel, converted to None above 1e11."
+    ),
+    "scripts/persistent_sources.py::coalesce(g.gem_m_temporal, 1e12),": (
+        "Distance sentinel, converted to None above 1e11."
+    ),
+    "scripts/persistent_sources.py::coalesce(c.flare_m, 1e12)": (
+        "Distance sentinel, converted to None above 1e11."
+    ),
 }
 
 
-def _exempt(path_key: str) -> str | None:
-    """An exemption may pin a whole file with :0 or a single line with :N."""
-    file_key = f"{path_key.split(':')[0]}:0"
-    return ALLOWED.get(path_key) or ALLOWED.get(file_key)
+def _normalise(line: str) -> str:
+    """The matched line as an exemption key sees it: stripped, whitespace collapsed."""
+    return re.sub(r"\s+", " ", line.strip())
+
+
+def _exempt(name: str, line: str) -> str | None:
+    """An exemption pins a whole file with :0 or one expression with ::<expression>."""
+    return ALLOWED.get(f"{name}:0") or ALLOWED.get(f"{name}::{_normalise(line)}")
 
 
 def _offenders() -> list[str]:
@@ -84,7 +110,7 @@ def _offenders() -> list[str]:
             for pattern, label in SUBSTITUTIONS:
                 if not pattern.search(line):
                     continue
-                if _exempt(f"{name}:{number}"):
+                if _exempt(name, line):
                     continue
                 found.append(f"{name}:{number}: {label}: {stripped[:90]}")
     return found
