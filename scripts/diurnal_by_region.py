@@ -73,9 +73,11 @@ def main() -> int:
         return 2
 
     lons, lats, hours = [], [], []
+    stamps: list[str] = []
     granules_per_hour: dict[int, int] = defaultdict(int)
     for path in files:
         with np.load(path, allow_pickle=False) as data:
+            stamps.append(str(data["acquired_utc"])[:10])
             hour = int(data["hour_ist"])
             granules_per_hour[hour] += 1
             n = int(data["longitude"].size)
@@ -83,6 +85,11 @@ def main() -> int:
                 lons.append(data["longitude"].copy())
                 lats.append(data["latitude"].copy())
                 hours.append(np.full(n, hour, dtype=np.int16))
+
+    # The window is read off the granules. It used to be a hardcoded string, which
+    # survived the output paths being parametrised by --source and put "1 to 3 November
+    # 2024" on the title and the table of a May 2025 run.
+    span = f"{min(stamps)} to {max(stamps)}" if stamps else "not measured"
 
     frame = pd.DataFrame(
         {
@@ -193,7 +200,7 @@ def main() -> int:
     for ax in axes[:, 0]:
         ax.set_ylabel("detections per granule")
     fig.suptitle(
-        "INSAT-3DS diurnal activity by state, 1 to 3 November 2024\n"
+        f"INSAT-3DS diurnal activity by state, {span}\n"
         "red is the 15:00 to 20:00 IST window the polar record never samples",
         fontsize=11,
     )
@@ -206,7 +213,7 @@ def main() -> int:
     out.write_text(
         "# INSAT-3DS diurnal activity by state\n\n"
         "Produced by `uv run python scripts/diurnal_by_region.py` over "
-        f"{len(files)} granules, 1 to 3 November 2024. Counts are normalised to "
+        f"{len(files)} granules, {span}. Counts are normalised to "
         "detections per granule per hour. States below "
         f"{MIN_DETECTIONS} detections are omitted.\n\n" + "\n".join(lines) + "\n"
     )
