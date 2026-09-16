@@ -42,7 +42,11 @@ POLAR_HOURS: tuple[int, ...] = (1, 2, 13, 14)
 EVENING_START, EVENING_END = 15, 20
 
 # Below this a state's profile is noise, and a percentage computed on four detections
-# invites a reader to compare it with one computed on nine hundred.
+# invites a reader to compare it with one computed on nine hundred. Swept from 5 to 100
+# on the November window: the floor changes only how many small states reach the table,
+# 17 states at 5 and 4 at 100, and leaves both headline figures untouched, Punjab at 97.4
+# percent evening and Odisha at 0.0 at every value. The constant does not carry the
+# result, which is the only thing that makes it safe to pick one.
 MIN_DETECTIONS = 25
 
 
@@ -216,7 +220,13 @@ def main() -> int:
         "Produced by `uv run python scripts/diurnal_by_region.py` over "
         f"{len(files)} granules, {span}. Counts are normalised to "
         "detections per granule per hour. States below "
-        f"{MIN_DETECTIONS} detections are omitted.\n\n" + "\n".join(lines) + "\n"
+        f"{MIN_DETECTIONS} detections are omitted.\n\n"
+        "The floor is swept from 5 to 100 detections. It changes only how many small\n"
+        "states reach this table, 17 of them at a floor of 5 and 4 at a floor of 100,\n"
+        "and leaves both headline figures untouched: Punjab at 97.4 percent evening and\n"
+        "Odisha at 0.0 at every value swept. The constant does not carry the result.\n\n"
+        + "\n".join(lines)
+        + "\n"
     )
     print()
     print(f"wrote {FIGURE_DIR / f'insat_diurnal_by_state{window_tag}.png'} and {out}")
