@@ -115,6 +115,7 @@ def main() -> int:
                   from ref_osm_admin s
                  where s.admin_level = '4'
                    and ST_Contains(s.geom, ST_Point(p.lon, p.lat))
+                 order by (coalesce(nullif(s.name_en, ''), s.name) is null), s.osm_id
                  limit 1) as state,
                exists(select 1
                         from ref_osm_admin s

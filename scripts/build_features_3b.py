@@ -61,6 +61,7 @@ SELECT d.detection_id,
           FROM ref_osm_admin s
          WHERE s.admin_level = '4'
            AND ST_Contains(s.geom, ST_Point(d.longitude, d.latitude))
+         ORDER BY (coalesce(nullif(s.name_en, ''), s.name) IS NULL), s.osm_id
          LIMIT 1) AS state_name
 FROM detections d;
 """

@@ -71,6 +71,16 @@ ALLOWED: dict[str, str] = {
     "scripts/osm_coverage_report.py::SELECT coalesce(nullif(name_en, ''), name) AS subdistrict_name, geom": (
         "Name fallback between two observed values."
     ),
+    # Name fallback again, inside an ORDER BY that makes the point in polygon tie
+    # break deterministic and prefers a named polygon over an unnamed one. 83 level 4
+    # polygons overlap, one real detection falls inside two, and the unordered pick
+    # was handing it the unnamed polygon and therefore no state at all.
+    "scripts/build_features_3b.py::ORDER BY (coalesce(nullif(s.name_en, ''), s.name) IS NULL), s.osm_id": (
+        "Name fallback ordering the point in polygon tie break."
+    ),
+    "scripts/diurnal_by_region.py::order by (coalesce(nullif(s.name_en, ''), s.name) is null), s.osm_id": (
+        "Name fallback ordering the point in polygon tie break."
+    ),
     'scripts/lift_with_gem.py::"least(coalesce(c.industrial_m, 1e12), coalesce(g.gem_m_temporal, 1e12))"': (
         "Distance sentinel for absent asset, discarded by least."
     ),

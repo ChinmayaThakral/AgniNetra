@@ -136,7 +136,7 @@ def detect(
     candidate_tir1 = tir1[candidate_rows, candidate_cols]
     hot = candidate_mir > (mir_background + np.maximum(mir_excess, 3.0 * mir_spread))
     signature = candidate_diff > (diff_background + np.maximum(diff_excess, 3.0 * diff_spread))
-    not_colder = (candidate_tir1 - tir1_background) > -max_tir1_deficit
+    not_colder = (candidate_tir1 - tir1_background) >= -max_tir1_deficit
     keep = hot & signature & not_colder
 
     rows, cols = candidate_rows[keep], candidate_cols[keep]
