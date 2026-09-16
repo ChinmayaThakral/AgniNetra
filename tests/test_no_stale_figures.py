@@ -63,6 +63,18 @@ EXEMPT = {
     # and the fourth column quotes surrounding prose which can supply the source
     # context word. Same reasoning as the audit reports below.
     "docs/number_verification.md",
+    # The 2026-09-16 audit round, seven reports across seven angles. Added knowingly
+    # rather than by pattern: each quotes withdrawn values while describing the
+    # contradiction that was fixed, and cites line numbers that collide with the stale
+    # values, "m1_prototype.md:21" being read as the withdrawn unregistered count.
+    "docs/audit/2026-09-16-numbers.md",
+    "docs/audit/2026-09-16-fusion-code.md",
+    "docs/audit/2026-09-16-claims.md",
+    "docs/audit/2026-09-16-guards.md",
+    "docs/audit/2026-09-16-secrets-history.md",
+    "docs/audit/2026-09-16-reproducibility.md",
+    "docs/audit/2026-09-16-methodology.md",
+    "docs/audit/2026-09-16-console-structure.md",
     # Audit reports are findings about this repository rather than claims by it.
     # They quote historical values and cite line numbers, and "line 39" is not a
     # source count. Listed by exact path so a new report forces a decision rather
