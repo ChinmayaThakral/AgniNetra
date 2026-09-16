@@ -14,6 +14,7 @@ curve beside it cannot be sized by a reader. D82.
 """
 
 import argparse
+import json
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -23,7 +24,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ml.paths import DATA_DIR
+from ml.paths import ARTIFACT_DIR, DATA_DIR, ensure_dir
 
 EARTH_RADIUS_M = 6371008.8
 
@@ -118,6 +119,7 @@ def main() -> int:
     print(f"outside any granule's time window: {int((~covered).sum())}")
     print()
 
+    polar_curve = []
     print("  radius m   polar matched   rate    by instrument")
     for radius in RADII_M:
         matched = np.zeros(len(rows), dtype=bool)
@@ -139,6 +141,9 @@ def main() -> int:
             m = covered & (p_inst == inst)
             if m.sum():
                 per.append(f"{inst} {100.0 * (matched & m).sum() / m.sum():.1f}%")
+        polar_curve.append(
+            {"radiusM": radius, "matched": int(matched.sum()), "ratePct": round(rate, 2)}
+        )
         print(f"  {radius:8.0f}   {int(matched.sum()):13d}  {rate:5.1f}%    {'  '.join(per)}")
 
     # The reverse direction, which is the one that says whether an INSAT detection is
@@ -152,6 +157,7 @@ def main() -> int:
     print("  INSAT detections corroborated by a polar detection, where the swath was")
     print(f"  within {nearby_m / 1000:.0f} km of the same granule")
     print()
+    insat_curve = []
     print("  radius m   checkable   corroborated   rate")
     for radius in RADII_M:
         checkable = 0
@@ -170,7 +176,41 @@ def main() -> int:
                 if d.min() <= radius:
                     hit += 1
         rate = 100.0 * hit / checkable if checkable else 0.0
+        insat_curve.append(
+            {
+                "radiusM": radius,
+                "checkable": checkable,
+                "corroborated": hit,
+                "ratePct": round(rate, 2),
+            }
+        )
         print(f"  {radius:8.0f}   {checkable:9d}   {hit:12d}  {rate:5.1f}%")
+
+    # Written so the console composes this from a command's output rather than from
+    # literals typed into a script. D91 records what happens otherwise: three rows of a
+    # published table frozen as strings, unable to move when the thing they describe did.
+    tag = "" if args.source == "insat" else f"_{args.source.removeprefix('insat_')}"
+    artifact = ensure_dir(ARTIFACT_DIR) / f"collocation{tag}.json"
+    artifact.write_text(
+        json.dumps(
+            {
+                "source": args.source,
+                "start": args.start,
+                "end": args.end,
+                "insatGranules": len(granules),
+                "insatDetections": insat_total,
+                "polarDetections": len(rows),
+                "polarWithinTimeTolerance": int(covered.sum()),
+                "polarOutsideAnyGranule": int((~covered).sum()),
+                "timeToleranceMinutes": int(TIME_TOLERANCE.total_seconds() // 60),
+                "nearbyProxyM": nearby_m,
+                "polarToInsat": polar_curve,
+                "insatToPolar": insat_curve,
+            },
+            indent=1,
+        )
+    )
+    print(f"\nwrote {artifact}")
     return 0
 
 

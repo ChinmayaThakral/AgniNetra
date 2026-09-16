@@ -1,7 +1,14 @@
 import { ConsoleClient } from "@/components/console-client";
 import { AttributionFooter } from "@/components/attribution-footer";
+import { GeostationaryPanel } from "@/components/geostationary-panel";
 import { ModelCard } from "@/components/metric-tables";
-import { loadDetections, loadManifest, loadMetrics, loadSources } from "@/lib/data";
+import {
+  loadDetections,
+  loadGeostationary,
+  loadManifest,
+  loadMetrics,
+  loadSources,
+} from "@/lib/data";
 
 export const dynamic = "force-static";
 
@@ -10,11 +17,12 @@ export const dynamic = "force-static";
  * hands plain data to the one client component that needs interaction.
  */
 export default async function Page() {
-  const [detections, sources, metrics, manifest] = await Promise.all([
+  const [detections, sources, metrics, manifest, geostationary] = await Promise.all([
     loadDetections(),
     loadSources(),
     loadMetrics(),
     loadManifest(),
+    loadGeostationary(),
   ]);
 
   return (
@@ -24,7 +32,7 @@ export default async function Page() {
           <h1>AgniNetra console</h1>
           <div className="sub">
             Thermal source attribution over India. Displays precomputed phase 4
-            results and runs no model.
+            results, the phase 5 geostationary window, and runs no model.
           </div>
         </div>
         <div className="sub" style={{ textAlign: "right" }}>
@@ -42,6 +50,13 @@ export default async function Page() {
         manifest={manifest}
         sources={sources}
       />
+
+      <div style={{ borderTop: "1px solid var(--line)", padding: "1rem" }}>
+        <h2>Phase 5, what the geostationary record adds</h2>
+        <div style={{ marginTop: "0.6rem" }}>
+          <GeostationaryPanel data={geostationary} />
+        </div>
+      </div>
 
       <div style={{ borderTop: "1px solid var(--line)", padding: "1rem" }}>
         <h2>Model card</h2>

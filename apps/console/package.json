@@ -10,21 +10,24 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint",
+    "lint": "eslint .",
     "shots": "node scripts/screenshot.mjs"
   },
   "dependencies": {
+    "maplibre-gl": "5.6.0",
     "next": "15.5.4",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "maplibre-gl": "5.6.0",
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
     "@types/node": "22.15.3",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "typescript": "5.8.3",
-    "puppeteer-core": "23.11.1"
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.4",
+    "puppeteer-core": "23.11.1",
+    "typescript": "5.8.3"
   }
 }

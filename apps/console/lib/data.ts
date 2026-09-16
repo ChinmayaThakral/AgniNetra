@@ -3,10 +3,12 @@ import path from "node:path";
 
 import {
   detectionSchema,
+  geostationarySchema,
   manifestSchema,
   metricsSchema,
   sourceSchema,
   type Detection,
+  type Geostationary,
   type Manifest,
   type Metrics,
   type Source,
@@ -33,4 +35,8 @@ export async function loadMetrics(): Promise<Metrics> {
 
 export async function loadManifest(): Promise<Manifest> {
   return manifestSchema.parse(await readJson("manifest.json"));
+}
+
+export async function loadGeostationary(): Promise<Geostationary> {
+  return geostationarySchema.parse(await readJson("geostationary.json"));
 }

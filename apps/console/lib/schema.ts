@@ -110,7 +110,59 @@ export const manifestSchema = z.object({
   externalExtents: z.record(z.string(), z.array(z.number())),
 });
 
+
+// Phase 5, the geostationary window. Parsed rather than cast, like every other file
+// the Python side produces, so a field the exporter stops emitting fails here at the
+// boundary instead of arriving as undefined somewhere further in.
+export const geostationarySchema = z.object({
+  generatedBy: z.string(),
+  windows: z.array(
+    z.object({
+      key: z.string(),
+      label: z.string(),
+      span: z.string(),
+      granules: z.number(),
+      slotsPresent: z.number(),
+      slotsExpected: z.number(),
+      hoursObserved: z.number(),
+      detections: z.number(),
+      detectionsInStubbleBox: z.number(),
+      eveningSharePct: z.number(),
+      polarOverpassSharePct: z.number(),
+      meanByHour: z.array(z.number().nullable()),
+      states: z.array(
+        z.object({
+          name: z.string(),
+          detections: z.number(),
+          perGranule: z.number(),
+          eveningSharePct: z.number(),
+          polarOverpassSharePct: z.number(),
+          peakHourIst: z.number(),
+        }),
+      ),
+      collocation: z.array(
+        z.object({
+          radiusM: z.number(),
+          checkable: z.number(),
+          corroborated: z.number(),
+          ratePct: z.number(),
+        }),
+      ),
+      polarDetections: z.number(),
+    }),
+  ),
+  detectorChange: z.object({
+    before: z.number(),
+    after: z.number(),
+    stubbleBoxBefore: z.number(),
+    stubbleBoxAfter: z.number(),
+    rule: z.string(),
+  }),
+  caveats: z.array(z.string()),
+});
+
 export type Detection = z.infer<typeof detectionSchema>;
 export type Source = z.infer<typeof sourceSchema>;
 export type Metrics = z.infer<typeof metricsSchema>;
 export type Manifest = z.infer<typeof manifestSchema>;
+export type Geostationary = z.infer<typeof geostationarySchema>;

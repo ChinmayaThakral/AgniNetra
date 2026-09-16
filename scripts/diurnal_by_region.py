@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import json
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -33,7 +34,7 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 
-from ml.paths import DATA_DIR, FIGURE_DIR, ROOT, ensure_dir
+from ml.paths import ARTIFACT_DIR, DATA_DIR, FIGURE_DIR, ROOT, ensure_dir
 
 # These must match scripts/diurnal_profile.py. tests/test_diurnal_windows.py fails if
 # they drift, because two scripts quoting different evening windows in the same report
@@ -228,8 +229,34 @@ def main() -> int:
         + "\n".join(lines)
         + "\n"
     )
+    artifact = ensure_dir(ARTIFACT_DIR) / f"insat_by_state{window_tag}.json"
+    artifact.write_text(
+        json.dumps(
+            {
+                "source": name,
+                "span": span,
+                "granules": len(files),
+                "floor": MIN_DETECTIONS,
+                "outsideAnyState": outside,
+                "insideUnnamedPolygon": unnamed,
+                "states": [
+                    {
+                        "name": state,
+                        "detections": raw,
+                        "perGranule": round(total, 2),
+                        "eveningSharePct": round(evening, 2),
+                        "polarOverpassSharePct": round(polar, 2),
+                        "peakHourIst": peak,
+                    }
+                    for state, _counts, raw, total, evening, polar, peak in reported
+                ],
+            },
+            indent=1,
+        )
+    )
     print()
-    print(f"wrote {FIGURE_DIR / f'insat_diurnal_by_state{window_tag}.png'} and {out}")
+    print(f"wrote {FIGURE_DIR / f'insat_diurnal_by_state{window_tag}.png'}, {out}")
+    print(f"and {artifact}")
     return 0
 
 

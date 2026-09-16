@@ -1,0 +1,315 @@
+{
+ "generatedBy": "scripts/export_console_geostationary.py",
+ "windows": [
+  {
+   "key": "kharif",
+   "label": "Kharif rice residue",
+   "span": "2024-11-01 to 2024-11-03",
+   "granules": 130,
+   "slotsPresent": 47,
+   "slotsExpected": 48,
+   "hoursObserved": 24,
+   "detections": 2120,
+   "detectionsInStubbleBox": 1006,
+   "eveningSharePct": 49.5,
+   "polarOverpassSharePct": 14.6,
+   "meanByHour": [
+    0.0,
+    0.2,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.0,
+    0.17,
+    2.0,
+    6.5,
+    19.5,
+    50.33,
+    47.67,
+    30.33,
+    21.0,
+    30.67,
+    82.67,
+    59.17,
+    2.33,
+    0.0,
+    0.33,
+    0.0,
+    0.33,
+    0.0
+   ],
+   "states": [
+    {
+     "name": "Punjab",
+     "detections": 762,
+     "perGranule": 127.0,
+     "eveningSharePct": 97.38,
+     "polarOverpassSharePct": 2.49,
+     "peakHourIst": 16
+    },
+    {
+     "name": "Haryana",
+     "detections": 156,
+     "perGranule": 26.0,
+     "eveningSharePct": 98.08,
+     "polarOverpassSharePct": 0.64,
+     "peakHourIst": 17
+    },
+    {
+     "name": "Gujarat",
+     "detections": 110,
+     "perGranule": 18.33,
+     "eveningSharePct": 0.91,
+     "polarOverpassSharePct": 33.64,
+     "peakHourIst": 11
+    },
+    {
+     "name": "Telangana",
+     "detections": 108,
+     "perGranule": 18.0,
+     "eveningSharePct": 5.56,
+     "polarOverpassSharePct": 45.37,
+     "peakHourIst": 13
+    },
+    {
+     "name": "Odisha",
+     "detections": 96,
+     "perGranule": 16.0,
+     "eveningSharePct": 0.0,
+     "polarOverpassSharePct": 33.33,
+     "peakHourIst": 11
+    },
+    {
+     "name": "Jharkhand",
+     "detections": 46,
+     "perGranule": 7.67,
+     "eveningSharePct": 6.52,
+     "polarOverpassSharePct": 32.61,
+     "peakHourIst": 12
+    },
+    {
+     "name": "Madhya Pradesh",
+     "detections": 46,
+     "perGranule": 7.67,
+     "eveningSharePct": 19.57,
+     "polarOverpassSharePct": 50.0,
+     "peakHourIst": 12
+    },
+    {
+     "name": "Tamil Nadu",
+     "detections": 27,
+     "perGranule": 4.5,
+     "eveningSharePct": 11.11,
+     "polarOverpassSharePct": 37.04,
+     "peakHourIst": 12
+    }
+   ],
+   "collocation": [
+    {
+     "radiusM": 2000.0,
+     "checkable": 267,
+     "corroborated": 40,
+     "ratePct": 14.98
+    },
+    {
+     "radiusM": 4000.0,
+     "checkable": 267,
+     "corroborated": 89,
+     "ratePct": 33.33
+    },
+    {
+     "radiusM": 6000.0,
+     "checkable": 267,
+     "corroborated": 116,
+     "ratePct": 43.45
+    },
+    {
+     "radiusM": 8000.0,
+     "checkable": 267,
+     "corroborated": 124,
+     "ratePct": 46.44
+    },
+    {
+     "radiusM": 10000.0,
+     "checkable": 267,
+     "corroborated": 126,
+     "ratePct": 47.19
+    },
+    {
+     "radiusM": 15000.0,
+     "checkable": 267,
+     "corroborated": 127,
+     "ratePct": 47.57
+    }
+   ],
+   "polarDetections": 20662
+  },
+  {
+   "key": "rabi",
+   "label": "Rabi wheat residue",
+   "span": "2025-05-05 to 2025-05-07",
+   "granules": 140,
+   "slotsPresent": 48,
+   "slotsExpected": 48,
+   "hoursObserved": 24,
+   "detections": 2815,
+   "detectionsInStubbleBox": 67,
+   "eveningSharePct": 10.5,
+   "polarOverpassSharePct": 20.8,
+   "meanByHour": [
+    0.17,
+    0.0,
+    0.0,
+    0.33,
+    0.17,
+    0.17,
+    0.17,
+    1.17,
+    10.33,
+    40.83,
+    68.0,
+    85.67,
+    122.67,
+    67.17,
+    34.0,
+    20.5,
+    17.33,
+    6.17,
+    3.5,
+    3.5,
+    2.5,
+    0.67,
+    1.17,
+    1.17
+   ],
+   "states": [
+    {
+     "name": "Rajasthan",
+     "detections": 96,
+     "perGranule": 16.5,
+     "eveningSharePct": 10.1,
+     "polarOverpassSharePct": 79.8,
+     "peakHourIst": 13
+    },
+    {
+     "name": "West Bengal",
+     "detections": 74,
+     "perGranule": 12.58,
+     "eveningSharePct": 0.0,
+     "polarOverpassSharePct": 17.88,
+     "peakHourIst": 12
+    },
+    {
+     "name": "Karnataka",
+     "detections": 58,
+     "perGranule": 10.25,
+     "eveningSharePct": 11.38,
+     "polarOverpassSharePct": 17.07,
+     "peakHourIst": 11
+    },
+    {
+     "name": "Odisha",
+     "detections": 50,
+     "perGranule": 8.58,
+     "eveningSharePct": 0.0,
+     "polarOverpassSharePct": 26.21,
+     "peakHourIst": 12
+    },
+    {
+     "name": "Punjab",
+     "detections": 48,
+     "perGranule": 8.58,
+     "eveningSharePct": 60.19,
+     "polarOverpassSharePct": 22.33,
+     "peakHourIst": 17
+    },
+    {
+     "name": "Gujarat",
+     "detections": 34,
+     "perGranule": 5.92,
+     "eveningSharePct": 12.68,
+     "polarOverpassSharePct": 22.54,
+     "peakHourIst": 11
+    },
+    {
+     "name": "Madhya Pradesh",
+     "detections": 31,
+     "perGranule": 5.67,
+     "eveningSharePct": 27.94,
+     "polarOverpassSharePct": 25.0,
+     "peakHourIst": 12
+    },
+    {
+     "name": "Ladakh",
+     "detections": 30,
+     "perGranule": 5.75,
+     "eveningSharePct": 15.94,
+     "polarOverpassSharePct": 49.28,
+     "peakHourIst": 14
+    },
+    {
+     "name": "Tamil Nadu",
+     "detections": 30,
+     "perGranule": 5.17,
+     "eveningSharePct": 9.68,
+     "polarOverpassSharePct": 16.13,
+     "peakHourIst": 12
+    }
+   ],
+   "collocation": [
+    {
+     "radiusM": 2000.0,
+     "checkable": 632,
+     "corroborated": 20,
+     "ratePct": 3.16
+    },
+    {
+     "radiusM": 4000.0,
+     "checkable": 632,
+     "corroborated": 55,
+     "ratePct": 8.7
+    },
+    {
+     "radiusM": 6000.0,
+     "checkable": 632,
+     "corroborated": 109,
+     "ratePct": 17.25
+    },
+    {
+     "radiusM": 8000.0,
+     "checkable": 632,
+     "corroborated": 136,
+     "ratePct": 21.52
+    },
+    {
+     "radiusM": 10000.0,
+     "checkable": 632,
+     "corroborated": 146,
+     "ratePct": 23.1
+    },
+    {
+     "radiusM": 15000.0,
+     "checkable": 632,
+     "corroborated": 164,
+     "ratePct": 25.95
+    }
+   ],
+   "polarDetections": 25874
+  }
+ ],
+ "detectorChange": {
+  "before": 7543,
+  "after": 2120,
+  "stubbleBoxBefore": 1006,
+  "stubbleBoxAfter": 1006,
+  "rule": "A candidate is rejected when its thermal infrared brightness temperature sits more than 1.0 K below its local background median. A fire cannot make the 11 micron channel colder than its surroundings; thin cloud and bare soil emissivity contrast can."
+ },
+ "caveats": [
+  "Each window is three days, not a season. Quote it as a sample.",
+  "The rabi window is corroborated at 8.7 percent against 33.3 for kharif at a 4 km tolerance. A permutation null shows both windows carry real signal, and shows the two curves have the same shape once chance is subtracted, so the difference is magnitude rather than kind.",
+  "The stubble box count being unchanged is weak evidence: of the detections nationwide in the filter's active hours only a handful fall inside that box, and most of the box sits in hours the threshold was swept to leave alone.",
+  "No detection here is validated against ground truth. No gold set exists.",
+  "The geostationary observability argument is published prior work, Jethva 2026 on GEO-KOMPSAT-2A. This measurement agrees with it independently."
+ ]
+}

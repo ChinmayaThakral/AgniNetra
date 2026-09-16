@@ -8,7 +8,7 @@
   "Punjab"
  ],
  "samplingRule": "Stratified sample of up to 4000 detections per class from the group_a held out states. Flare is 1.16 percent of the record, so an unstratified sample would show almost none. This is a sample, not the whole record.",
- "totalDetectionsInStore": 601941,
+ "totalDetectionsInStore": 642970,
  "indiaAssignedDetections": 469430,
  "sampledDetections": 8246,
  "windows": [

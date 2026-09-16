@@ -104,7 +104,7 @@ export function ModelCard({
 
       <div className="card">
         <h3>Not measured</h3>
-        {Object.entries(metrics.notMeasured).map(([name, reason]) => (
+        {Object.entries(metrics.notMeasured).map(([name]) => (
           <div className="row" key={name}>
             <span className="k">{name}</span>
             <span className="v">
