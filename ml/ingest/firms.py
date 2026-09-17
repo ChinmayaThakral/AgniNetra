@@ -145,12 +145,22 @@ class FirmsClient:
         return url.replace(self._key, "MAP_KEY_REDACTED")
 
     def availability(self) -> str:
-        """Return the raw data availability CSV, reporting min and max date per source."""
-        return self._fetch(AVAILABILITY_URL.format(key=self._key))
+        """Return the data availability CSV, reporting min and max date per source.
+
+        Redacted for the same reason as mapkey_status: callers print it.
+        """
+        return self._redact(self._fetch(AVAILABILITY_URL.format(key=self._key)))
 
     def mapkey_status(self) -> str:
-        """Return the raw map key status response, reporting transactions used."""
-        return self._fetch(MAPKEY_STATUS_URL.format(key=self._key))
+        """Return the map key status response, reporting transactions used.
+
+        Redacted on the way out. The body is third party text that callers print to
+        stdout and into `data/*.log`, and the standing rule here is that the key is
+        never printed or logged. It does not contain the key in FIRMS's current
+        responses; redacting rather than trusting that is what keeps the rule true if
+        the upstream response ever echoes the request.
+        """
+        return self._redact(self._fetch(MAPKEY_STATUS_URL.format(key=self._key)))
 
     def area_csv(self, source: str, bbox: str, start: date, days: int) -> str:
         """Fetch one area chunk. days must not exceed the documented cap."""

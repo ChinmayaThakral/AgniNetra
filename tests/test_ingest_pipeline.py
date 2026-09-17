@@ -169,6 +169,24 @@ class TestClient:
         assert "super-secret-key" not in str(caught.value)
         assert "MAP_KEY_REDACTED" in str(caught.value)
 
+    def test_map_key_is_redacted_from_the_responses_callers_print(self) -> None:
+        """The two bodies that reach stdout and data/*.log must not carry the key.
+
+        scripts/backfill_firms.py prints both of these verbatim. Neither contains the
+        key in FIRMS's current responses, so this test does not describe a leak that
+        happened; it pins the redaction so that a response which starts echoing the
+        request cannot put the key into a log file.
+        """
+        echoed = '{"key": "super-secret-key", "transaction_limit": 5000}'
+        transport = StubTransport([Response(200, echoed), Response(200, echoed)])
+        client = FirmsClient("super-secret-key", transport, sleep=lambda _: None)
+        status = client.mapkey_status()
+        availability = client.availability()
+        assert "super-secret-key" not in status
+        assert "super-secret-key" not in availability
+        assert "MAP_KEY_REDACTED" in status
+        assert "MAP_KEY_REDACTED" in availability
+
 
 def test_empty_chunk_inserts_nothing_without_raising(con: duckdb.DuckDBPyConnection) -> None:
     """A quiet window returns no rows, and executemany rejects an empty list."""
