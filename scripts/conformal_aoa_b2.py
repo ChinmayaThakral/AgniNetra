@@ -131,9 +131,7 @@ def main() -> int:
             predicted = np.array(classes)[test_probs.argmax(axis=1)][test_observed]
             truth = test["weak_label"].to_numpy()[test_observed]
             inside_correct = (
-                float((predicted[~outside] == truth[~outside]).mean())
-                if (~outside).sum()
-                else None
+                float((predicted[~outside] == truth[~outside]).mean()) if (~outside).sum() else None
             )
             outside_correct = (
                 float((predicted[outside] == truth[outside]).mean()) if outside.sum() else None

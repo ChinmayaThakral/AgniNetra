@@ -266,9 +266,7 @@ def check_figure_freshness() -> list[tuple[str, str, str]]:
     for name, artifacts in FIGURE_SOURCES:
         figure = ROOT / "docs" / "figures" / name
         if not figure.is_file():
-            findings.append(
-                (name, "missing", "the document references a figure that is absent")
-            )
+            findings.append((name, "missing", "the document references a figure that is absent"))
             continue
         if not artifacts:
             findings.append(
