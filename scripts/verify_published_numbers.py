@@ -40,7 +40,64 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT
 
-DOCUMENTS = ("docs/results.md", "docs/model_card.md", "docs/paper_outline.md")
+# Scope is a glob with an explicit exclude list, not an inclusion list. An inclusion
+# list omits silently: this constant named three documents, so "15.2 percent unbacked"
+# was 15.2 percent of three files while every other document in docs/ went unchecked.
+# An exclude list fails loudly instead, because a new document enters scope by default
+# and has to be argued out. The report is therefore in scope before it is
+# written, which is the point: the one document that matters must not be the one the
+# tracer never sees.
+SCOPE_EXCLUDED: dict[str, str] = {
+    "docs/number_verification.md": "this tracer's own output",
+    "docs/audit/SUMMARY.md": "audit findings about this repository, not claims by it",
+    "docs/audit/audit-code.md": "audit finding",
+    "docs/audit/audit-deploy.md": "audit finding",
+    "docs/audit/audit-licensing.md": "audit finding",
+    "docs/audit/audit-logic.md": "audit finding",
+    "docs/audit/audit-repo.md": "audit finding",
+    "docs/audit/audit-secrets.md": "audit finding",
+    "docs/audit/2026-09-16-numbers.md": "audit finding",
+    "docs/audit/2026-09-16-fusion-code.md": "audit finding",
+    "docs/audit/2026-09-16-methodology.md": "audit finding",
+    "docs/audit/2026-09-16-guards.md": "audit finding",
+    "docs/audit/2026-09-16-secrets-history.md": "audit finding",
+}
+
+
+def is_generated(path: Path) -> bool:
+    """True when a script wrote this document, declared in its own header.
+
+    This is the type test that keeps the two tiers apart. It reads the header rather
+    than the body because a prose document quoting a regenerate command is still prose:
+    testing the whole text admitted the audit reports and paper_outline.md as evidence,
+    and they quote the very numbers they discuss, so claims began backing themselves.
+    """
+    return "Regenerate:" in "\n".join(path.read_text().splitlines()[:10])
+
+
+def all_documents() -> list[Path]:
+    return [
+        path
+        for path in sorted((ROOT / "docs").rglob("*.md"))
+        if path.relative_to(ROOT).as_posix() not in SCOPE_EXCLUDED
+    ]
+
+
+def evidence_documents() -> list[Path]:
+    """Generated documents. A script produced these numbers, so they are provenance."""
+    return [p for p in all_documents() if is_generated(p)]
+
+
+def documents() -> list[str]:
+    """Prose documents. These make claims, and every claim must trace to evidence.
+
+    Disjoint from evidence_documents by construction: a document is one or the other,
+    decided by whether a script wrote it. Nothing can be both its own claim and its own
+    proof. tests/test_number_tracer_tiers.py asserts the two sets never intersect.
+    """
+    return [p.relative_to(ROOT).as_posix() for p in all_documents() if not is_generated(p)]
+
+
 OUTPUT = ROOT / "docs" / "number_verification.md"
 
 # Tokens that are numeric but are not claims about measurement.
@@ -117,12 +174,8 @@ def derive_from_generated_docs() -> list[Derived]:
     simply backed by a generated table rather than by JSON.
     """
     values: list[Derived] = []
-    for path in sorted((ROOT / "docs").glob("*.md")):
-        if path.name in {Path(d).name for d in DOCUMENTS} or path.name == OUTPUT.name:
-            continue
+    for path in evidence_documents():
         text = path.read_text()
-        if "Regenerate:" not in text:
-            continue
         for token in NUMBER.findall(text):
             try:
                 values.append(
@@ -300,7 +353,7 @@ def main() -> int:
             index.setdefault(form, []).append(candidate)
 
     findings: list[Finding] = []
-    for relative in DOCUMENTS:
+    for relative in documents():
         path = ROOT / relative
         for number, line in enumerate(path.read_text().splitlines(), start=1):
             if SKIP_LINE.search(line):
@@ -349,7 +402,7 @@ def render(
         "The suite pins that a claim points at a command. It does not pin that the",
         "command still produces the claim. This checks the second thing.",
         "",
-        f"{total} numeric claims examined across {len(DOCUMENTS)} documents, against "
+        f"{total} numeric claims examined across {len(documents())} documents, against "
         f"{len(derived)} derived values.",
         "",
         "| Category | Count | Share |",

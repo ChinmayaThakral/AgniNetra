@@ -218,7 +218,8 @@ def main() -> int:
     out = ROOT / "docs" / f"insat_diurnal_by_state{window_tag}.md"
     out.write_text(
         "# INSAT-3DS diurnal activity by state\n\n"
-        "Produced by `uv run python scripts/diurnal_by_region.py` over "
+        "Regenerate: `uv run python scripts/diurnal_by_region.py`\n\n"
+        "Produced over "
         f"{len(files)} granules, {span}. Counts are normalised to "
         "detections per granule per hour. States below "
         f"{MIN_DETECTIONS} detections are omitted.\n\n"
