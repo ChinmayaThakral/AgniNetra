@@ -148,3 +148,25 @@ class TestSpatialCallGuard:
                 assert any(call in f for f in findings), f"{call} not guarded"
             finally:
                 probe.unlink(missing_ok=True)
+
+
+def test_the_checker_actually_passes_over_the_whole_repository() -> None:
+    """Run the checker over every tracked file, not just over probe fixtures.
+
+    The rest of this file tests that the checker would catch a violation. Nothing
+    tested that the repository currently has none, and the two things that were
+    supposed to cover that both have holes. The local write hook sees only files saved
+    through the editor, so a file written through a shell heredoc never reaches it,
+    and most of this repository's recent files were written that way. The checker
+    itself is a script somebody has to remember to run.
+
+    This closes both by asserting the repository state rather than the checker's
+    behaviour, and it does not care how a file arrived.
+    """
+    offenders: list[str] = []
+    for relpath in check_conventions.tracked_files():
+        if relpath in check_conventions.EXCLUDED:
+            continue
+        found, _suppressed = check_conventions.scan(relpath)
+        offenders.extend(f"{relpath}: {item}" for item in found)
+    assert not offenders, "convention violations in tracked files:\n" + "\n".join(offenders)
