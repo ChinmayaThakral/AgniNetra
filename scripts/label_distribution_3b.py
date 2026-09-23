@@ -25,14 +25,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import duckdb
 
+from ml.documents import provenance_line
+from ml.labels.background import flare_background, weighted_industrial_background
 from ml.labels.splits import HELD_OUT_GROUPS, split_for, validate_groups
-from ml.labels.weak import CLASS_UNLABELLED, MAX_CLASS_SHARE
+from ml.labels.weak import (
+    CLASS_UNLABELLED,
+    MAX_CLASS_SHARE,
+    label_from_distances,
+    weak_label_sql,
+)
 from ml.paths import DUCKDB_PATH, ROOT, ensure_dir
 
 OUT = ROOT / "docs" / "label_distribution.md"
 
-# From scripts/label_radius_sensitivity.py, 4000 uniform probe points, 2026-09-04.
-BACKGROUND = {"flare": 0.000000, "industrial": 0.0175}
+# Read from the measurement rather than copied. The industrial rate includes GEM and
+# is weighted by how the population splits across window years, D122. Filled in main.
+BACKGROUND: dict[str, float] = {}
 
 MIN_CLASS_MEMBERS = 300
 MIN_TEST_ROWS = 500
@@ -45,27 +53,47 @@ def main() -> int:
         print("detection_context is empty. Run build_features_3b.py first.", file=sys.stderr)
         return 2
 
+    # The label of record, from the one SQL definition. Until 2026-09-23 this read the
+    # stored column, which predates the withdrawal of the wildfire class and has no GEM
+    # term, and the second method below recomputed that same stale rule, so the two
+    # agreed exactly while both were wrong. D121.
     rows = con.execute(
-        "SELECT weak_label, count(*) FROM detection_context GROUP BY 1 ORDER BY 2 DESC"
+        f"SELECT {weak_label_sql('c', 'g')} AS label, count(*) "
+        "FROM detection_context c LEFT JOIN detection_gem g USING (detection_id) "
+        "GROUP BY 1 ORDER BY 2 DESC, 1"
     ).fetchall()
     shares = {label: count / total for label, count in rows}
     counts = dict(rows)
+    years = dict(
+        con.execute(
+            "SELECT year(d.acq_date_ist), count(*) FROM detection_context c "
+            "JOIN detections d USING (detection_id) GROUP BY 1"
+        ).fetchall()
+    )
+    BACKGROUND["flare"] = flare_background()
+    BACKGROUND["industrial"] = weighted_industrial_background(years)
 
-    # Second method: recompute the shares from the raw distance columns rather than
-    # from the stored label, so a bug in the write path cannot agree with itself.
-    independent = con.execute(
-        """
-        SELECT CASE
-                 WHEN flare_m IS NOT NULL AND flare_m <= 500 THEN 'flare'
-                 WHEN industrial_m IS NOT NULL AND industrial_m <= 1000 THEN 'industrial'
-                 WHEN landcover_class = 'cropland' THEN 'agricultural'
-                 WHEN landcover_class IN ('tree_cover','shrubland','grassland') THEN 'wildfire'
-                 ELSE 'unlabelled'
-               END AS recomputed, count(*)
-        FROM detection_context GROUP BY 1
-        """
+    # Second method: the same rule implemented independently in Python, from the raw
+    # distance columns, so a defect in either implementation cannot agree with itself.
+    raw = con.execute(
+        "SELECT c.flare_m, c.industrial_m, c.landcover_class, g.gem_m_temporal "
+        "FROM detection_context c LEFT JOIN detection_gem g USING (detection_id)"
     ).fetchall()
-    independent_counts = dict(independent)
+    independent_counts: dict[str, int] = {}
+    for flare_m, industrial_m, landcover_class, gem_m in raw:
+        name = label_from_distances(flare_m, industrial_m, landcover_class, gem_m=gem_m).label
+        independent_counts[name] = independent_counts.get(name, 0) + 1
+
+    # The stored column is kept visible rather than hidden: it is stale, nothing reads it
+    # any more, and until it is rebuilt a count of how far it has drifted belongs in the
+    # document that describes the labels.
+    stale_rows = int(
+        con.execute(
+            f"SELECT count(*) FROM detection_context c "
+            f"LEFT JOIN detection_gem g USING (detection_id) "
+            f"WHERE c.weak_label IS DISTINCT FROM {weak_label_sql('c', 'g')}"
+        ).fetchone()[0]
+    )
 
     print(f"detections with context: {total}\n")
     print(f"{'class':14s} {'count':>8s} {'share':>9s} {'background':>11s} {'lift':>8s}")
@@ -85,13 +113,14 @@ def main() -> int:
                 f"{label}: stored {count}, recomputed {independent_counts.get(label, 0)}"
             )
 
-    print("\nsecond method check, labels recomputed from raw distances:")
+    print("\nsecond method check, the rule implemented twice, SQL against Python:")
     if disagreements:
         print("  DISAGREEMENT")
         for line in disagreements:
             print(f"    {line}")
     else:
-        print("  stored labels and recomputed labels agree exactly")
+        print("  the two implementations agree exactly")
+    print(f"stored column rows that differ from the label of record: {stale_rows}")
 
     failures: list[str] = []
     for label, share in shares.items():
@@ -151,6 +180,7 @@ def main() -> int:
         "# Weak label class distribution",
         "",
         "Regenerate: `uv run python scripts/label_distribution_3b.py`",
+        provenance_line(__file__),
         "",
         "Generated by `scripts/label_distribution_3b.py`.",
         "",
@@ -187,14 +217,24 @@ def main() -> int:
     ]
     for group, test_n, labelled_n in group_rows:
         lines.append(f"| {group} | {test_n} | {labelled_n} |")
-    lines += ["", f"Detections assigned to no state: {unassigned} ({unassigned / total:.2%}).", ""]
+    lines += [
+        "",
+        f"Detections assigned to no state: {unassigned} ({unassigned / total:.2%}).",
+        "",
+        "The label is computed by `weak_label_sql` and checked against an independent",
+        "Python implementation of the same rule. The stored `weak_label` column in",
+        "`detection_context` predates the withdrawal of the wildfire class and carries",
+        f"no GEM term. It differs from the label of record in {stale_rows} rows and no",
+        "analysis reads it. D120, D121.",
+        "",
+    ]
 
     ensure_dir(OUT.parent)
     OUT.write_text("\n".join(lines) + "\n")
     print(f"\nwritten to {OUT}")
 
     if disagreements:
-        print("\nSTOP: the second method disagrees with the stored labels", file=sys.stderr)
+        print("\nSTOP: the two implementations of the label rule disagree", file=sys.stderr)
         return 1
     if failures:
         print("\nSTOP CONDITIONS MET:", file=sys.stderr)

@@ -82,6 +82,8 @@ def label_from_distances(
     flare_m: float | None,
     industrial_m: float | None,
     landcover_class: str | None,
+    *,
+    gem_m: float | None = None,
 ) -> WeakLabel:
     """Assign a weak label from the reference distances at one detection.
 
@@ -103,6 +105,18 @@ def label_from_distances(
             label=CLASS_INDUSTRIAL,
             source="osm_industrial",
             rule=f"within {INDUSTRIAL_RADIUS_M:.0f} m of an OSM industrial feature",
+            confidence=0.7,
+        )
+    # The GEM term the label of record carries. Without it this function was a third
+    # definition of the rule that disagreed with the one B1 trains on. It is keyword
+    # only and optional so the stored build path keeps its meaning, and so that this
+    # function can serve as the independent second implementation `weak_label_sql` is
+    # checked against. D121.
+    if gem_m is not None and gem_m <= INDUSTRIAL_RADIUS_M:
+        return WeakLabel(
+            label=CLASS_INDUSTRIAL,
+            source="gem_assets",
+            rule=f"within {INDUSTRIAL_RADIUS_M:.0f} m of a GEM asset operating that year",
             confidence=0.7,
         )
     if landcover_class == "cropland":
@@ -170,3 +184,42 @@ def assert_label_share(
                 "source type. Check the radius before trusting any downstream number."
             )
     return shares
+
+
+def weak_label_sql(context: str = "c", gem: str = "g", *, with_gem: bool = True) -> str:
+    """The weak label as a SQL expression, the definition every analysis uses.
+
+    There were three definitions and they disagreed. The column stored in
+    `detection_context` was built before the wildfire rule was withdrawn on
+    2026-09-04 and never rebuilt, so it still labels 79136 rows `wildfire` and differs
+    from the rule B1 trains on in 74742 of 469430 labelled rows. `label_from_distances`
+    above has no GEM term. The expression B1 used, inline in `FEATURE_SQL`, was the
+    only one with both corrections, and six scripts were reading the stale column
+    instead of it. D120.
+
+    Written without a substitution. `NULL <= 1000` is NULL, a CASE treats NULL as not
+    true, and `NULL OR TRUE` is TRUE, so an absent distance simply fails to match.
+    That is the same result the earlier sentinel form produced, which substituted a
+    distance of a trillion metres for an absent one, verified row by row, without
+    inventing the distance to get it.
+
+    The caller must join `detection_context` as `context` and `detection_gem`, left
+    joined, as `gem`.
+
+    `with_gem=False` is a named variant, not a second definition. It drops the GEM term
+    from the industrial rule and nothing else. It exists because M1 reverses between
+    the two: GEM only industrial detections in Gujarat are 24.3 percent nocturnal
+    against 68.8 for OSM sourced ones, and per cell summaries are dominated by them.
+    The owner decided on 2026-09-23 to report M1 under both definitions. Everything
+    that is not that comparison uses the default. D121.
+    """
+    industrial = f"{context}.industrial_m <= {INDUSTRIAL_RADIUS_M:.0f}"
+    if with_gem:
+        industrial += f" OR {gem}.gem_m_temporal <= {INDUSTRIAL_RADIUS_M:.0f}"
+    return (
+        "CASE "
+        f"WHEN {context}.flare_m <= {FLARE_RADIUS_M:.0f} THEN '{CLASS_FLARE}' "
+        f"WHEN {industrial} THEN '{CLASS_INDUSTRIAL}' "
+        f"WHEN {context}.landcover_class = 'cropland' THEN '{CLASS_AGRICULTURAL}' "
+        f"ELSE '{CLASS_UNLABELLED}' END"
+    )

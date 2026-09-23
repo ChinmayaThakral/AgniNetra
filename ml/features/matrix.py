@@ -17,6 +17,8 @@ cannot help it and can only encourage it to memorise belts that do not transfer.
 
 from typing import Final
 
+from ml.labels.weak import weak_label_sql
+
 # A missing recurrence row means the feature was not computed for that detection.
 # It does not mean the location had zero prior detections. An earlier version wrote
 # `coalesce(r.prior_count_90d, 0)`, which asserted the second, and because
@@ -67,18 +69,15 @@ FEATURE_COLUMNS: Final[tuple[str, ...]] = (
     "is_viirs",
 )
 
-FEATURE_SQL: Final[str] = """
+# The label comes from the one definition in ml/labels/weak.py rather than an inline
+# copy. Six scripts had been reading a stored column that predates the wildfire
+# withdrawal, while this file carried the only correct copy of the rule. D120.
+FEATURE_SQL: Final[str] = f"""
 SELECT
     d.detection_id,
     c.state_name,
     d.acq_date_ist,
-    CASE
-      WHEN c.flare_m IS NOT NULL AND c.flare_m <= 500 THEN 'flare'
-      WHEN least(coalesce(c.industrial_m, 1e12), coalesce(g.gem_m_temporal, 1e12)) <= 1000
-        THEN 'industrial'
-      WHEN c.landcover_class = 'cropland' THEN 'agricultural'
-      ELSE 'unlabelled'
-    END AS weak_label,
+    {weak_label_sql("c", "g")} AS weak_label,
     d.longitude, d.latitude,
     d.frp, d.scan, d.track,
     coalesce(d.bright_ti4, d.brightness) AS bright_primary,

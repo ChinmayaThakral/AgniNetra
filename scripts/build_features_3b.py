@@ -24,6 +24,7 @@ import duckdb
 
 from ml.labels.weak import label_from_distances
 from ml.paths import DUCKDB_PATH
+from ml.population import analysis_predicate
 from ml.reference.geo import install_geo
 from ml.reference.landcover import (
     TileNotAvailableError,
@@ -54,7 +55,7 @@ WINDOW_DEG = 0.06
 # Concurrent tile samplers. Network bound, so well above the core count.
 SAMPLE_WORKERS = 8
 
-STATE_SQL = """
+STATE_SQL = f"""
 CREATE OR REPLACE TEMP TABLE det_state AS
 SELECT d.detection_id,
        (SELECT coalesce(nullif(s.name_en, ''), s.name)
@@ -63,7 +64,8 @@ SELECT d.detection_id,
            AND ST_Contains(s.geom, ST_Point(d.longitude, d.latitude))
          ORDER BY (coalesce(nullif(s.name_en, ''), s.name) IS NULL), s.osm_id
          LIMIT 1) AS state_name
-FROM detections d;
+FROM detections d
+WHERE {analysis_predicate("d")};
 """
 
 DISTANCE_SQL = f"""
@@ -79,7 +81,8 @@ SELECT d.detection_id, d.longitude, d.latitude,
          WHERE i.longitude BETWEEN d.longitude - {WINDOW_DEG} AND d.longitude + {WINDOW_DEG}
            AND i.latitude  BETWEEN d.latitude  - {WINDOW_DEG} AND d.latitude  + {WINDOW_DEG}
        ) AS industrial_m
-FROM detections d;
+FROM detections d
+WHERE {analysis_predicate("d")};
 """
 
 
@@ -87,7 +90,11 @@ def main() -> int:
     con = duckdb.connect(str(DUCKDB_PATH))
     install_geo(con)
 
-    total = int(con.execute("SELECT count(*) FROM detections").fetchone()[0])
+    total = int(
+        con.execute(
+            f"SELECT count(*) FROM detections d WHERE {analysis_predicate('d')}"
+        ).fetchone()[0]
+    )
     if total == 0:
         print("no detections. Run scripts/backfill_firms.py first.", file=sys.stderr)
         return 2
@@ -99,11 +106,15 @@ def main() -> int:
     con.execute(DISTANCE_SQL)
 
     print("sampling ESA WorldCover over the network, block ordered", flush=True)
+    # Constrained like the two queries above. Left unconstrained, a rebuild would
+    # have sampled land cover for the May 2025 validation rows too. D114, D121.
     rows = con.execute(
-        "SELECT detection_id, longitude, latitude FROM detections ORDER BY detection_id"
+        "SELECT detection_id, longitude, latitude FROM detections d "
+        f"WHERE {analysis_predicate('d')} ORDER BY detection_id"
     ).fetchall()
-    ids = [r[0] for r in rows]
-    points = [(float(r[1]), float(r[2])) for r in rows]
+    ids = [detection_id for detection_id, _, _ in rows]
+    longitudes = [float(lon) for _, lon, _ in rows]
+    latitudes = [float(lat) for _, _, lat in rows]
 
     # Persisted, not temp, and written as each tile lands. The network sampling is
     # the long pole, so an interruption must not throw away completed work.
@@ -118,7 +129,7 @@ def main() -> int:
     if already:
         print(f"  resuming, {len(already)} detections already sampled", flush=True)
 
-    grouped = group_by_tile(points)
+    grouped = group_by_tile(longitudes=longitudes, latitudes=latitudes)
     pending = {
         name: [i for i in indexes if ids[i] not in already] for name, indexes in grouped.items()
     }
@@ -140,7 +151,12 @@ def main() -> int:
     ) -> tuple[str, list[int], list[int | None] | None]:
         name, indexes = item
         try:
-            return name, indexes, sample_tile_remote(name, [points[i] for i in indexes])
+            sampled = sample_tile_remote(
+                name,
+                longitudes=[longitudes[i] for i in indexes],
+                latitudes=[latitudes[i] for i in indexes],
+            )
+            return name, indexes, sampled
         except TileNotAvailableError:
             return name, indexes, None
 
