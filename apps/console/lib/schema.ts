@@ -66,16 +66,26 @@ export const metricsSchema = z.object({
   ),
   uncertainty: z.record(
     z.string(),
-    z.object({
-      coverage: z.number(),
-      nominal: z.number(),
-      mean_set_size: z.number(),
-      singleton_fraction: z.number(),
-      empty_fraction: z.number(),
-      outside_aoa_fraction: z.number(),
-      accuracy_inside_aoa: z.number().nullable(),
-      accuracy_outside_aoa: z.number().nullable(),
-    }),
+    // Strict, so a field the Python side adds fails the parse loudly instead of being
+    // dropped without a word, which is what happened to four fields until 2026-09-23.
+    // outside_aoa_fraction is nullable because the producer writes null when a group has
+    // no assessable rows, and a non nullable schema would fail the whole build then.
+    z
+      .object({
+        coverage: z.number(),
+        nominal: z.number(),
+        mean_set_size: z.number(),
+        singleton_fraction: z.number(),
+        empty_fraction: z.number(),
+        outside_aoa_fraction: z.number().nullable(),
+        accuracy_inside_aoa: z.number().nullable(),
+        accuracy_outside_aoa: z.number().nullable(),
+        aoa_assessable_rows: z.number().int(),
+        aoa_not_assessable_rows: z.number().int(),
+        aoa_assessable_fraction: z.number().nullable(),
+        superseded_imputed_outside_aoa_fraction: z.number().nullable(),
+      })
+      .strict(),
   ),
   b2Industrial: z.object({
     precision: z.number(),

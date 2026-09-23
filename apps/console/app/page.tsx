@@ -49,6 +49,7 @@ export default async function Page() {
         detections={detections}
         manifest={manifest}
         sources={sources}
+        heldOutCoverage={metrics.uncertainty[manifest.heldOutGroup]?.coverage ?? null}
       />
 
       <div style={{ borderTop: "1px solid var(--line)", padding: "1rem" }}>

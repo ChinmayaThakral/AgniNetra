@@ -72,11 +72,16 @@ const STYLE: StyleSpecification = {
     : [],
 };
 
+// The export text promises the posterior. It was never written, so a reader following
+// the text would look for a column that did not exist. D122.
+const POSTERIOR_CLASSES = ["flare", "industrial", "agricultural"] as const;
+
 function toCsv(rows: Detection[]): string {
   const header = [
     "id", "lon", "lat", "date", "state", "frp_mw", "is_night", "weak_label",
     "predicted", "prediction_set", "outside_applicability", "prior_count_90d",
-    "night_fraction_90d", "nearest_flare_m", "nearest_industrial_m", "nearest_gem_m",
+    "night_fraction_90d", "nearest_flare_band", "nearest_industrial_m", "nearest_gem_m",
+    ...POSTERIOR_CLASSES.map((c) => `posterior_${c}`),
   ];
   const lines = rows.map((d) =>
     [
@@ -87,6 +92,7 @@ function toCsv(rows: Detection[]): string {
       d.nearestFlareBand ?? "not measured",
       d.nearestIndustrialM ?? "not measured",
       d.nearestGemM ?? "not measured",
+      ...POSTERIOR_CLASSES.map((c) => d.posterior[c] ?? "not measured"),
     ].join(","),
   );
   return [header.join(","), ...lines].join("\n");
@@ -96,10 +102,12 @@ export function ConsoleClient({
   detections,
   sources,
   manifest,
+  heldOutCoverage,
 }: {
   detections: Detection[];
   sources: Source[];
   manifest: Manifest;
+  heldOutCoverage: number | null;
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -348,7 +356,12 @@ export function ConsoleClient({
           ) : null}
         </div>
         <aside className="aside">
-          <EvidencePanel detection={selected} />
+          <EvidencePanel
+            detection={selected}
+            nominal={manifest.conformalNominal}
+            heldOutGroup={manifest.heldOutGroup}
+            heldOutCoverage={heldOutCoverage}
+          />
 
           <div className="card">
             <h3>Persistent sources</h3>

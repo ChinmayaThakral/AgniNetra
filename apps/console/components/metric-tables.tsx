@@ -62,7 +62,8 @@ export function ModelCard({
               <th>Group</th>
               <th>coverage</th>
               <th>nominal</th>
-              <th>outside AoA</th>
+              <th>assessable</th>
+              <th>outside AoA, of assessable</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +74,16 @@ export function ModelCard({
                   {fraction(row.coverage, 4)}
                 </td>
                 <td>{fraction(row.nominal, 2)}</td>
-                <td>{percent(row.outside_aoa_fraction)}</td>
+                <td>
+                  {row.aoa_assessable_fraction === null
+                    ? "not measured"
+                    : percent(row.aoa_assessable_fraction)}
+                </td>
+                <td>
+                  {row.outside_aoa_fraction === null
+                    ? "not measured"
+                    : percent(row.outside_aoa_fraction)}
+                </td>
               </tr>
             ))}
           </tbody>

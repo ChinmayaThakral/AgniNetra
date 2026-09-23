@@ -81,7 +81,7 @@ export function GeostationaryPanel({ data }: { data: Geostationary }) {
             <thead>
               <tr>
                 <th>State</th>
-                <th>Detections</th>
+                <th>Per granule</th>
                 <th>Evening</th>
                 <th>Peak IST</th>
               </tr>
@@ -90,7 +90,7 @@ export function GeostationaryPanel({ data }: { data: Geostationary }) {
               {w.states.slice(0, 6).map((s) => (
                 <tr key={s.name}>
                   <td>{s.name}</td>
-                  <td>{s.detections}</td>
+                  <td>{s.perGranule.toFixed(1)}</td>
                   <td>{s.eveningSharePct.toFixed(1)}%</td>
                   <td>{String(s.peakHourIst).padStart(2, "0")}h</td>
                 </tr>

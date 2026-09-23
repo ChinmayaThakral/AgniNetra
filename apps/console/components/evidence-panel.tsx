@@ -9,7 +9,17 @@ import type { Detection } from "@/lib/schema";
  * the applicability domain. A probability shown without its prediction set would
  * misrepresent what the system knows.
  */
-export function EvidencePanel({ detection }: { detection: Detection | null }) {
+export function EvidencePanel({
+  detection,
+  nominal,
+  heldOutGroup,
+  heldOutCoverage,
+}: {
+  detection: Detection | null;
+  nominal: number;
+  heldOutGroup: string;
+  heldOutCoverage: number | null;
+}) {
   if (!detection) {
     return (
       <div className="card">
@@ -43,7 +53,7 @@ export function EvidencePanel({ detection }: { detection: Detection | null }) {
       <div className="row">
         <span className="k">location</span>
         <span className="v">
-          {detection.lat.toFixed(4)}, {detection.lon.toFixed(4)}
+          {detection.lat.toFixed(4)} degrees N, {detection.lon.toFixed(4)} degrees E
         </span>
       </div>
       <div className="row">
@@ -72,7 +82,7 @@ export function EvidencePanel({ detection }: { detection: Detection | null }) {
 
       <h3 style={{ marginTop: "0.8rem" }}>What the system will commit to</h3>
       <div className="row">
-        <span className="k">prediction set, 90 percent nominal</span>
+        <span className="k">prediction set, {Math.round(nominal * 100)} percent nominal</span>
         <span className="v">
           {detection.predictionSet.length === 0 ? (
             <span className="notmeasured">empty, abstains</span>
@@ -104,8 +114,10 @@ export function EvidencePanel({ detection }: { detection: Detection | null }) {
       {abstains ? (
         <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
           The set is not a single class, so the system is declining to commit at this
-          level. Coverage on this held out group is measured below and is under the
-          nominal level.
+          level.{" "}
+          {heldOutCoverage === null
+            ? `Coverage on ${heldOutGroup} is not measured.`
+            : `Measured coverage on ${heldOutGroup} is ${heldOutCoverage.toFixed(4)} against a nominal ${nominal.toFixed(2)}, ${heldOutCoverage < nominal ? "below" : "at or above"} it.`}
         </p>
       ) : null}
 
