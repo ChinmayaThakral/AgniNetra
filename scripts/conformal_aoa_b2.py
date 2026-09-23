@@ -30,6 +30,7 @@ os.environ.setdefault("OMP_NUM_THREADS", "4")
 
 import json
 import sys
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -54,8 +55,19 @@ AOA_QUANTILE = 0.95
 B2_SAMPLE = 60000
 
 
+def group_generator(group: str) -> np.random.Generator:
+    """An independent stream per group, derived from the group's name.
+
+    A single generator shared across the loop made every group's result depend on
+    how many draws the groups before it happened to make, so group_b and group_c
+    moved whenever anything above them changed and nothing recorded the dependency.
+    Deriving the seed from the name rather than from the loop index means adding,
+    removing or reordering a group does not move the others. D111.
+    """
+    return np.random.default_rng([SEED, zlib.crc32(group.encode())])
+
+
 def main() -> int:
-    rng = np.random.default_rng(SEED)
     con = duckdb.connect(str(DUCKDB_PATH))
     frame = con.execute(FEATURE_SQL).df()
     trained = frame[frame["weak_label"].isin(TRAINED_CLASSES)].copy()
@@ -65,6 +77,7 @@ def main() -> int:
     summary: dict[str, dict] = {}
 
     for group in HELD_OUT_GROUPS:
+        rng = group_generator(group)
         _, test_states = split_for(group)
         pool = trained[~trained["state_name"].isin(test_states)]
         test = trained[trained["state_name"].isin(test_states)]
@@ -137,6 +150,34 @@ def main() -> int:
                 float((predicted[outside] == truth[outside]).mean()) if outside.sum() else None
             )
 
+        # The superseded imputed variant, recomputed rather than transcribed.
+        #
+        # The before and after comparison in the results is evidence that the
+        # imputation was adding noise whose sign varied by group, and the before
+        # figures had no source of their own. Freezing them as literals would be the
+        # defect D91 names, so the old behaviour is recomputed here under a name that
+        # says it is superseded. Nothing downstream reads it. D110.
+        imputed_outside = None
+        if fit_observed.sum() >= 2:
+            fit_filled = fit_set[columns].fillna(0.0)
+            imputed_scaler = StandardScaler().fit(fit_filled)
+            imputed_fit = imputed_scaler.transform(fit_filled)
+            # Its own generator. Drawing from the shared rng advanced the stream and
+            # silently moved group_b and group_c, which are downstream of it in the
+            # loop: group_a was unchanged because it ran before the first draw. A
+            # diagnostic that perturbs the measurement it is diagnosing is worse than
+            # no diagnostic. D59 is the same class.
+            imputed_rng = group_generator(f"{group}:superseded")
+            imputed_sample = imputed_rng.choice(
+                len(imputed_fit), size=min(40000, len(imputed_fit)), replace=False
+            )
+            imputed_nn = NearestNeighbors(n_neighbors=2).fit(imputed_fit[imputed_sample])
+            imputed_train, _ = imputed_nn.kneighbors(imputed_fit[imputed_sample])
+            imputed_threshold = float(np.quantile(imputed_train[:, 1], AOA_QUANTILE))
+            imputed_test = imputed_scaler.transform(test[columns].fillna(0.0))
+            imputed_distance, _ = imputed_nn.kneighbors(imputed_test, n_neighbors=1)
+            imputed_outside = float((imputed_distance[:, 0] > imputed_threshold).mean())
+
         print(f"\n{group}")
         print(f"  conformal, nominal {NOMINAL:.0%}: empirical coverage {coverage:.4f}")
         print(f"  mean prediction set size {set_sizes.mean():.3f} of {len(classes)} classes")
@@ -168,7 +209,15 @@ def main() -> int:
             "aoa_assessable_rows": assessable,
             "aoa_not_assessable_rows": len(test) - assessable,
             "aoa_assessable_fraction": round(assessable / len(test), 4) if len(test) else None,
+            "superseded_imputed_outside_aoa_fraction": imputed_outside,
         }
+        if imputed_outside is not None:
+            print(
+                f"  superseded imputed variant, outside the domain: {imputed_outside:.2%} "
+                f"against {outside_fraction:.2%} measured"
+                if outside_fraction is not None
+                else f"  superseded imputed variant: {imputed_outside:.2%}"
+            )
 
     # B2, spatiotemporal density clustering, scored on industrial alone.
     print("\n=== B2, spatiotemporal density clustering ===", flush=True)

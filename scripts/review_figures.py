@@ -48,17 +48,20 @@ def caption(fig, text: str) -> None:
 
 
 def figure_lift() -> None:
+    # Read from the artifact rather than typed. The typed values included with GEM lifts
+    # divided by an OpenStreetMap only background, so the figure showed 16.40x where the
+    # measurement is 13.35x, and with no artifact registered the freshness check could
+    # never see it. D122.
+    lifts = json.loads((ARTIFACT_DIR / "lift_with_gem.json").read_text())
+    keys = ["monsoon 2026", "burning season 2023", "burning season 2024"]
     windows = ["monsoon 2026", "season 2023", "season 2024"]
-    before = {
-        "industrial": [10.53, 7.00, 7.51],
-        "agricultural": [0.66, 1.48, 1.44],
-        "wildfire": [0.78, 0.20, 0.23],
+    names = {
+        "industrial": "industrial",
+        "agricultural": "agricultural",
+        "wildfire": "wildfire, withdrawn rule",
     }
-    after = {
-        "industrial": [16.40, 9.99, 10.76],
-        "agricultural": [0.64, 1.48, 1.42],
-        "wildfire": [0.70, 0.17, 0.20],
-    }
+    before = {k: [lifts[w][v]["lift_before"] for w in keys] for k, v in names.items()}
+    after = {k: [lifts[w][v]["lift_after"] for w in keys] for k, v in names.items()}
     fig, axes = plt.subplots(1, 3, figsize=(12, 4.2), sharey=True)
     x = np.arange(len(windows))
     for axis, (name, colour) in zip(
@@ -97,41 +100,10 @@ def figure_lift() -> None:
 
 
 def figure_diurnal() -> None:
-    y2023 = {
-        0: 5272,
-        1: 21476,
-        2: 10095,
-        3: 540,
-        9: 215,
-        10: 1574,
-        11: 296,
-        12: 19051,
-        13: 97116,
-        14: 32775,
-        15: 10,
-        20: 4,
-        21: 298,
-        22: 214,
-        23: 43,
-    }
-    y2024 = {
-        0: 5191,
-        1: 18513,
-        2: 9874,
-        3: 392,
-        8: 1,
-        9: 446,
-        10: 1211,
-        11: 120,
-        12: 17182,
-        13: 78466,
-        14: 23031,
-        15: 335,
-        20: 23,
-        21: 385,
-        22: 44,
-        23: 34,
-    }
+    # Read from scripts/seasonal_comparison.py's artifact rather than typed. D122.
+    profiles = json.loads((ARTIFACT_DIR / "seasonal_diurnal.json").read_text())
+    y2023 = {int(h): n for h, n in profiles["burning season 2023"].items()}
+    y2024 = {int(h): n for h, n in profiles["burning season 2024"].items()}
     t23, t24 = sum(y2023.values()), sum(y2024.values())
     hours = np.arange(24)
     s23 = [100 * y2023.get(h, 0) / t23 for h in hours]

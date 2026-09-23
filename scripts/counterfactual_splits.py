@@ -27,6 +27,7 @@ from sklearn.metrics import f1_score
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
 from ml.labels.splits import HELD_OUT_GROUPS
 from ml.labels.weak import TRAINED_CLASSES
@@ -155,6 +156,7 @@ def main() -> int:
         "# Two counterfactuals, measured instead of asserted",
         "",
         f"Regenerate: `uv run python {Path('scripts/counterfactual_splits.py')}`",
+        provenance_line(__file__),
         "",
         f"Seed {SEED}, `OMP_NUM_THREADS=4`. D59.",
         "",

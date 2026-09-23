@@ -34,6 +34,7 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, DATA_DIR, FIGURE_DIR, ROOT, ensure_dir
 
 # These must match scripts/diurnal_profile.py. tests/test_diurnal_windows.py fails if
@@ -219,6 +220,7 @@ def main() -> int:
     out.write_text(
         "# INSAT-3DS diurnal activity by state\n\n"
         "Regenerate: `uv run python scripts/diurnal_by_region.py`\n\n"
+        f"{provenance_line(__file__)}\n\n"
         "Produced over "
         f"{len(files)} granules, {span}. Counts are normalised to "
         "detections per granule per hour. States below "

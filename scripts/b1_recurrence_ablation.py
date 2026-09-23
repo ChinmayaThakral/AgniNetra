@@ -35,6 +35,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from sklearn.ensemble import HistGradientBoostingClassifier  # noqa: E402
 
+from ml.documents import provenance_line  # noqa: E402
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL  # noqa: E402
 from ml.labels.splits import HELD_OUT_GROUPS, split_for, validate_groups  # noqa: E402
 from ml.labels.weak import TRAINED_CLASSES  # noqa: E402
@@ -123,6 +124,7 @@ def main() -> int:
         "# Does B1's flare confusion depend on the recurrence features?",
         "",
         f"Regenerate: `uv run python {Path('scripts/b1_recurrence_ablation.py')}`",
+        provenance_line(__file__),
         "",
         "`FEATURE_COLUMNS` contains five recurrence features, and `mean_gap_days` is the",
         "mean of raw inter arrival gaps, the quantity D37 found to be a constellation",

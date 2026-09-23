@@ -28,6 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, ROOT
 
 
@@ -68,6 +69,7 @@ def main() -> int:
         f"# Persistent sources surviving a {km:.0f} km registry search",
         "",
         "Regenerate: `uv run python scripts/spot_check_list.py`",
+        provenance_line(__file__),
         "",
         "These are the candidates the results section asks somebody to check against",
         "imagery. Proximity cannot settle whether a source is genuinely absent from every",

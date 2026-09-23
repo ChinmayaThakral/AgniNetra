@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, ROOT
 
 BEFORE_DIR = ROOT / "context" / "withdrawn"
@@ -65,6 +66,7 @@ def main() -> int:
         "# Before and after the D61 rebuild",
         "",
         f"Regenerate: `uv run python {Path('scripts/refit_comparison.py')}`",
+        provenance_line(__file__),
         "",
         "`detection_recurrence` covered 88454 of 601941 detections and `FEATURE_SQL`",
         "coalesced the missing prior counts to zero, so **92.1 percent of B1's training",

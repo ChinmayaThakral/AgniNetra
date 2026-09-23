@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, ROOT
 
 CLASSES = ("flare", "industrial", "agricultural")
@@ -60,6 +61,7 @@ def main() -> None:
         "# Model card: AgniNetra source attribution",
         "",
         f"Regenerate: `uv run python {Path('scripts/model_card.py')}`",
+        provenance_line(__file__),
         "",
         "Generated from the recorded artifacts. No number here is typed by hand.",
         "",

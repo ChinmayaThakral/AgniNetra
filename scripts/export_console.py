@@ -25,6 +25,7 @@ os.environ.setdefault("OMP_NUM_THREADS", "4")
 
 import json
 import sys
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -87,8 +88,18 @@ def optional_number(value: object, digits: int = 0) -> float | int | None:
     return round(float(value), digits) if digits else round(float(value))
 
 
+def stage_generator(purpose: str) -> np.random.Generator:
+    """An independent stream per stage, derived from what the stage is for.
+
+    Two stages sharing one generator makes the second depend on how many values the
+    first drew, so changing the calibration split silently moved the applicability
+    sample with nothing recording the link. Naming the stream after its purpose means
+    a stage's result depends only on its own inputs. D111.
+    """
+    return np.random.default_rng([SEED, zlib.crc32(purpose.encode())])
+
+
 def main() -> int:
-    rng = np.random.default_rng(SEED)
     con = duckdb.connect(str(DUCKDB_PATH))
     frame = con.execute(FEATURE_SQL).df()
     trained = frame[frame["weak_label"].isin(TRAINED_CLASSES)].copy()
@@ -96,7 +107,7 @@ def main() -> int:
 
     _, test_states = split_for("group_a")
     fit_pool = trained[~trained["state_name"].isin(test_states)]
-    mask = rng.random(len(fit_pool)) < 0.2
+    mask = stage_generator("calibration split").random(len(fit_pool)) < 0.2
     calibration, fit_set = fit_pool[mask], fit_pool[~mask]
 
     model = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=SEED)
@@ -117,7 +128,9 @@ def main() -> int:
     fit_rows = fit_set.loc[fit_observed, columns]
     scaler = StandardScaler().fit(fit_rows)
     fit_scaled = scaler.transform(fit_rows)
-    index = rng.choice(len(fit_scaled), size=min(40000, len(fit_scaled)), replace=False)
+    index = stage_generator("applicability sample").choice(
+        len(fit_scaled), size=min(40000, len(fit_scaled)), replace=False
+    )
     neighbours = NearestNeighbors(n_neighbors=2).fit(fit_scaled[index])
     train_distance, _ = neighbours.kneighbors(fit_scaled[index])
     aoa_threshold = float(np.quantile(train_distance[:, 1], AOA_QUANTILE))

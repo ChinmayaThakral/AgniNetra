@@ -31,6 +31,7 @@ from sklearn.preprocessing import StandardScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
 from ml.labels.splits import split_for
 from ml.labels.weak import TRAINED_CLASSES
@@ -164,6 +165,7 @@ def main() -> int:
         "# Sensitivity of the three tuned constants",
         "",
         f"Regenerate: `uv run python {Path('scripts/threshold_sensitivity.py')}`",
+        provenance_line(__file__),
         "",
         f"Seed {SEED}, `OMP_NUM_THREADS=4`. Each sweep varies one constant and holds",
         "the others at the published value.",

@@ -49,6 +49,20 @@ ALLOWED: dict[str, str] = {
         "The module documents the removed coalesce in prose so the defect stays legible. No live substitution."
     ),
     "tests/test_no_fabricated_missing.py:0": "This file names the patterns by definition.",
+    # The one deliberate substitution in the repository, exempted by exact line so it
+    # cannot drift. These two reproduce the superseded imputed applicability domain in
+    # order to measure how wrong it was, which is the defect this guard exists to
+    # prevent, performed on purpose and reported under a key that says superseded.
+    # Nothing downstream reads the result. Removing the exemption is correct the moment
+    # the before and after comparison leaves the report. D110.
+    "scripts/conformal_aoa_b2.py::fit_filled = fit_set[columns].fillna(0.0)": (
+        "Recreates the superseded imputed domain so the before figures are measured "
+        "rather than transcribed."
+    ),
+    "scripts/conformal_aoa_b2.py::imputed_test = imputed_scaler.transform(test[columns].fillna(0.0))": (
+        "Recreates the superseded imputed domain so the before figures are measured "
+        "rather than transcribed."
+    ),
     "scripts/verify_published_numbers.py:0": "Reports on substitutions, does not perform one.",
     "scripts/build_features_3b.py::(SELECT coalesce(nullif(s.name_en, ''), s.name)": (
         "Name fallback between two observed values."
@@ -169,3 +183,52 @@ def test_the_recurrence_columns_are_still_features() -> None:
         "mean_gap_days",
     ):
         assert column in FEATURE_COLUMNS, f"{column} left FEATURE_COLUMNS"
+
+
+SUPERSEDED_EXEMPTIONS = (
+    "scripts/conformal_aoa_b2.py::fit_filled = fit_set[columns].fillna(0.0)",
+    "scripts/conformal_aoa_b2.py::imputed_test = "
+    "imputed_scaler.transform(test[columns].fillna(0.0))",
+)
+SUPERSEDED_KEY = "superseded_imputed_outside_aoa_fraction"
+
+
+def test_the_superseded_exemption_does_not_outlive_its_reason() -> None:
+    """The one deliberate substitution is allowed only while something cites it.
+
+    Its justification is that the before and after comparison in the results needs
+    the imputed figures measured rather than transcribed. That justification was
+    originally a comment saying to remove the exemption when the comparison leaves
+    the report, which is enforcement by memory. This is the enforcement. D111.
+    """
+    from ml.paths import ROOT
+
+    # docs/ exists only on the owner's machine and never in the published repository,
+    # so in a clean clone the citation this test looks for cannot exist and the test
+    # would fail on every checkout without protecting anything. It is enforced in full
+    # wherever the report is present. Approved by the owner on 2026-09-23. D121.
+    if not (ROOT / "docs").is_dir():
+        pytest.skip("docs/ is local only, so the citation cannot be checked here")
+
+    present = [key for key in SUPERSEDED_EXEMPTIONS if key in ALLOWED]
+    # Only prose may serve as evidence. The tracer's own report quotes the results
+    # line verbatim, so counting generated documents would let the exemption keep
+    # itself alive through a document that merely echoes the thing under test. D112.
+    from ml.documents import prose_documents
+
+    cited = [
+        path.relative_to(ROOT).as_posix()
+        for path in prose_documents("docs")
+        if SUPERSEDED_KEY in path.read_text()
+    ]
+    if present and not cited:
+        raise AssertionError(
+            "The fillna exemption in scripts/conformal_aoa_b2.py is still in ALLOWED, "
+            f"but no document cites {SUPERSEDED_KEY} any more. The comparison it exists "
+            "for has left the report, so delete the exemption and the imputed pass."
+        )
+    if cited and not present:
+        raise AssertionError(
+            f"A document cites {SUPERSEDED_KEY} but the exemption is gone, so the "
+            "imputed pass cannot be computing it. Check what that number now refers to."
+        )

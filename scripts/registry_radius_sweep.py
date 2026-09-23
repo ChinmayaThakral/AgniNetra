@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import duckdb
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT
 from ml.reference.geo import GEO_MACROS
 
@@ -73,6 +74,7 @@ def main() -> int:
         "# How far before every persistent source has a reference asset?",
         "",
         f"Regenerate: `uv run python {Path('scripts/registry_radius_sweep.py')}`",
+        provenance_line(__file__),
         "",
         f"{len(sources)} persistent sources, of which {len(unregistered)} have no reference",
         "asset within the 1 km rule. Those are the candidates swept below.",

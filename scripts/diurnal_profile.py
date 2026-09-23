@@ -28,6 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from ml.documents import provenance_line
 from ml.paths import ARTIFACT_DIR, DATA_DIR, FIGURE_DIR, ROOT, ensure_dir
 
 # The hours the polar constellation actually visits, measured in this project from
@@ -158,6 +159,7 @@ def main() -> int:
         "# Diurnal activity from INSAT-3DS, and what the polar record misses",
         "",
         f"Regenerate: `uv run python {Path('scripts/diurnal_profile.py')}`",
+        provenance_line(__file__),
         "",
         f"{len(files)} granules over {len(days)} day(s), "
         f"{len(per_slot)} of {slots_expected} half hour slots.",
