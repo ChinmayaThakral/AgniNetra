@@ -103,13 +103,15 @@ ATTRIBUTION_MARKERS: tuple[str, ...] = (
 
 def tracked_files() -> list[str]:
     """Return git tracked paths, repository relative, sorted."""
+    # Includes untracked files git does not ignore, so a new file is checked before it
+    # is committed rather than after. D122.
     out = subprocess.run(
-        ["git", "-C", str(ROOT), "ls-files"],
+        ["git", "-C", str(ROOT), "ls-files", "--cached", "--others", "--exclude-standard"],
         capture_output=True,
         text=True,
         check=True,
     )
-    return sorted(line for line in out.stdout.splitlines() if line)
+    return sorted({line for line in out.stdout.splitlines() if line and (ROOT / line).is_file()})
 
 
 def read_text(path: Path) -> str | None:

@@ -26,9 +26,14 @@ def tracked_files(suffixes: tuple[str, ...] | None = None) -> list[Path]:
     Raises TrackedFilesError rather than returning an empty list when git fails,
     because a guard that silently scans nothing reports clean.
     """
+    # Untracked files that git does not ignore are included. Twice on 2026-09-23 a new
+    # script passed every guard because it was not yet committed, and then turned the
+    # suite red in the commit that added it, since the guards had only ever read what
+    # was already in the index. A file is now checked before it is committed. Files
+    # excluded through .git/info/exclude, docs/ and context/, stay excluded. D122.
     try:
         result = subprocess.run(
-            ["git", "-C", str(ROOT), "ls-files"],
+            ["git", "-C", str(ROOT), "ls-files", "--cached", "--others", "--exclude-standard"],
             capture_output=True,
             text=True,
             check=True,
@@ -36,7 +41,8 @@ def tracked_files(suffixes: tuple[str, ...] | None = None) -> list[Path]:
     except (OSError, subprocess.CalledProcessError) as exc:
         raise TrackedFilesError(f"git ls-files failed: {exc}") from exc
 
-    paths = [ROOT / line for line in result.stdout.splitlines() if line]
+    lines = sorted({line for line in result.stdout.splitlines() if line})
+    paths = [ROOT / line for line in lines if (ROOT / line).is_file()]
     if not paths:
         raise TrackedFilesError("git ls-files returned nothing, refusing to report clean")
     if suffixes is not None:
