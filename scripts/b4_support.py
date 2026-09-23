@@ -19,8 +19,10 @@ import duckdb
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import provenance_line
 from ml.imagery.catalogue import search_l2a
 from ml.labels.splits import HELD_OUT_GROUPS
+from ml.labels.weak import weak_label_sql
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 from ml.reference.geo import GEO_MACROS
 
@@ -56,7 +58,9 @@ def _group_of(state: str | None, membership: dict[str, str]) -> str:
 
 
 def main() -> None:
-    products = search_l2a(PROBE_LON, PROBE_LAT, WINDOW_START, WINDOW_END)
+    products = search_l2a(
+        longitude=PROBE_LON, latitude=PROBE_LAT, start=WINDOW_START, end=WINDOW_END
+    )
     if not products:
         raise SystemExit("catalogue returned no L2A products over the probe point")
     scene = products[0]
@@ -67,9 +71,10 @@ def main() -> None:
     membership = {s: g for g, states in HELD_OUT_GROUPS.items() for s in states}
 
     in_scene = connection.execute(
-        """
-        SELECT c.state_name, c.weak_label, count(*)
+        f"""
+        SELECT c.state_name, {weak_label_sql("c", "g")} AS weak_label, count(*)
         FROM a.detections d JOIN a.detection_context c USING (detection_id)
+        LEFT JOIN a.detection_gem g USING (detection_id)
         WHERE ST_Within(geo_point(d.longitude, d.latitude), ST_GeomFromText(?))
         GROUP BY 1, 2
         """,
@@ -85,10 +90,11 @@ def main() -> None:
         by_group[_group_of(state, membership)][label] += count
 
     everything = connection.execute(
-        """
+        f"""
         SELECT c.state_name, d.longitude, d.latitude
         FROM a.detections d JOIN a.detection_context c USING (detection_id)
-        WHERE c.weak_label IN ('flare', 'industrial', 'agricultural')
+        LEFT JOIN a.detection_gem g USING (detection_id)
+        WHERE {weak_label_sql("c", "g")} IN ('flare', 'industrial', 'agricultural')
           AND c.state_name IS NOT NULL
         """
     ).fetchall()
@@ -166,6 +172,7 @@ def _render(scene, by_group: dict, tiles_needed: dict) -> str:
         "# How much of the evaluation set does one Sentinel-2 scene reach?",
         "",
         f"Regenerate: `uv run python {Path('scripts/b4_support.py')}`",
+        provenance_line(__file__),
         "",
         f"Scene: `{scene.name}`",
         "",

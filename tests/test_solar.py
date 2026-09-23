@@ -30,7 +30,11 @@ def _min_zenith_over_the_day(lat: float, lon: float, day_utc: datetime) -> float
     occurs.
     """
     return min(
-        float(solar_zenith_angle_deg(lat, lon, day_utc + timedelta(minutes=m)))
+        float(
+            solar_zenith_angle_deg(
+                latitude=lat, longitude=lon, when_utc=day_utc + timedelta(minutes=m)
+            )
+        )
         for m in range(0, 24 * 60, 1)
     )
 
@@ -42,12 +46,16 @@ def test_declination_reaches_the_obliquity_at_the_june_solstice() -> None:
     obliquity of the ecliptic by definition of the solstice, so the pole's zenith
     angle should sit near 90 minus 23.44, independent of hour angle entirely.
     """
-    zenith = solar_zenith_angle_deg(90.0, 0.0, datetime(2024, 6, 21, 0, 0, tzinfo=UTC))
+    zenith = solar_zenith_angle_deg(
+        latitude=90.0, longitude=0.0, when_utc=datetime(2024, 6, 21, 0, 0, tzinfo=UTC)
+    )
     assert float(zenith) == pytest.approx(90.0 - OBLIQUITY_DEG, abs=0.1)
 
 
 def test_declination_reaches_the_obliquity_at_the_december_solstice() -> None:
-    zenith = solar_zenith_angle_deg(90.0, 0.0, datetime(2024, 12, 21, 0, 0, tzinfo=UTC))
+    zenith = solar_zenith_angle_deg(
+        latitude=90.0, longitude=0.0, when_utc=datetime(2024, 12, 21, 0, 0, tzinfo=UTC)
+    )
     assert float(zenith) == pytest.approx(90.0 + OBLIQUITY_DEG, abs=0.1)
 
 
@@ -55,7 +63,11 @@ def test_the_midnight_sun_is_visible_at_the_north_pole_in_june() -> None:
     """Around the June solstice the sun never sets at the North Pole, the midnight
     sun, an elementary fact of polar geography independent of this module."""
     worst = max(
-        float(solar_zenith_angle_deg(90.0, 0.0, datetime(2024, 6, 20, hour, 0, tzinfo=UTC)))
+        float(
+            solar_zenith_angle_deg(
+                latitude=90.0, longitude=0.0, when_utc=datetime(2024, 6, 20, hour, 0, tzinfo=UTC)
+            )
+        )
         for hour in range(24)
     )
     assert worst < 90.0, f"the sun would set at the pole in June, zenith reached {worst}"
@@ -64,7 +76,11 @@ def test_the_midnight_sun_is_visible_at_the_north_pole_in_june() -> None:
 def test_polar_night_covers_the_south_pole_in_june() -> None:
     """The Southern Hemisphere counterpart: polar night, the sun never rises."""
     best = min(
-        float(solar_zenith_angle_deg(-90.0, 0.0, datetime(2024, 6, 20, hour, 0, tzinfo=UTC)))
+        float(
+            solar_zenith_angle_deg(
+                latitude=-90.0, longitude=0.0, when_utc=datetime(2024, 6, 20, hour, 0, tzinfo=UTC)
+            )
+        )
         for hour in range(24)
     )
     assert best > 90.0, f"the sun would rise at the south pole in June, zenith reached {best}"
@@ -93,7 +109,11 @@ def test_day_and_night_are_equal_length_at_the_equator_on_the_equinox() -> None:
     """
     start = datetime(2024, 9, 22, tzinfo=UTC)
     samples = [
-        float(solar_zenith_angle_deg(0.0, 77.0, start + timedelta(minutes=m)))
+        float(
+            solar_zenith_angle_deg(
+                latitude=0.0, longitude=77.0, when_utc=start + timedelta(minutes=m)
+            )
+        )
         for m in range(0, 24 * 60, 5)
     ]
     daylight_fraction = sum(1 for z in samples if z < 90.0) / len(samples)
@@ -102,7 +122,9 @@ def test_day_and_night_are_equal_length_at_the_equator_on_the_equinox() -> None:
 
 def test_arrays_broadcast_and_keep_their_shape() -> None:
     lon, lat = np.meshgrid(np.linspace(68.0, 97.0, 4), np.linspace(8.0, 35.0, 5))
-    zenith = solar_zenith_angle_deg(lat, lon, datetime(2024, 11, 1, 6, 30, tzinfo=UTC))
+    zenith = solar_zenith_angle_deg(
+        latitude=lat, longitude=lon, when_utc=datetime(2024, 11, 1, 6, 30, tzinfo=UTC)
+    )
     assert zenith.shape == lat.shape
     assert np.all(zenith >= 0.0) and np.all(zenith <= 180.0)
 
@@ -113,9 +135,11 @@ def test_kerala_at_midday_faces_the_sun_more_squarely_than_punjab_at_dusk() -> N
     Punjab point at 16:30 IST, which is the separation the detector's day and
     night thresholds are built on.
     """
-    kerala_at_1130_ist = solar_zenith_angle_deg(15.0, 78.0, datetime(2024, 11, 1, 6, 0, tzinfo=UTC))
+    kerala_at_1130_ist = solar_zenith_angle_deg(
+        latitude=15.0, longitude=78.0, when_utc=datetime(2024, 11, 1, 6, 0, tzinfo=UTC)
+    )
     punjab_at_1630_ist = solar_zenith_angle_deg(
-        30.0, 75.5, datetime(2024, 11, 1, 11, 0, tzinfo=UTC)
+        latitude=30.0, longitude=75.5, when_utc=datetime(2024, 11, 1, 11, 0, tzinfo=UTC)
     )
     assert float(kerala_at_1130_ist) < 45.0
     assert float(punjab_at_1630_ist) > 60.0

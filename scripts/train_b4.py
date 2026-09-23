@@ -44,6 +44,7 @@ from ml.imagery.cdse import (
 from ml.imagery.chips import ChipError, band_paths_in_safe, read_chip
 from ml.imagery.embed import embed_chips, load_backbone
 from ml.labels.splits import HELD_OUT_GROUPS
+from ml.labels.weak import weak_label_sql
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ENV_PATH, RAW_DIR, ROOT, ensure_dir
 from ml.reference.geo import GEO_MACROS
 
@@ -99,10 +100,12 @@ def detections_in_scene(footprint_wkt: str) -> list[tuple]:
         connection.execute(macro)
     connection.execute(f"ATTACH '{DUCKDB_PATH}' AS a (READ_ONLY);")
     return connection.execute(
-        """
-        SELECT d.detection_id, d.longitude, d.latitude, c.state_name, c.weak_label
+        f"""
+        SELECT d.detection_id, d.longitude, d.latitude, c.state_name,
+               {weak_label_sql("c", "g")} AS weak_label
         FROM a.detections d JOIN a.detection_context c USING (detection_id)
-        WHERE c.weak_label IN ('flare', 'industrial', 'agricultural')
+        LEFT JOIN a.detection_gem g USING (detection_id)
+        WHERE {weak_label_sql("c", "g")} IN ('flare', 'industrial', 'agricultural')
           AND ST_Within(geo_point(d.longitude, d.latitude), ST_GeomFromText(?))
         ORDER BY d.detection_id
         """,
@@ -114,7 +117,9 @@ def main() -> int:
     args = parse_args()
     load_dotenv(ENV_PATH)
 
-    products = search_l2a(PROBE_LON, PROBE_LAT, WINDOW_START, WINDOW_END)
+    products = search_l2a(
+        longitude=PROBE_LON, latitude=PROBE_LAT, start=WINDOW_START, end=WINDOW_END
+    )
     if args.scene:
         products = [p for p in products if p.name.startswith(args.scene)]
     if not products:
@@ -153,7 +158,7 @@ def main() -> int:
     chips, kept = [], []
     for detection_id, longitude, latitude, state, label in rows:
         try:
-            chips.append(read_chip(bands, longitude, latitude))
+            chips.append(read_chip(bands, longitude=longitude, latitude=latitude))
         except ChipError:
             continue
         kept.append((detection_id, state, label))

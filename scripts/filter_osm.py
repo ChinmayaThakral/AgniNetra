@@ -58,7 +58,7 @@ class IndustrialHandler(osmium.SimpleHandler):
         self.rows: list[dict[str, object]] = []
         self.skipped_ways = 0
 
-    def _append(self, osm_id: int, kind: str, tags: object, lon: float, lat: float) -> None:
+    def _append(self, osm_id: int, kind: str, tags: object, *, lon: float, lat: float) -> None:
         hit = matches(tags)
         if hit is None:
             return
@@ -79,7 +79,7 @@ class IndustrialHandler(osmium.SimpleHandler):
     def node(self, n: osmium.osm.Node) -> None:
         if matches(n.tags) is None:
             return
-        self._append(n.id, "node", n.tags, n.location.lon, n.location.lat)
+        self._append(n.id, "node", n.tags, lon=n.location.lon, lat=n.location.lat)
 
     def way(self, w: osmium.osm.Way) -> None:
         if matches(w.tags) is None:
@@ -93,7 +93,7 @@ class IndustrialHandler(osmium.SimpleHandler):
         if not lons:
             self.skipped_ways += 1
             return
-        self._append(w.id, "way", w.tags, sum(lons) / len(lons), sum(lats) / len(lats))
+        self._append(w.id, "way", w.tags, lon=sum(lons) / len(lons), lat=sum(lats) / len(lats))
 
 
 def main() -> int:

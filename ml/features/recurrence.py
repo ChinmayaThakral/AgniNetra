@@ -40,7 +40,7 @@ class Event:
     is_night: bool
 
 
-def cell_key(longitude: float, latitude: float) -> tuple[int, int]:
+def cell_key(*, longitude: float, latitude: float) -> tuple[int, int]:
     """Return the integer grid cell a coordinate falls in."""
     return (
         math.floor(longitude / CELL_DEGREES),

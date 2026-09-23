@@ -87,8 +87,8 @@ def read_india(path: Path) -> IndiaWindow:
         x_axis = handle["X"][:]
         y_axis = handle["Y"][:]
 
-        west_x, north_y = forward(INDIA_WEST, INDIA_NORTH)
-        east_x, south_y = forward(INDIA_EAST, INDIA_SOUTH)
+        west_x, north_y = forward(longitude=INDIA_WEST, latitude=INDIA_NORTH)
+        east_x, south_y = forward(longitude=INDIA_EAST, latitude=INDIA_SOUTH)
         cols = np.where((x_axis >= float(west_x)) & (x_axis <= float(east_x)))[0]
         rows = np.where((y_axis >= float(south_y)) & (y_axis <= float(north_y)))[0]
         if cols.size == 0 or rows.size == 0:
@@ -111,7 +111,7 @@ def read_india(path: Path) -> IndiaWindow:
 
     from ml.fusion.geolocate import inverse
 
-    longitude, latitude = inverse(grid_x, grid_y)
+    longitude, latitude = inverse(x=grid_x, y=grid_y)
     return IndiaWindow(
         acquired_utc=acquired,
         mir=mir,

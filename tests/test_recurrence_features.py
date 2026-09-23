@@ -136,11 +136,15 @@ class TestInterAnnualReturn:
 
 class TestCellKey:
     def test_points_within_half_a_pixel_share_a_cell(self) -> None:
-        assert cell_key(82.6757, 24.1030) == cell_key(82.6757 + CELL_DEGREES / 4, 24.1030)
+        assert cell_key(longitude=82.6757, latitude=24.1030) == cell_key(
+            longitude=82.6757 + CELL_DEGREES / 4, latitude=24.1030
+        )
 
     def test_points_a_cell_apart_differ(self) -> None:
-        assert cell_key(82.6757, 24.1030) != cell_key(82.6757 + CELL_DEGREES * 1.5, 24.1030)
+        assert cell_key(longitude=82.6757, latitude=24.1030) != cell_key(
+            longitude=82.6757 + CELL_DEGREES * 1.5, latitude=24.1030
+        )
 
     def test_cell_key_is_stable_across_the_negative_boundary(self) -> None:
         """floor, not int, so cells do not double in width at zero."""
-        assert cell_key(-0.001, 0.0) != cell_key(0.001, 0.0)
+        assert cell_key(longitude=-0.001, latitude=0.0) != cell_key(longitude=0.001, latitude=0.0)

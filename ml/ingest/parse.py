@@ -55,7 +55,7 @@ def _opt_float(row: dict[str, str], key: str) -> float | None:
     return float(raw)
 
 
-def in_india_bbox(latitude: float, longitude: float) -> bool:
+def in_india_bbox(*, latitude: float, longitude: float) -> bool:
     """Return whether a coordinate falls inside the project bounding box."""
     west, south, east, north = INDIA_BBOX
     return west <= longitude <= east and south <= latitude <= north
@@ -87,7 +87,7 @@ def parse_csv(text: str, source: str, restrict_to_bbox: bool = True) -> list[Det
             continue
         latitude = float(row["latitude"])
         longitude = float(row["longitude"])
-        if restrict_to_bbox and not in_india_bbox(latitude, longitude):
+        if restrict_to_bbox and not in_india_bbox(latitude=latitude, longitude=longitude):
             continue
 
         acq_utc = parse_acq_timestamp(row["acq_date"], row["acq_time"])
@@ -99,7 +99,13 @@ def parse_csv(text: str, source: str, restrict_to_bbox: bool = True) -> list[Det
 
         detections.append(
             Detection(
-                detection_id=detection_id(instrument, satellite, latitude, longitude, acq_utc),
+                detection_id=detection_id(
+                    instrument=instrument,
+                    satellite=satellite,
+                    latitude=latitude,
+                    longitude=longitude,
+                    acq_utc=acq_utc,
+                ),
                 source=source,
                 family=family,
                 instrument=instrument,

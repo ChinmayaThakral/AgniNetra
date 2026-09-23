@@ -61,6 +61,7 @@ def _equation_of_time_minutes(when_utc: datetime) -> float:
 
 
 def solar_zenith_angle_deg(
+    *,
     latitude: float | np.ndarray,
     longitude: float | np.ndarray,
     when_utc: datetime,

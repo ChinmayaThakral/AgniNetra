@@ -33,7 +33,7 @@ def _scale_factor() -> float:
 K0: Final[float] = _scale_factor()
 
 
-def forward(longitude, latitude):
+def forward(*, longitude, latitude):
     """Longitude and latitude in degrees to grid metres. Arrays or scalars."""
     lon = np.radians(np.asarray(longitude, dtype=float))
     lat = np.radians(np.asarray(latitude, dtype=float))
@@ -46,7 +46,7 @@ def forward(longitude, latitude):
     return x, SEMI_MAJOR * K0 * isometric
 
 
-def inverse(x, y, tolerance: float = 1e-12, max_iterations: int = 40):
+def inverse(*, x, y, tolerance: float = 1e-12, max_iterations: int = 40):
     """Grid metres to longitude and latitude in degrees.
 
     The latitude has no closed form on the ellipsoid and is solved by the standard

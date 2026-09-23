@@ -64,6 +64,7 @@ def _to_product(entry: dict) -> Product:
 
 
 def search_l2a(
+    *,
     longitude: float,
     latitude: float,
     start: datetime,

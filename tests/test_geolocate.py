@@ -18,7 +18,7 @@ UPPER_LEFT_XY = (-3473242.733735, 5401854.420193)
 
 
 def test_upper_left_corner_matches_the_product() -> None:
-    x, y = forward(UPPER_LEFT_LAT_LON[1], UPPER_LEFT_LAT_LON[0])
+    x, y = forward(longitude=UPPER_LEFT_LAT_LON[1], latitude=UPPER_LEFT_LAT_LON[0])
     assert float(x) == pytest.approx(UPPER_LEFT_XY[0], abs=1.0)
     assert float(y) == pytest.approx(UPPER_LEFT_XY[1], abs=1.0)
 
@@ -34,12 +34,12 @@ def test_a_spherical_mercator_would_not_pass() -> None:
 
 
 def test_origin_maps_to_zero_easting() -> None:
-    x, _ = forward(77.25, 0.0)
+    x, _ = forward(longitude=77.25, latitude=0.0)
     assert float(x) == pytest.approx(0.0, abs=1e-6)
 
 
 def test_equator_maps_to_zero_northing() -> None:
-    _, y = forward(77.25, 0.0)
+    _, y = forward(longitude=77.25, latitude=0.0)
     assert float(y) == pytest.approx(0.0, abs=1e-6)
 
 
@@ -48,7 +48,8 @@ def test_equator_maps_to_zero_northing() -> None:
     [(68.0, 6.5), (97.5, 37.5), (82.0, 24.0), (77.25, 17.75), (44.5, -10.0)],
 )
 def test_round_trip_is_exact(lon: float, lat: float) -> None:
-    back_lon, back_lat = inverse(*forward(lon, lat))
+    grid_x, grid_y = forward(longitude=lon, latitude=lat)
+    back_lon, back_lat = inverse(x=grid_x, y=grid_y)
     assert float(back_lon) == pytest.approx(lon, abs=1e-9)
     assert float(back_lat) == pytest.approx(lat, abs=1e-9)
 
@@ -71,6 +72,6 @@ def test_scale_factor_is_the_ellipsoidal_one() -> None:
 def test_arrays_are_supported() -> None:
     lons = np.array([70.0, 80.0, 90.0])
     lats = np.array([10.0, 20.0, 30.0])
-    x, y = forward(lons, lats)
+    x, y = forward(longitude=lons, latitude=lats)
     assert x.shape == lons.shape and y.shape == lats.shape
     assert np.all(np.diff(x) > 0) and np.all(np.diff(y) > 0)

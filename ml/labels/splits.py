@@ -101,7 +101,7 @@ EXTERNAL_EXTENTS: Final[dict[str, tuple[float, float, float, float]]] = {
 }
 
 
-def in_external_extent(longitude: float, latitude: float) -> str | None:
+def in_external_extent(*, longitude: float, latitude: float) -> str | None:
     """Return the external country a coordinate falls in, or None.
 
     Only meaningful for a detection that falls inside no Indian state polygon.

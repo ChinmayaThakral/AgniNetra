@@ -79,25 +79,45 @@ class TestConfidence:
 class TestIdentity:
     def test_same_instant_in_any_offset_gives_one_id(self) -> None:
         moment = datetime(2026, 1, 15, 20, 0, tzinfo=UTC)
-        assert detection_id("VIIRS", "N", 23.1, 80.2, moment) == detection_id(
-            "VIIRS", "N", 23.1, 80.2, moment.astimezone(IST)
+        assert detection_id(
+            instrument="VIIRS", satellite="N", latitude=23.1, longitude=80.2, acq_utc=moment
+        ) == detection_id(
+            instrument="VIIRS",
+            satellite="N",
+            latitude=23.1,
+            longitude=80.2,
+            acq_utc=moment.astimezone(IST),
         )
 
     def test_float_noise_below_product_precision_collapses(self) -> None:
         moment = datetime(2026, 1, 15, 20, 0, tzinfo=UTC)
-        assert detection_id("VIIRS", "N", 23.1, 80.2, moment) == detection_id(
-            "VIIRS", "N", 23.100000001, 80.199999999, moment
+        assert detection_id(
+            instrument="VIIRS", satellite="N", latitude=23.1, longitude=80.2, acq_utc=moment
+        ) == detection_id(
+            instrument="VIIRS",
+            satellite="N",
+            latitude=23.100000001,
+            longitude=80.199999999,
+            acq_utc=moment,
         )
 
     def test_distinct_locations_give_distinct_ids(self) -> None:
         moment = datetime(2026, 1, 15, 20, 0, tzinfo=UTC)
-        assert detection_id("VIIRS", "N", 23.1, 80.2, moment) != detection_id(
-            "VIIRS", "N", 23.2, 80.2, moment
+        assert detection_id(
+            instrument="VIIRS", satellite="N", latitude=23.1, longitude=80.2, acq_utc=moment
+        ) != detection_id(
+            instrument="VIIRS", satellite="N", latitude=23.2, longitude=80.2, acq_utc=moment
         )
 
     def test_naive_datetime_is_refused(self) -> None:
         with pytest.raises(ValueError, match="timezone aware"):
-            detection_id("VIIRS", "N", 23.1, 80.2, datetime(2026, 1, 15, 20, 0))
+            detection_id(
+                instrument="VIIRS",
+                satellite="N",
+                latitude=23.1,
+                longitude=80.2,
+                acq_utc=datetime(2026, 1, 15, 20, 0),
+            )
 
 
 class TestColumns:

@@ -26,21 +26,21 @@ def test_adding_it_as_a_state_group_is_refused() -> None:
 
 
 def test_lahore_falls_in_the_pakistan_extent() -> None:
-    assert in_external_extent(74.33, 31.55) == "Pakistan"
+    assert in_external_extent(longitude=74.33, latitude=31.55) == "Pakistan"
 
 
 def test_colombo_falls_in_the_sri_lanka_extent() -> None:
-    assert in_external_extent(79.86, 6.93) == "Sri Lanka"
+    assert in_external_extent(longitude=79.86, latitude=6.93) == "Sri Lanka"
 
 
 def test_a_point_in_no_extent_returns_none() -> None:
-    assert in_external_extent(88.36, 22.57) is None
+    assert in_external_extent(longitude=88.36, latitude=22.57) is None
 
 
 def test_the_extents_overlap_india_so_containment_alone_proves_nothing() -> None:
     """Amritsar is Indian and sits inside the Pakistan bounding rectangle. The
     external group is defined by having no Indian state, not by these extents."""
-    assert in_external_extent(74.87, 31.63) == "Pakistan"
+    assert in_external_extent(longitude=74.87, latitude=31.63) == "Pakistan"
     assert assign_fold("Punjab") == "group_a"
 
 

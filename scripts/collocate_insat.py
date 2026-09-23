@@ -24,7 +24,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ml.paths import ARTIFACT_DIR, DATA_DIR, ensure_dir
+from ml.paths import ARTIFACT_DIR, DATA_DIR, DUCKDB_PATH, ensure_dir
 
 EARTH_RADIUS_M = 6371008.8
 
@@ -48,13 +48,34 @@ def parse_args() -> argparse.Namespace:
 
 
 def _haversine_m(
-    lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
+    *, lat1: np.ndarray, lon1: np.ndarray, lat2: np.ndarray, lon2: np.ndarray
 ) -> np.ndarray:
     p1, p2 = np.radians(lat1), np.radians(lat2)
     dp = p2 - p1
     dl = np.radians(lon2 - lon1)
     a = np.sin(dp / 2.0) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2.0) ** 2
     return 2.0 * EARTH_RADIUS_M * np.arcsin(np.sqrt(np.clip(a, 0.0, 1.0)))
+
+
+def to_utc(moment: datetime) -> datetime:
+    """The same instant in UTC. Refuses a naive timestamp rather than guessing its zone.
+
+    DuckDB renders a TIMESTAMPTZ in the session zone, IST here. An earlier version
+    stripped the offset instead of converting, compared an IST wall clock with a UTC
+    one, and put every match five and a half hours out while still finding a granule
+    inside the time tolerance. A naive timestamp is exactly that ambiguity, so it is an
+    error here rather than an assumption.
+    """
+    if moment.tzinfo is None or moment.utcoffset() is None:
+        raise ValueError(f"naive timestamp {moment.isoformat()}, its zone is unknown")
+    return moment.astimezone(UTC)
+
+
+def nearest_granule(when: datetime, granule_times: np.ndarray, tolerance: timedelta) -> int:
+    """Index of the granule nearest in time, or -1 if none lies within tolerance."""
+    gaps = np.abs(granule_times - to_utc(when))
+    index = int(np.argmin(gaps))
+    return index if gaps[index] <= tolerance else -1
 
 
 def _load_insat(source: Path) -> list[tuple[datetime, np.ndarray, np.ndarray]]:
@@ -75,7 +96,11 @@ def main() -> int:
         print(f"BLOCKED: no reduced granules in {source}", file=sys.stderr)
         return 2
 
-    con = duckdb.connect(str(DATA_DIR / "agninetra.duckdb"), read_only=True)
+    con = duckdb.connect(str(DUCKDB_PATH), read_only=True)
+    # Deliberately not constrained to the analysis population. The May 2025 rows that
+    # ml/population.py excludes from every published result were pulled for exactly
+    # this comparison, corroborating the rabi INSAT window, so here they are the point
+    # rather than a contaminant. D114.
     rows = con.execute(
         """
         select latitude, longitude, acq_ts_utc, instrument
@@ -97,10 +122,10 @@ def main() -> int:
     # converting would compare an IST wall clock against the granule's UTC one and put
     # every match 5 hours 30 minutes out, which still finds a granule within the time
     # tolerance and quietly matches the wrong half of the day.
-    p_when = [r[2].astimezone(UTC) for r in rows]
+    p_when = [to_utc(r[2]) for r in rows]
     p_inst = np.array([r[3] for r in rows])
 
-    times = np.array([g[0].astimezone(UTC) for g in granules])
+    times = np.array([to_utc(g[0]) for g in granules])
     insat_total = sum(len(g[1]) for g in granules)
     print(f"INSAT granules {len(granules)}, detections {insat_total}")
     print(f"polar detections {len(rows)} over {args.start} to {args.end}")
@@ -108,12 +133,7 @@ def main() -> int:
 
     # Every polar detection that has a granule within the time tolerance. The rest are
     # unmatchable by construction, not unmatched, and are reported apart from the rate.
-    nearest = []
-    for when in p_when:
-        gaps = np.abs(times - when)
-        j = int(np.argmin(gaps))
-        nearest.append(j if gaps[j] <= TIME_TOLERANCE else -1)
-    nearest_arr = np.array(nearest)
+    nearest_arr = np.array([nearest_granule(when, times, TIME_TOLERANCE) for when in p_when])
     covered = nearest_arr >= 0
     print(f"polar detections with a granule within {TIME_TOLERANCE}: {int(covered.sum())}")
     print(f"outside any granule's time window: {int((~covered).sum())}")
@@ -131,7 +151,7 @@ def main() -> int:
             if g_lat.size == 0:
                 continue
             for k in idx:
-                d = _haversine_m(p_lat[k], p_lon[k], g_lat, g_lon)
+                d = _haversine_m(lat1=p_lat[k], lon1=p_lon[k], lat2=g_lat, lon2=g_lon)
                 if d.min() <= radius:
                     matched[k] = True
         n_cov = int(covered.sum())

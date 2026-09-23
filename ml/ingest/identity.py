@@ -25,6 +25,7 @@ def round_coord(value: float | str) -> str:
 
 
 def detection_id(
+    *,
     instrument: str,
     satellite: str,
     latitude: float | str,

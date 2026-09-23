@@ -38,7 +38,7 @@ class ChipError(RuntimeError):
     """Raised when a chip cannot be cut whole from the scene."""
 
 
-def pixel_of(dataset, longitude: float, latitude: float) -> tuple[int, int]:
+def pixel_of(dataset, *, longitude: float, latitude: float) -> tuple[int, int]:
     """Return the (row, col) of a geographic point in the dataset's own grid.
 
     The point is reprojected into the dataset CRS first. Sentinel-2 is delivered
@@ -67,7 +67,7 @@ def chip_window(row: int, col: int, size_px: int, height: int, width: int) -> Wi
     return Window(col_off, row_off, size_px, size_px)
 
 
-def read_chip(band_paths: dict[str, Path], longitude: float, latitude: float) -> np.ndarray:
+def read_chip(band_paths: dict[str, Path], *, longitude: float, latitude: float) -> np.ndarray:
     """Return one (12, 224, 224) float32 chip, bands in S2L2A_BANDS order.
 
     Every band is resampled to the 10 m grid by reading a window scaled to that
@@ -81,7 +81,7 @@ def read_chip(band_paths: dict[str, Path], longitude: float, latitude: float) ->
     stack = np.empty((len(S2L2A_BANDS), CHIP_PX, CHIP_PX), dtype=np.float32)
     for index, band in enumerate(S2L2A_BANDS):
         with rasterio.open(band_paths[band]) as dataset:
-            row, col = pixel_of(dataset, longitude, latitude)
+            row, col = pixel_of(dataset, longitude=longitude, latitude=latitude)
             metres = dataset.res[0]
             size_px = max(1, round(CHIP_PX * 10.0 / metres))
             window = chip_window(row, col, size_px, dataset.height, dataset.width)

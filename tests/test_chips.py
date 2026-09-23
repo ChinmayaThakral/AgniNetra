@@ -40,7 +40,7 @@ def _synthetic_utm_raster(path):
 def test_probe_point_lands_at_the_raster_centre(tmp_path):
     path = _synthetic_utm_raster(tmp_path / "synthetic.tif")
     with rasterio.open(path) as dataset:
-        row, col = pixel_of(dataset, SYNTHETIC_LON, SYNTHETIC_LAT)
+        row, col = pixel_of(dataset, longitude=SYNTHETIC_LON, latitude=SYNTHETIC_LAT)
     assert row == pytest.approx(500, abs=1)
     assert col == pytest.approx(500, abs=1)
 
@@ -50,7 +50,9 @@ def test_unreprojected_lookup_would_have_missed(tmp_path):
     path = _synthetic_utm_raster(tmp_path / "synthetic.tif")
     with rasterio.open(path) as dataset:
         naive_row, naive_col = dataset.index(SYNTHETIC_LON, SYNTHETIC_LAT)
-        correct_row, correct_col = pixel_of(dataset, SYNTHETIC_LON, SYNTHETIC_LAT)
+        correct_row, correct_col = pixel_of(
+            dataset, longitude=SYNTHETIC_LON, latitude=SYNTHETIC_LAT
+        )
     assert (naive_row, naive_col) != (correct_row, correct_col)
 
 

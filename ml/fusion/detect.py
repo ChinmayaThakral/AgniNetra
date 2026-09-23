@@ -148,7 +148,9 @@ def detect(
         mir=window.mir[rows, cols],
         diff=diff[rows, cols].astype(np.float32),
         solar_zenith=solar_zenith_angle_deg(
-            window.latitude[rows, cols], window.longitude[rows, cols], window.acquired_utc
+            latitude=window.latitude[rows, cols],
+            longitude=window.longitude[rows, cols],
+            when_utc=window.acquired_utc,
         ).astype(np.float32),
         valid_pixels=int(observed.sum()),
     )

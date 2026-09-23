@@ -12,6 +12,7 @@ sampling run pulls only the tiles its points actually fall in.
 """
 
 import os
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Final
 
@@ -39,7 +40,7 @@ CLASSES: Final[dict[int, str]] = {
 }
 
 
-def tile_name(latitude: float, longitude: float) -> str:
+def tile_name(*, latitude: float, longitude: float) -> str:
     """Return the WorldCover tile filename containing a coordinate."""
     lat_corner = (int(latitude) // TILE_DEGREES) * TILE_DEGREES
     lon_corner = (int(longitude) // TILE_DEGREES) * TILE_DEGREES
@@ -51,18 +52,46 @@ def tile_name(latitude: float, longitude: float) -> str:
     )
 
 
-def tile_url(latitude: float, longitude: float) -> str:
+def tile_url(*, latitude: float, longitude: float) -> str:
     """Return the download URL for the tile containing a coordinate."""
-    return f"{S3_BASE}/{tile_name(latitude, longitude)}"
+    return f"{S3_BASE}/{tile_name(latitude=latitude, longitude=longitude)}"
 
 
-def sample_tile(tile_path: Path, points: list[tuple[float, float]]) -> list[int | None]:
-    """Sample one tile at (longitude, latitude) points. Returns class codes.
+class AxisOrderError(ValueError):
+    """Every point handed to a tile fell outside it, which only a caller can cause."""
+
+
+def _points(
+    *, longitudes: Sequence[float], latitudes: Sequence[float]
+) -> list[tuple[float, float]]:
+    return list(zip(longitudes, latitudes, strict=True))
+
+
+def _refuse_if_all_outside(name: str, inside: list, points: list) -> None:
+    # Callers group points by tile before sampling, so a tile that contains none of
+    # its points has been handed the wrong coordinates. The usual cause is latitude
+    # and longitude swapped, which is how three None results were once read as a
+    # broken remote sampler rather than a wrong call. Returning all None hid it. D121.
+    if points and not inside:
+        raise AxisOrderError(
+            f"none of {len(points)} points fall inside {name}; check the axis order"
+        )
+
+
+def sample_tile(
+    tile_path: Path, *, longitudes: Sequence[float], latitudes: Sequence[float]
+) -> list[int | None]:
+    """Sample one tile at the given coordinates. Returns class codes.
+
+    Coordinates are two keyword only sequences named by axis rather than a list of
+    pairs, so a reversed call has to be written as `longitudes=lats` in plain sight.
 
     A point outside the tile, or landing on the raster nodata value, comes back as
     None rather than as a filled default, so an unsampled point stays
-    distinguishable from a measured class.
+    distinguishable from a measured class. Raises AxisOrderError when no point at
+    all falls inside the tile.
     """
+    points = _points(longitudes=longitudes, latitudes=latitudes)
     with rasterio.open(tile_path) as raster:
         left, bottom, right, top = raster.bounds
         results: list[int | None] = []
@@ -72,8 +101,7 @@ def sample_tile(tile_path: Path, points: list[tuple[float, float]]) -> list[int 
             if left <= point[0] <= right and bottom <= point[1] <= top
         ]
         results = [None] * len(points)
-        if not inside:
-            return results
+        _refuse_if_all_outside(tile_path.name, inside, points)
         sampled = raster.sample([point for _, point in inside])
         for (index, _), value in zip(inside, sampled, strict=True):
             code = int(value[0])
@@ -102,7 +130,9 @@ class TileNotAvailableError(RuntimeError):
     """
 
 
-def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int | None]:
+def sample_tile_remote(
+    name: str, *, longitudes: Sequence[float], latitudes: Sequence[float]
+) -> list[int | None]:
     """Sample one tile over the network, without downloading it.
 
     WorldCover tiles are cloud optimised GeoTIFFs with 1024 pixel blocks, so a
@@ -112,6 +142,7 @@ def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int
     against 44.8 seconds ordered, a factor of 6.2. Results are returned in the
     caller's original order. D20.
     """
+    points = _points(longitudes=longitudes, latitudes=latitudes)
     _configure_gdal_for_remote()
     url = f"/vsicurl/{S3_BASE}/{name}"
     results: list[int | None] = [None] * len(points)
@@ -128,8 +159,7 @@ def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int
             for index, point in enumerate(points)
             if left <= point[0] <= right and bottom <= point[1] <= top
         ]
-        if not inside:
-            return results
+        _refuse_if_all_outside(name, inside, points)
         located = [(raster.index(point[0], point[1]), index) for index, point in inside]
         located.sort(
             key=lambda item: (
@@ -146,12 +176,14 @@ def sample_tile_remote(name: str, points: list[tuple[float, float]]) -> list[int
 
 
 def group_by_tile(
-    points: list[tuple[float, float]],
+    *, longitudes: Sequence[float], latitudes: Sequence[float]
 ) -> dict[str, list[int]]:
     """Group point indexes by the WorldCover tile that contains them."""
     grouped: dict[str, list[int]] = {}
-    for index, (longitude, latitude) in enumerate(points):
-        grouped.setdefault(tile_name(latitude, longitude), []).append(index)
+    for index, (longitude, latitude) in enumerate(
+        _points(longitudes=longitudes, latitudes=latitudes)
+    ):
+        grouped.setdefault(tile_name(latitude=latitude, longitude=longitude), []).append(index)
     return grouped
 
 
