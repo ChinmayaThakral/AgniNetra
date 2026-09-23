@@ -508,7 +508,32 @@ def check_figure_freshness() -> list[tuple[str, str, str]]:
     return findings
 
 
-def main() -> int:
+# The unbacked claims are pinned as a set, not a count. A count can stay level while one
+# claim is fixed and a different one appears, which is exactly the swap a ratchet on a
+# number cannot see. Each pin is keyed on the document, the nearest heading above the
+# claim and the normalised value, so rewording a sentence does not unpin it and moving a
+# number to another section does. Every pin carries a category saying why it has no
+# source. The file lives beside the documents it describes, on this machine only. D122.
+BASELINE = ROOT / "docs" / "number_baseline.json"
+
+
+def nearest_heading(lines: list[str], line_number: int) -> str:
+    for line in reversed(lines[: line_number - 1]):
+        if line.startswith("#"):
+            return line.lstrip("#").strip()
+    return ""
+
+
+def pin_key(finding: Finding, lines: list[str]) -> str:
+    value = float(finding.token.replace(",", ""))
+    return f"{finding.document} | {nearest_heading(lines, finding.line_number)} | {value:g}"
+
+
+def load_baseline() -> dict[str, dict[str, str]]:
+    return json.loads(BASELINE.read_text()) if BASELINE.is_file() else {}
+
+
+def collect_findings() -> tuple[list[Finding], list[Derived], dict[str, list[str]]]:
     derived = derive_from_database() + derive_from_artifacts() + derive_from_generated_docs()
     print(
         f"derived {len(derived)} values: "
@@ -525,11 +550,13 @@ def main() -> int:
             percent_index.setdefault(form, []).append(candidate)
 
     findings: list[Finding] = []
+    texts: dict[str, list[str]] = {}
     for relative in documents():
         path = ROOT / relative
         text = path.read_text()
         cited = external_lines(text)
         all_lines = text.splitlines()
+        texts[relative] = all_lines
         for number, line in enumerate(all_lines, start=1):
             if SKIP_LINE.search(line):
                 continue
@@ -551,6 +578,30 @@ def main() -> int:
                     finding.category = "external"
                 finding.document, finding.line_number, finding.line = relative, number, line.strip()
                 findings.append(finding)
+    return findings, derived, texts
+
+
+def unpinned(findings: list[Finding], texts: dict[str, list[str]]) -> tuple[list, list]:
+    """Unbacked claims absent from the baseline, and baseline pins no longer present."""
+    baseline = load_baseline()
+    live = {pin_key(f, texts[f.document]): f for f in findings if f.category == "unbacked"}
+    new = [f for key, f in live.items() if key not in baseline]
+    gone = sorted(key for key in baseline if key not in live)
+    return new, gone
+
+
+def main() -> int:
+    findings, derived, texts = collect_findings()
+    if "--write-baseline" in sys.argv:
+        baseline = load_baseline()
+        fresh = {}
+        for f in findings:
+            if f.category != "unbacked":
+                continue
+            key = pin_key(f, texts[f.document])
+            fresh[key] = baseline.get(key, {"category": "untriaged", "reason": ""})
+        BASELINE.write_text(json.dumps(fresh, indent=2, sort_keys=True) + "\n")
+        print(f"baseline written: {len(fresh)} pins")
 
     counts = {name: 0 for name in ("reproduced", "external", "unbacked")}
     for finding in findings:
@@ -559,6 +610,13 @@ def main() -> int:
     print(f"\n{total} numeric claims examined")
     for name, count in counts.items():
         print(f"  {name:12s} {count:5d}  {count / total:.1%}" if total else f"  {name}: 0")
+
+    new, gone = unpinned(findings, texts)
+    print(f"  unbacked and not pinned: {len(new)}, pins no longer present: {len(gone)}")
+    for f in new:
+        print(f"    NEW: {f.document}:{f.line_number} {f.token}")
+    for key in gone:
+        print(f"    GONE: {key}")
 
     documents_stale = check_document_freshness()
     if documents_stale:
