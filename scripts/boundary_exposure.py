@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import duckdb
 
 from ml.documents import provenance_line
-from ml.labels.splits import HELD_OUT_GROUPS
+from ml.labels.splits import HELD_OUT_GROUPS, assign_fold
 from ml.labels.weak import weak_label_sql
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -41,14 +41,27 @@ def main() -> int:
         "INSERT INTO state_group VALUES (?, ?)",
         [(s, g) for g, states in HELD_OUT_GROUPS.items() for s in states],
     )
+    # Each state polygon is classified by the split's own definition. assign_fold
+    # returns None for a state in no held out group, which the split defines as
+    # always trained, so that is a classification rather than a default for missing
+    # data. Either name field may carry the state's name. D122.
+    polygons = con.execute(
+        "SELECT rowid, name_en, name FROM ref_osm_admin WHERE admin_level = '4'"
+    ).fetchall()
+    labels = []
+    for rowid, name_en, name in polygons:
+        fold = assign_fold(name_en) if name_en else None
+        if fold is None and name:
+            fold = assign_fold(name)
+        labels.append((rowid, "train" if fold is None else fold))
+    con.execute("CREATE TEMP TABLE polygon_group (rid BIGINT, grp VARCHAR)")
+    con.executemany("INSERT INTO polygon_group VALUES (?, ?)", labels)
     con.execute(
         f"""
         CREATE TEMP TABLE states AS
-        SELECT coalesce(sg.grp, 'train') AS grp,
+        SELECT pg.grp,
                ST_Transform(a.geom, 'EPSG:4326', '{PROJECTED}', always_xy := true) AS g
-        FROM ref_osm_admin a
-        LEFT JOIN state_group sg ON sg.state = coalesce(nullif(a.name_en, ''), a.name)
-        WHERE a.admin_level = '4'
+        FROM ref_osm_admin a JOIN polygon_group pg ON pg.rid = a.rowid
         """
     )
     con.execute(
