@@ -170,3 +170,69 @@ def test_the_checker_actually_passes_over_the_whole_repository() -> None:
         found, _suppressed = check_conventions.scan(relpath)
         offenders.extend(f"{relpath}: {item}" for item in found)
     assert not offenders, "convention violations in tracked files:\n" + "\n".join(offenders)
+
+
+# Prohibition 3. The rule was enabled after measuring zero violations, and a detector
+# that finds nothing is indistinguishable from a broken one, so these probes prove it
+# fires on each banner shape and stays quiet on the look-alikes it must not flag. D121.
+BANNER_SHAPES = (
+    "# " + "=" * 20,
+    "=" * 12,
+    "# " + "*" * 8,
+    "#" * 10,
+    "// " + "=" * 7,
+    "=" * 3 + " Setup " + "=" * 3,
+    "# " + "#" * 4 + " Results " + "#" * 4,
+)
+NOT_BANNERS = (
+    "# A heading",
+    "###### A level six heading",
+    "| a | b |",
+    "|---|---|",
+    "x = a == b",
+    'print("=" * 70)',
+    "def f(*args, **kwargs):",
+    "***",
+)
+
+
+@pytest.mark.parametrize("line", BANNER_SHAPES)
+def test_checker_flags_a_decorative_banner(line: str) -> None:
+    probe = ROOT / "_probe_banner.md"
+    try:
+        probe.write_text(line + "\n")
+        findings, _ = check_conventions.scan("_probe_banner.md")
+        assert any("decorative banner" in f for f in findings), line
+    finally:
+        probe.unlink(missing_ok=True)
+
+
+@pytest.mark.parametrize("line", NOT_BANNERS)
+def test_checker_ignores_banner_look_alikes(line: str) -> None:
+    probe = ROOT / "_probe_not_banner.py"
+    try:
+        probe.write_text(line + "\n")
+        findings, _ = check_conventions.scan("_probe_not_banner.py")
+        assert not any("decorative banner" in f for f in findings), line
+    finally:
+        probe.unlink(missing_ok=True)
+
+
+# Positive probes for the three checks that had none. Each marker is assembled from
+# pieces so this file does not trip the scan it is testing. D121.
+PROBES = (
+    ("emoji", "a fire " + chr(0x1F525) + " here", "emoji"),
+    ("filler", "this works " + "seam" + "lessly now", "banned filler phrase"),
+    ("attribution", "Co-" + "Authored-" + "By: someone", "attribution"),
+)
+
+
+@pytest.mark.parametrize(("kind", "line", "expected"), PROBES, ids=[p[0] for p in PROBES])
+def test_checker_flags_each_prohibited_kind(kind: str, line: str, expected: str) -> None:
+    probe = ROOT / f"_probe_{kind}.md"
+    try:
+        probe.write_text(line + "\n")
+        findings, _ = check_conventions.scan(f"_probe_{kind}.md")
+        assert any(expected in f for f in findings), (kind, findings)
+    finally:
+        probe.unlink(missing_ok=True)

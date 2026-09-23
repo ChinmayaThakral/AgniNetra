@@ -33,11 +33,22 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Final
 
 import duckdb
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from ml.documents import (
+    DIGEST_LABEL,
+    declared_generator,
+    generated_documents,
+    generator_digest,
+    is_generated,
+    provenance_line,
+    recorded_digest,
+)
+from ml.labels.weak import weak_label_sql
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT
 
 # Scope is a glob with an explicit exclude list, not an inclusion list. An inclusion
@@ -64,15 +75,8 @@ SCOPE_EXCLUDED: dict[str, str] = {
 }
 
 
-def is_generated(path: Path) -> bool:
-    """True when a script wrote this document, declared in its own header.
-
-    This is the type test that keeps the two tiers apart. It reads the header rather
-    than the body because a prose document quoting a regenerate command is still prose:
-    testing the whole text admitted the audit reports and paper_outline.md as evidence,
-    and they quote the very numbers they discuss, so claims began backing themselves.
-    """
-    return "Regenerate:" in "\n".join(path.read_text().splitlines()[:10])
+# The type test that keeps the two tiers apart lives in ml/documents.py, because
+# three separate checks need it and each local copy is a place it can drift. D112.
 
 
 def all_documents() -> list[Path]:
@@ -106,9 +110,13 @@ SKIP_LINE = re.compile(
 )
 # A bare year, or a fragment left behind by splitting a timestamp, is not a claim.
 NOT_A_CLAIM = re.compile(r"^(19|20)\d\d$|^\d{2}$")
+# A DOI, a PMC identifier, a volume or a page range is an address, not a measurement.
+# The report's literature chapter is dense with them and every one read as an unbacked
+# claim, which is noise that hides real findings in the same table.
 SKIP_CONTEXT = re.compile(
     r"\bD\d+\b|\b20\d\d-\d\d-\d\d\b|\bsection \d+\b|\bfigure \d+\b|\bphase \d+\b"
-    r"|\bgroup_[a-d]\b(?![^|]*\d\.\d)|EPSG|T4[45]|S2[ABC]_|MSIL2A",
+    r"|\bgroup_[a-d]\b(?![^|]*\d\.\d)|EPSG|T4[45]|S2[ABC]_|MSIL2A"
+    r"|\bdoi:|\bdoi\.org|\bPMC\d+|\barXiv:",
     re.IGNORECASE,
 )
 NUMBER = re.compile(r"(?<![\w.])(\d{1,3}(?:,\d{3})+|\d+\.\d+|\d+)(?![\w])")
@@ -134,17 +142,119 @@ class Finding:
     candidates: list[str] = field(default_factory=list)
 
 
-def renderings(value: float) -> set[str]:
-    """Every string form a published document plausibly uses for one value."""
+# A rendering may round a value but it may not round the value away. An earlier
+# version emitted every form at zero through four decimal places and again at a
+# hundred times scale, so a single stored 0.0066 claimed to back the tokens 0, 0.0,
+# 0.007, 0.01, 0.66, 0.660, 0.6600, 0.7 and 1. Across 4219 derived values that
+# indexed 16758 tokens, of which 1 was backed by 653 different values and 0 by 476.
+# Proximity was refused in classify and readmitted through rounding. D101.
+RENDER_TOLERANCE: Final[float] = 0.005
+
+
+def _forms(value: float, scale: float) -> set[str]:
+    """String forms of value times scale that keep the value's significant figures."""
+    scaled = value * scale
     forms: set[str] = set()
-    if value == int(value) and abs(value) < 1e12:
-        whole = int(value)
+    if scaled == int(scaled) and abs(scaled) < 1e12:
+        whole = int(scaled)
         forms.add(str(whole))
         forms.add(f"{whole:,}")
-    for places in (0, 1, 2, 3, 4):
-        forms.add(f"{value:.{places}f}")
-        forms.add(f"{value * 100:.{places}f}")
+    # The range extends past four places for small magnitudes. A fixed 0 to 4 cannot
+    # represent 0.000669 at its own precision at all, so a standard deviation that size
+    # read as unbacked no matter how it was written. The tolerance gate below still
+    # decides which of these survive, so widening the range cannot loosen matching.
+    limit = 4
+    if scaled != 0:
+        import math
+
+        limit = max(4, min(10, int(-math.floor(math.log10(abs(scaled)))) + 4))
+    for places in range(limit + 1):
+        text = f"{scaled:.{places}f}"
+        shown = float(text)
+        if scaled == 0:
+            if shown == 0:
+                forms.add(text)
+            continue
+        if abs(shown - scaled) / abs(scaled) <= RENDER_TOLERANCE:
+            forms.add(text)
     return {f for f in forms if f}
+
+
+def renderings(value: float) -> set[str]:
+    """Forms a document uses when it states the value as it is."""
+    return _forms(value, 1.0)
+
+
+def percent_renderings(value: float) -> set[str]:
+    """Forms a document uses when it states the value as a percentage.
+
+    Applied only where the claim is actually marked as a percentage. Applying the
+    hundred times rescale everywhere is what let a share of 0.0066 back a claim of
+    0.66 about something unrelated.
+    """
+    return _forms(value, 100.0)
+
+
+def in_percent_context(line: str, token: str, following: str = "") -> bool:
+    """Whether this token is written as a percentage.
+
+    The next line is appended before searching because prose wraps. A paragraph
+    reading "rose from 6.52 to 9.69" then "percent." on the next line left 9.69
+    outside percent context and therefore unbacked, while the identical claim
+    unwrapped was backed. Only a token at the very end of a line can reach into the
+    following one, because the window is measured from the token.
+    """
+    probe = line if not following else f"{line} {following.lstrip()}"
+    for match in re.finditer(re.escape(token), probe):
+        tail = probe[match.end() : match.end() + 10].lstrip()
+        if tail.startswith("%") or tail.lower().startswith("percent"):
+            return True
+    return False
+
+
+# An external category exists so that "unbacked" can mean one thing: this project
+# asserted a number it cannot reproduce, which is a defect. A figure quoted from
+# somebody else's paper is not that, and mixing the two means the headline can never
+# reach zero, at which point a ratchet with permanent residents stops being watched.
+#
+# External status is earned, not fallen into. A paragraph qualifies only if it carries
+# BOTH a resolvable citation and a recorded read depth. Without both requirements the
+# category is an escape hatch and every awkward number migrates into it.
+EXTERNAL_CITATION = re.compile(r"\bdoi:|\bdoi\.org/|\bPMC\d{4,}|\barXiv:", re.IGNORECASE)
+READ_DEPTH = re.compile(
+    r"read at full text|read depth:|\bunverified\b|abstract only|metadata only"
+    r"|read in full",
+    re.IGNORECASE,
+)
+
+
+def external_lines(text: str) -> set[int]:
+    """Line numbers sitting in a paragraph that cites a source and states a read depth.
+
+    Paragraph scoped rather than line scoped because a citation and the figures it
+    supports are routinely on different lines of the same wrapped paragraph.
+    """
+    qualifying: set[int] = set()
+    start = 1
+    buffer: list[str] = []
+
+    def flush(first: int, lines: list[str]) -> None:
+        if not lines:
+            return
+        joined = "\n".join(lines)
+        if EXTERNAL_CITATION.search(joined) and READ_DEPTH.search(joined):
+            qualifying.update(range(first, first + len(lines)))
+
+    for number, line in enumerate(text.splitlines(), start=1):
+        if line.strip():
+            if not buffer:
+                start = number
+            buffer.append(line)
+        else:
+            flush(start, buffer)
+            buffer = []
+    flush(start, buffer)
+    return qualifying
 
 
 def derive_from_artifacts() -> list[Derived]:
@@ -175,7 +285,9 @@ def derive_from_generated_docs() -> list[Derived]:
     """
     values: list[Derived] = []
     for path in evidence_documents():
-        text = path.read_text()
+        # The digest line is an identifier. Its hex could contain a run of digits, and
+        # an identifier must never be able to back a claim. D121.
+        text = "\n".join(line for line in path.read_text().splitlines() if DIGEST_LABEL not in line)
         for token in NUMBER.findall(text):
             try:
                 values.append(
@@ -198,9 +310,14 @@ def derive_from_database() -> list[Derived]:
         "detections.no_state": (
             "SELECT count(*) FROM a.detection_context WHERE state_name IS NULL"
         ),
+        # The label of record, not the stored column, which predates the withdrawal of
+        # the wildfire class and carries no GEM term. This is the strongest provenance
+        # tier the tracer has, so reading the stale column here would have certified
+        # stale class counts at the highest confidence it gives. D121.
         "detections.trained_class_rows": (
-            "SELECT count(*) FROM a.detection_context "
-            "WHERE weak_label IN ('flare','industrial','agricultural')"
+            "SELECT count(*) FROM a.detection_context c "
+            "LEFT JOIN a.detection_gem g USING (detection_id) "
+            f"WHERE {weak_label_sql('c', 'g')} IN ('flare','industrial','agricultural')"
         ),
         "reference.osm_industrial": "SELECT count(*) FROM a.ref_osm_industrial",
         "reference.osm_admin": "SELECT count(*) FROM a.ref_osm_admin",
@@ -218,14 +335,20 @@ def derive_from_database() -> list[Derived]:
             values.append(Derived(float(result[0]), label, "live query"))
 
     per_class = connection.execute(
-        "SELECT weak_label, count(*) FROM a.detection_context GROUP BY 1"
+        f"SELECT {weak_label_sql('c', 'g')} AS label, count(*) "
+        "FROM a.detection_context c LEFT JOIN a.detection_gem g USING (detection_id) "
+        "GROUP BY 1"
     ).fetchall()
     for name, count in per_class:
         values.append(Derived(float(count), f"detections.class.{name}", "live query"))
     return values
 
 
-def classify(token: str, index: dict[str, list[Derived]]) -> Finding:
+def classify(
+    token: str,
+    index: dict[str, list[Derived]],
+    percent_index: dict[str, list[Derived]] | None = None,
+) -> Finding:
     """Reproduced at the strongest available provenance, or unbacked.
 
     There is deliberately no numeric proximity heuristic. An earlier version
@@ -235,7 +358,9 @@ def classify(token: str, index: dict[str, list[Derived]]) -> Finding:
     between the claim and the source is not evidence of anything. Real staleness is
     caught by REGISTRY below, which compares named claims against named sources.
     """
-    hits = index.get(token)
+    hits = list(index.get(token) or [])
+    if percent_index is not None:
+        hits += percent_index.get(token) or []
     if not hits:
         return Finding("", 0, token, "", "unbacked")
     rank = {"live query": 0, "stored artifact": 1, "generated document": 2}
@@ -297,15 +422,59 @@ def check_registry() -> list[tuple[str, str, float, float, bool]]:
 # cannot read the picture, but it can insist the picture is not older than what it
 # depicts.
 FIGURE_SOURCES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("architecture.png", ("architecture.json",)),
     ("b1_pr_confusion.png", ("b1_results.json", "b1_confusion_group_a.npy")),
     ("conformal_aoa.png", ("conformal_aoa_b2.json",)),
     ("console_country.png", ("persistent_sources.json", "b1_results.json")),
     ("console_jharkhand.png", ("persistent_sources.json", "b1_results.json")),
-    ("diurnal_comparison.png", ()),
-    ("lift_by_window.png", ()),
+    ("diurnal_comparison.png", ("seasonal_diurnal.json",)),
+    ("lift_by_window.png", ("lift_with_gem.json",)),
     ("m1_intensity_signatures.png", ()),
     ("osm_coverage_density.png", ()),
 )
+
+
+def check_document_freshness() -> list[tuple[str, str]]:
+    """Generated documents that no longer describe what regenerating them would say.
+
+    Two ways, reported separately. The code that produced a document can have changed,
+    which is caught exactly: each generator records a digest of its own code and every
+    repository module it imports, and a mismatch means rerunning it would run different
+    code. That is how m1_prototype.md went stale unnoticed, D117. Or the data can have
+    changed since, caught conservatively by the last ingest date: fifteen documents were
+    found predating an ingest, though six of nine regenerated byte identical once the
+    analysis population was pinned, so an ingest flag is a reason to look rather than
+    proof of a change. D113, D114, D121.
+
+    Reported rather than failed, because a stale document is a queue item, not a broken
+    build.
+    """
+    stale: list[tuple[str, str]] = []
+    cutoff = None
+    try:
+        con = duckdb.connect(str(DUCKDB_PATH), read_only=True)
+        last = con.execute("SELECT max(started_at) FROM ingest_runs").fetchone()[0]
+        if last is not None and hasattr(last, "timestamp"):
+            cutoff = (last.timestamp(), str(last)[:19])
+    except (duckdb.Error, TypeError, AttributeError):
+        cutoff = None
+    for path in generated_documents("docs"):
+        if path == OUTPUT:
+            # This run rewrites its own report after checking, so the previous copy is
+            # always about to be replaced and flagging it would be noise.
+            continue
+        name = path.relative_to(ROOT).as_posix()
+        generator = declared_generator(path)
+        recorded = recorded_digest(path)
+        if generator is None or not generator.is_file():
+            stale.append((name, "names no generator script that exists"))
+        elif recorded is None:
+            stale.append((name, "records no generator digest"))
+        elif recorded != (current := generator_digest(generator)):
+            stale.append((name, f"code changed, recorded {recorded} against {current}"))
+        if cutoff and path.stat().st_mtime < cutoff[0]:
+            stale.append((name, f"predates the last ingest at {cutoff[1]}"))
+    return stale
 
 
 def check_figure_freshness() -> list[tuple[str, str, str]]:
@@ -348,14 +517,20 @@ def main() -> int:
     )
 
     index: dict[str, list[Derived]] = {}
+    percent_index: dict[str, list[Derived]] = {}
     for candidate in derived:
         for form in renderings(candidate.value):
             index.setdefault(form, []).append(candidate)
+        for form in percent_renderings(candidate.value):
+            percent_index.setdefault(form, []).append(candidate)
 
     findings: list[Finding] = []
     for relative in documents():
         path = ROOT / relative
-        for number, line in enumerate(path.read_text().splitlines(), start=1):
+        text = path.read_text()
+        cited = external_lines(text)
+        all_lines = text.splitlines()
+        for number, line in enumerate(all_lines, start=1):
             if SKIP_LINE.search(line):
                 continue
             for token in NUMBER.findall(line):
@@ -363,17 +538,35 @@ def main() -> int:
                     continue
                 if len(token.replace(",", "")) < 2 or NOT_A_CLAIM.match(token):
                     continue
-                finding = classify(token, index)
+                finding = classify(
+                    token,
+                    index,
+                    percent_index
+                    if in_percent_context(
+                        line, token, all_lines[number] if number < len(all_lines) else ""
+                    )
+                    else None,
+                )
+                if finding.category == "unbacked" and number in cited:
+                    finding.category = "external"
                 finding.document, finding.line_number, finding.line = relative, number, line.strip()
                 findings.append(finding)
 
-    counts = {name: 0 for name in ("reproduced", "unbacked")}
+    counts = {name: 0 for name in ("reproduced", "external", "unbacked")}
     for finding in findings:
         counts[finding.category] += 1
     total = len(findings)
     print(f"\n{total} numeric claims examined")
     for name, count in counts.items():
         print(f"  {name:12s} {count:5d}  {count / total:.1%}" if total else f"  {name}: 0")
+
+    documents_stale = check_document_freshness()
+    if documents_stale:
+        print(f"\ngenerated documents that are stale: {len(documents_stale)}")
+        for name, reason in documents_stale:
+            print(f"  STALE: {name}, {reason}")
+    else:
+        print("\ngenerated documents: all match their generator code and postdate the ingest")
 
     figures = check_figure_freshness()
     stale = [f for f in figures if f[1] == "STALE"]
@@ -398,6 +591,7 @@ def render(
         "# Can every published number be re-derived?",
         "",
         f"Regenerate: `uv run python {Path('scripts/verify_published_numbers.py')}`",
+        provenance_line(__file__),
         "",
         "The suite pins that a claim points at a command. It does not pin that the",
         "command still produces the claim. This checks the second thing.",
@@ -408,7 +602,7 @@ def render(
         "| Category | Count | Share |",
         "|---|---|---|",
     ]
-    for name in ("reproduced", "unbacked"):
+    for name in ("reproduced", "external", "unbacked"):
         share = f"{counts[name] / total:.1%}" if total else "n/a"
         lines.append(f"| {name} | {counts[name]} | {share} |")
     lines += [
@@ -457,9 +651,36 @@ def render(
         "registered artifact is drawn from the database, and a checker that called that",
         "a pass would be the same defect one level up.",
         "",
+        "## External, quoted from cited sources",
+        "",
+        "Figures from other people's papers. These are not defects and they are not",
+        "this project's to reproduce. Their correct backing is a citation with a stated",
+        "read depth, which is what puts them here: a claim reaches this category only if",
+        "its paragraph carries both a resolvable citation and a recorded read depth.",
+        "Requiring both is what stops the category becoming an escape hatch for awkward",
+        "numbers.",
+        "",
+        "They were counted as unbacked until 2026-09-20. At the changeover the headline",
+        "moved from 76 unbacked of 527 to 71 unbacked and 5 external, with the reproduced",
+        "count unchanged at 451. Both figures are recorded because relocating a number",
+        "without saying so is the failure this report exists to catch.",
+        "",
+        "| Document | Line | Token | Claim |",
+        "|---|---|---|---|",
+    ]
+    for finding in findings:
+        if finding.category != "external":
+            continue
+        excerpt = finding.line[:90].replace("|", "\\|")
+        lines.append(
+            f"| {finding.document} | {finding.line_number} | {finding.token} | {excerpt} |"
+        )
+    lines += [
+        "",
         "## Unbacked",
         "",
-        "No derived value corresponds to these. Some are prose quantities that are",
+        "This project asserted these numbers and cannot re-derive them. Some are prose",
+        "quantities that are",
         "legitimately not artifact backed, such as a count of columns or a threshold",
         "chosen by decision. The list is reported in full rather than filtered, because",
         "deciding which are legitimate is the review, and a filter would hide the ones",
@@ -474,6 +695,25 @@ def render(
         excerpt = finding.line[:90].replace("|", "\\|")
         lines.append(
             f"| {finding.document} | {finding.line_number} | {finding.token} | {excerpt} |"
+        )
+    lines += [
+        "",
+        "## Reproduced, and by what",
+        "",
+        "A verdict that does not say what it matched cannot be audited. The spurious",
+        "backing found in D101 was invisible for exactly that reason: the report said",
+        "reproduced and stopped, when printing the source would have shown a burstiness",
+        "separation being backed by an hourly detection share. Every reproduction is",
+        "listed with the value that backs it, so a wrong match is visible on reading.",
+        "",
+        "| Document | Line | Token | Backed by |",
+        "|---|---|---|---|",
+    ]
+    for finding in findings:
+        if finding.category != "reproduced":
+            continue
+        lines.append(
+            f"| {finding.document} | {finding.line_number} | {finding.token} | {finding.matched} |"
         )
     lines.append("")
     return "\n".join(lines)

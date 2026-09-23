@@ -21,6 +21,7 @@ import importlib.util
 import re
 import sys
 
+from ml.documents import is_generated
 from ml.tracked import ROOT
 
 _spec = importlib.util.spec_from_file_location(
@@ -101,8 +102,7 @@ def test_audit_reports_are_never_evidence() -> None:
 
 def test_every_prose_document_is_actually_prose() -> None:
     for relative in tracer.documents():
-        header = "\n".join((ROOT / relative).read_text().splitlines()[:10])
-        assert "Regenerate:" not in header, (
+        assert not is_generated(ROOT / relative), (
             f"{relative} declares a regenerate command but is being checked as a claim. "
             "A generated document is evidence; checking it asserts nothing."
         )

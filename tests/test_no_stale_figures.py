@@ -15,6 +15,7 @@ import re
 
 import pytest
 
+from ml.documents import prose_documents
 from ml.paths import ROOT
 
 # value, the wording that would make it a current claim
@@ -88,12 +89,13 @@ EXEMPT = {
     "docs/audit/audit-secrets.md",
 }
 
-SCANNED = sorted(
-    path
-    for pattern in ("docs/**/*.md", "context/**/*.md", "apps/console/**/*.md")
-    for path in ROOT.glob(pattern)
-    if "node_modules" not in str(path)
-)
+# Generated documents are excluded because they quote prose they did not author.
+# A stale count echoed into the tracer's report is the same defect already reported
+# against its source document, attributed to the wrong file, and it would keep
+# failing until the generated document was rebuilt. The source document is scanned,
+# so nothing is lost. Declaration based rather than a path list, so the next
+# generated document is covered without anyone remembering to add it. D112.
+SCANNED = prose_documents("docs", "context", "apps/console")
 
 
 @pytest.mark.parametrize("path", SCANNED, ids=lambda p: str(p.relative_to(ROOT)))

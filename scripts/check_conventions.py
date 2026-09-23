@@ -14,6 +14,7 @@ The banned characters are held as codepoint integers rather than literals so thi
 file does not match its own scan.
 """
 
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -81,6 +82,16 @@ CALL_EXEMPT: frozenset[str] = frozenset(
 # The call check applies to code, not prose. A decision entry describing the trap
 # must be able to name the function it is about.
 CODE_SUFFIXES: frozenset[str] = frozenset({".py", ".ts", ".tsx", ".sql"})
+
+# Prohibition 3, decorative banners made of equals signs, hashes or asterisks. Two
+# shapes: a line that is nothing but a run of one banner character, and a title held
+# between two such runs. Comment markers are stripped first so a commented banner is
+# caught in code as well as in prose. A markdown heading is a run of at most six hashes
+# followed by text and is not matched, because the full line shape needs five or more
+# of one character and nothing else, and the titled shape needs a closing run as well.
+# Measured before being enabled: zero violations across every tracked file. D121.
+BANNER_FULL = re.compile(r"^\s*(?:#|//|/\*|\*|<!--|-->)?\s*([=#*])\1{4,}\s*(?:\*/|-->)?\s*$")
+BANNER_TITLED = re.compile(r"^\s*(?:#|//|<!--)?\s*([=#*])\1{2,}\s+\S.*\S\s+\1{3,}\s*(?:-->)?\s*$")
 
 # Attribution footers and co-author trailers. Authorship is the bracketed name
 # on each commit subject, so neither belongs in a tracked file.
@@ -162,6 +173,8 @@ def scan(relpath: str) -> tuple[list[str], int]:
         for phrase in FILLER_PHRASES:
             if phrase in lowered:
                 findings.append(f"{relpath}:{lineno}: banned filler phrase '{phrase}'")
+        if BANNER_FULL.match(line) or BANNER_TITLED.match(line):
+            findings.append(f"{relpath}:{lineno}: decorative banner, prohibition 3")
         for marker in ATTRIBUTION_MARKERS:
             if marker in lowered:
                 findings.append(f"{relpath}:{lineno}: attribution '{marker}'")
