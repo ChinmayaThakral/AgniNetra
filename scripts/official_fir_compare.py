@@ -45,6 +45,12 @@ from ml.paths import ARTIFACT_DIR, DATA_DIR, ENV_PATH, ROOT, ensure_dir
 DATASET = "3SIMG_L2P_FIR"
 DAYS = ("2024-11-01", "2024-11-02", "2024-11-03")
 OFFICIAL_DIR = DATA_DIR / "raw" / "insat_fir"
+# The same product on the same calendar days a year later. The 2024 window found the
+# product nearly empty over India in the evening; a control is what separates "the
+# product misses the evening" from "the 2024 archive is sparse". This detector has not
+# been run on 2025, so the control is official only.
+CONTROL_DAYS = ("2025-11-01", "2025-11-02", "2025-11-03")
+CONTROL_DIR = DATA_DIR / "raw" / "insat_fir_2025"
 OURS_DIR = DATA_DIR / "derived" / "insat"
 ARTIFACT = ARTIFACT_DIR / "official_fir_comparison.json"
 DOC = ROOT / "docs" / "official_fir_comparison.md"
@@ -110,20 +116,44 @@ def matched(
 def fetch() -> int:
     load_dotenv(ENV_PATH)
     tokens = TokenSource(os.environ.get("MOSDAC_USERNAME"), os.environ.get("MOSDAC_PASSWORD"))
-    granules = {}
-    for day in DAYS:
-        for granule in search(DATASET, day, day):
-            granules[granule.identifier] = granule.granule_id
-    wanted = sorted(name for name in granules if slot_of(name).strftime("%Y-%m-%d") in DAYS)
-    fetched = 0
-    for name in wanted:
-        destination = OFFICIAL_DIR / name
-        if destination.exists():
-            continue
-        download(granules[name], tokens, destination)
-        fetched += 1
-    print(f"{len(wanted)} granules in the window, {fetched} fetched this run")
+    for days, directory in ((DAYS, OFFICIAL_DIR), (CONTROL_DAYS, CONTROL_DIR)):
+        granules = {}
+        for day in days:
+            for granule in search(DATASET, day, day):
+                granules[granule.identifier] = granule.granule_id
+        wanted = sorted(name for name in granules if slot_of(name).strftime("%Y-%m-%d") in days)
+        fetched = 0
+        for name in wanted:
+            destination = directory / name
+            if destination.exists():
+                continue
+            download(granules[name], tokens, destination)
+            fetched += 1
+        print(f"{days[0]}: {len(wanted)} granules in the window, {fetched} fetched this run")
     return 0
+
+
+def official_by_hour(directory: Path) -> dict:
+    """Official detections per IST hour, inside India and inside the box, all files."""
+    files: Counter = Counter()
+    india: Counter = Counter()
+    box: Counter = Counter()
+    for path in sorted(directory.glob("*.kml")):
+        hour = (slot_of(path.name) + IST).hour
+        longitudes, latitudes = parse_kml(path.read_text(errors="replace"))
+        files[hour] += 1
+        india[hour] += int(
+            inside(longitudes=longitudes, latitudes=latitudes, box=india_box()).sum()
+        )
+        box[hour] += int(inside(longitudes=longitudes, latitudes=latitudes, box=BOX).sum())
+    return {
+        "files": sum(files.values()),
+        "india": sum(india.values()),
+        "box": sum(box.values()),
+        "box_evening": sum(box[h] for h in EVENING_HOURS_IST),
+        "india_by_hour_ist": {str(h): india[h] for h in range(24)},
+        "box_by_hour_ist": {str(h): box[h] for h in range(24)},
+    }
 
 
 def load_ours() -> dict[datetime, tuple[np.ndarray, np.ndarray]]:
@@ -206,6 +236,10 @@ def main() -> int:
         "evening_hours_ist": list(EVENING_HOURS_IST),
         "evening_totals": dict(evening),
         "by_hour_ist": {str(h): dict(c) for h, c in by_hour.items()},
+        "official_only": {
+            DAYS[0][:4]: official_by_hour(OFFICIAL_DIR),
+            CONTROL_DAYS[0][:4]: official_by_hour(CONTROL_DIR) if CONTROL_DIR.is_dir() else None,
+        },
     }
     ARTIFACT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
@@ -249,6 +283,27 @@ def main() -> int:
             f"| {hour:02d} | {c['official']} | {c['ours']} | {c['official_matched']} | "
             f"{c['ours_matched']} | {c['official_in_box']} | {c['ours_in_box']} |"
         )
+    control = payload["official_only"][CONTROL_DAYS[0][:4]]
+    reference = payload["official_only"][DAYS[0][:4]]
+    lines += [
+        "",
+        "## The same product a year later",
+        "",
+        "Official detections only, every file in each window, 1 to 3 November.",
+        "",
+        "| Quantity | 2024 | 2025 |",
+        "|---|---|---|",
+    ]
+    if control is None:
+        lines.append("| control window | fetched | not measured |")
+    else:
+        for key, label in (
+            ("files", "files"),
+            ("india", "detections inside the India box"),
+            ("box", "detections inside the Punjab and Haryana box"),
+            ("box_evening", "inside the box in hours 15 to 17 IST"),
+        ):
+            lines.append(f"| {label} | {reference[key]} | {control[key]} |")
     lines.append("")
     ensure_dir(DOC.parent)
     DOC.write_text("\n".join(lines))
