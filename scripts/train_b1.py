@@ -38,7 +38,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
 from ml.features.matrix import EXTERNAL_SQL, FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import HELD_OUT_GROUPS, split_for, validate_groups
+from ml.labels.splits import HELD_OUT_GROUPS, test_rows, training_rows, validate_groups
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -93,9 +93,8 @@ def main() -> int:
 
     # Leakage demonstration. Fitted, reported, and never used as a baseline.
     leak_columns = [*columns, "flare_m", "industrial_m", "gem_m_temporal", "landcover_code"]
-    _, test_states = split_for("group_a")
-    leak_train = trained[~trained["state_name"].isin(test_states)]
-    leak_test = trained[trained["state_name"].isin(test_states)]
+    leak_train = training_rows(trained, "group_a")
+    leak_test = test_rows(trained, "group_a")
     leak_model = fit(leak_train, leak_columns)
     leak_report = evaluate(leak_model, leak_test, leak_columns)
     clean_model = fit(leak_train, columns)
@@ -107,9 +106,8 @@ def main() -> int:
     results: dict[str, dict] = {}
     print("\n=== option A, no class weighting, per group ===", flush=True)
     for group in HELD_OUT_GROUPS:
-        _, test_states = split_for(group)
-        train = trained[~trained["state_name"].isin(test_states)]
-        test = trained[trained["state_name"].isin(test_states)]
+        train = training_rows(trained, group)
+        test = test_rows(trained, group)
         model = fit(train, columns)
         report = evaluate(model, test, columns)
         results[group] = report
@@ -147,9 +145,8 @@ def main() -> int:
     print("\n=== option C ablation, majority capped ===", flush=True)
     capped_results: dict[str, float] = {}
     for group in HELD_OUT_GROUPS:
-        _, test_states = split_for(group)
-        train = trained[~trained["state_name"].isin(test_states)]
-        test = trained[trained["state_name"].isin(test_states)]
+        train = training_rows(trained, group)
+        test = test_rows(trained, group)
         minority_n = len(train[train["weak_label"] != "agricultural"])
         target = int(MAJORITY_CAP / (1 - MAJORITY_CAP) * minority_n)
         majority = train[train["weak_label"] == "agricultural"]

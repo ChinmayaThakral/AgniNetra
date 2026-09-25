@@ -8,74 +8,74 @@
   "agricultural"
  ],
  "wildfire": "not measured. No weak label rule produces it; the baselines structurally cannot recover it. D33",
- "leakageMacroF1": 0.9995553971098422,
- "cleanMacroF1": 0.6609146164222457,
+ "leakageMacroF1": 0.9995125759399258,
+ "cleanMacroF1": 0.6585303064181222,
  "perGroup": {
   "group_a": {
-   "macroF1": 0.6609146164222457,
+   "macroF1": 0.6585303064181222,
    "classes": {
     "flare": {
-     "precision": 0.12244897959183673,
-     "recall": 0.17073170731707318,
-     "f1": 0.14261460101867574,
+     "precision": 0.12681159420289856,
+     "recall": 0.14227642276422764,
+     "f1": 0.13409961685823754,
      "support": 246
     },
     "industrial": {
-     "precision": 0.9388720850814714,
-     "recall": 0.8048260287721646,
-     "f1": 0.8666966899346994,
+     "precision": 0.9373302289483896,
+     "recall": 0.8081298093007695,
+     "f1": 0.8679482572763205,
      "support": 23912
     },
     "agricultural": {
-     "precision": 0.9585786839393493,
-     "recall": 0.9887540215049682,
-     "f1": 0.9734325583133622,
+     "precision": 0.9589090273111371,
+     "recall": 0.9886306479012252,
+     "f1": 0.9735430451198086,
      "support": 105371
     }
    }
   },
   "group_b": {
-   "macroF1": 0.6118921945565972,
+   "macroF1": 0.608414008314288,
    "classes": {
     "flare": {
-     "precision": 0.4567901234567901,
-     "recall": 0.03500473036896878,
-     "f1": 0.06502636203866433,
+     "precision": 0.34574468085106386,
+     "recall": 0.03074739829706717,
+     "f1": 0.05647263249348393,
      "support": 2114
     },
     "industrial": {
-     "precision": 0.7811582790464601,
-     "recall": 0.8899037677377263,
-     "f1": 0.8319926804163014,
+     "precision": 0.7789526327070087,
+     "recall": 0.8891697928559779,
+     "f1": 0.8304200464602612,
      "support": 12262
     },
     "agricultural": {
-     "precision": 0.9333701200165541,
-     "recall": 0.9440052088177844,
-     "f1": 0.9386575412148258,
+     "precision": 0.9342184114691375,
+     "recall": 0.9425169751651009,
+     "f1": 0.9383493459891191,
      "support": 21502
     }
    }
   },
   "group_c": {
-   "macroF1": 0.6508631674480503,
+   "macroF1": 0.6392832975656791,
    "classes": {
     "flare": {
-     "precision": 0.23529411764705882,
-     "recall": 0.06254653760238273,
-     "f1": 0.0988235294117647,
+     "precision": 0.1695906432748538,
+     "recall": 0.04318689501116903,
+     "f1": 0.06884272997032641,
      "support": 1343
     },
     "industrial": {
-     "precision": 0.912548656163114,
-     "recall": 0.9008600182982617,
-     "f1": 0.9066666666666666,
+     "precision": 0.9117789446244368,
+     "recall": 0.8960292772186642,
+     "f1": 0.9038355051866072,
      "support": 27325
     },
     "agricultural": {
-     "precision": 0.9299302559092513,
-     "recall": 0.9649142567510489,
-     "f1": 0.9470993062657196,
+     "precision": 0.9263505110041638,
+     "recall": 0.964773463238814,
+     "f1": 0.945171657540104,
      "support": 35513
     }
    }
@@ -106,46 +106,46 @@
  },
  "uncertainty": {
   "group_a": {
-   "coverage": 0.9305715322437447,
+   "coverage": 0.9288113086644689,
    "nominal": 0.9,
-   "mean_set_size": 0.9667641995228867,
-   "singleton_fraction": 0.9667641995228867,
-   "empty_fraction": 0.033235800477113234,
-   "outside_aoa_fraction": 0.09318262376432594,
-   "accuracy_inside_aoa": 0.9629533116178067,
-   "accuracy_outside_aoa": 0.9404057480980558,
+   "mean_set_size": 0.9647337661836346,
+   "singleton_fraction": 0.9647337661836346,
+   "empty_fraction": 0.03526623381636545,
+   "outside_aoa_fraction": 0.09838131621440668,
+   "accuracy_inside_aoa": 0.9628707465164024,
+   "accuracy_outside_aoa": 0.9319455564451561,
    "aoa_assessable_rows": 25391,
    "aoa_not_assessable_rows": 104138,
    "aoa_assessable_fraction": 0.196,
-   "superseded_imputed_outside_aoa_fraction": 0.06658740513707355
+   "superseded_imputed_outside_aoa_fraction": 0.06701202047417952
   },
   "group_b": {
-   "coverage": 0.8076537153687496,
+   "coverage": 0.810775405541,
    "nominal": 0.9,
-   "mean_set_size": 0.8877585149673894,
-   "singleton_fraction": 0.8877585149673894,
-   "empty_fraction": 0.11224148503261051,
-   "outside_aoa_fraction": 0.07147345271756204,
-   "accuracy_inside_aoa": 0.815428861444764,
-   "accuracy_outside_aoa": 0.7032967032967034,
+   "mean_set_size": 0.893472322871955,
+   "singleton_fraction": 0.893472322871955,
+   "empty_fraction": 0.10652767712804505,
+   "outside_aoa_fraction": 0.06935281181275527,
+   "accuracy_inside_aoa": 0.8126424170816102,
+   "accuracy_outside_aoa": 0.6896942242355606,
    "aoa_assessable_rows": 12732,
    "aoa_not_assessable_rows": 23146,
    "aoa_assessable_fraction": 0.3549,
-   "superseded_imputed_outside_aoa_fraction": 0.10544066001449356
+   "superseded_imputed_outside_aoa_fraction": 0.09950387424048163
   },
   "group_c": {
-   "coverage": 0.8472600925507549,
+   "coverage": 0.8408095853913152,
    "nominal": 0.9,
-   "mean_set_size": 0.8896558171421449,
-   "singleton_fraction": 0.8896558171421449,
-   "empty_fraction": 0.11034418285785513,
-   "outside_aoa_fraction": 0.10216380182002022,
-   "accuracy_inside_aoa": 0.9264381278435966,
-   "accuracy_outside_aoa": 0.9014251781472684,
+   "mean_set_size": 0.8837662236487434,
+   "singleton_fraction": 0.8837662236487434,
+   "empty_fraction": 0.1162337763512566,
+   "outside_aoa_fraction": 0.10632962588473205,
+   "accuracy_inside_aoa": 0.9188993482983345,
+   "accuracy_outside_aoa": 0.8744769874476988,
    "aoa_assessable_rows": 24725,
    "aoa_not_assessable_rows": 39456,
    "aoa_assessable_fraction": 0.3852,
-   "superseded_imputed_outside_aoa_fraction": 0.12125083747526527
+   "superseded_imputed_outside_aoa_fraction": 0.12290241660304452
   }
  },
  "b2Industrial": {

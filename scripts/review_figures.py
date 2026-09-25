@@ -29,7 +29,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import PrecisionRecallDisplay
 
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import split_for
+from ml.labels.splits import test_rows, training_rows
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -144,9 +144,8 @@ def figure_pr_and_confusion() -> None:
     frame = con.execute(FEATURE_SQL).df()
     trained = frame[frame["weak_label"].isin(TRAINED_CLASSES)].copy()
     columns = list(FEATURE_COLUMNS)
-    _, test_states = split_for("group_a")
-    train = trained[~trained["state_name"].isin(test_states)]
-    test = trained[trained["state_name"].isin(test_states)]
+    train = training_rows(trained, "group_a")
+    test = test_rows(trained, "group_a")
     model = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=SEED)
     model.fit(train[columns], train["weak_label"])
     probs = model.predict_proba(test[columns])

@@ -96,11 +96,13 @@ SELECT
     r.frp_variance_90d,
     r.mean_gap_days,
     CASE WHEN d.family = 'viirs' THEN 1 ELSE 0 END AS is_viirs,
-    c.flare_m, c.industrial_m, g.gem_m_temporal, c.landcover_code
+    c.flare_m, c.industrial_m, g.gem_m_temporal, c.landcover_code,
+    bf.near_group_a, bf.near_group_b, bf.near_group_c
 FROM detections d
 JOIN detection_context c USING (detection_id)
 LEFT JOIN detection_gem g USING (detection_id)
 LEFT JOIN detection_recurrence r USING (detection_id)
+LEFT JOIN detection_buffer bf USING (detection_id)
 WHERE c.state_name IS NOT NULL
 ORDER BY d.detection_id
 """

@@ -68,6 +68,33 @@ def assign_fold(state: str, groups: dict[str, tuple[str, ...]] = HELD_OUT_GROUPS
     return None
 
 
+# Owner decision A, 2026-09-25. For each held out group, training rows within this
+# distance of that group's states are excluded, so the model cannot learn from fires
+# just across the border from the states it is tested on. 2 km is the top of the range
+# VIIRS geolocation error motivates. Before the buffer, 2.66 percent of held out rows
+# lay within 2 km of a state outside their group. D123.
+BUFFER_M: Final[int] = 2000
+
+
+def training_rows(frame, group_name: str):
+    """Rows a model tested on this group may train on: outside it and outside its buffer.
+
+    The frame must carry the `near_<group>` column FEATURE_SQL joins from
+    detection_buffer. A missing column raises rather than silently skipping the buffer.
+    """
+    _, test = split_for(group_name)
+    column = f"near_{group_name}"
+    if column not in frame.columns:
+        raise SplitError(f"{column} absent, run scripts/build_boundary_buffer.py")
+    return frame[~frame["state_name"].isin(test) & ~frame[column].astype(bool)]
+
+
+def test_rows(frame, group_name: str):
+    """Rows in the held out group itself. Unchanged by the buffer."""
+    _, test = split_for(group_name)
+    return frame[frame["state_name"].isin(test)]
+
+
 def split_for(
     group_name: str, groups: dict[str, tuple[str, ...]] = HELD_OUT_GROUPS
 ) -> tuple[frozenset[str], frozenset[str]]:

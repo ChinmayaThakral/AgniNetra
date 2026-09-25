@@ -45,7 +45,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import HELD_OUT_GROUPS, split_for
+from ml.labels.splits import HELD_OUT_GROUPS, test_rows, training_rows
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ensure_dir
 
@@ -78,9 +78,8 @@ def main() -> int:
 
     for group in HELD_OUT_GROUPS:
         rng = group_generator(group)
-        _, test_states = split_for(group)
-        pool = trained[~trained["state_name"].isin(test_states)]
-        test = trained[trained["state_name"].isin(test_states)]
+        pool = training_rows(trained, group)
+        test = test_rows(trained, group)
 
         # Calibration split, taken from the training states only.
         mask = rng.random(len(pool)) < 0.2

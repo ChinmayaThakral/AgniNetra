@@ -38,7 +38,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import EXTERNAL_EXTENTS, HELD_OUT_GROUPS, split_for
+from ml.labels.splits import EXTERNAL_EXTENTS, HELD_OUT_GROUPS, test_rows, training_rows
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -105,8 +105,7 @@ def main() -> int:
     trained = frame[frame["weak_label"].isin(TRAINED_CLASSES)].copy()
     columns = list(FEATURE_COLUMNS)
 
-    _, test_states = split_for("group_a")
-    fit_pool = trained[~trained["state_name"].isin(test_states)]
+    fit_pool = training_rows(trained, "group_a")
     mask = stage_generator("calibration split").random(len(fit_pool)) < 0.2
     calibration, fit_set = fit_pool[mask], fit_pool[~mask]
 
@@ -137,7 +136,7 @@ def main() -> int:
 
     # Stratified sample of the held out group, so every class is visible in the
     # interface even though flare is 1.16 percent of the record.
-    held_out = trained[trained["state_name"].isin(test_states)]
+    held_out = test_rows(trained, "group_a")
     parts = [
         held_out[held_out["weak_label"] == name].sample(
             n=min(SAMPLE_PER_CLASS, int((held_out["weak_label"] == name).sum())),

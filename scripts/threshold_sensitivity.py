@@ -33,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from ml.documents import provenance_line
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import split_for
+from ml.labels.splits import test_rows, training_rows
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -94,9 +94,8 @@ def main() -> int:
     frame = con.execute(FEATURE_SQL).df()
     trained = frame[frame["weak_label"].isin(TRAINED_CLASSES)].copy()
     columns = list(FEATURE_COLUMNS)
-    _, test_states = split_for("group_a")
-    fit_set = trained[~trained["state_name"].isin(test_states)]
-    test = trained[trained["state_name"].isin(test_states)]
+    fit_set = training_rows(trained, "group_a")
+    test = test_rows(trained, "group_a")
     fit_observed = fit_set[columns].notna().all(axis=1)
     test_observed = test[columns].notna().all(axis=1).to_numpy()
 

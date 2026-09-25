@@ -37,7 +37,12 @@ from sklearn.ensemble import HistGradientBoostingClassifier  # noqa: E402
 
 from ml.documents import provenance_line  # noqa: E402
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL  # noqa: E402
-from ml.labels.splits import HELD_OUT_GROUPS, split_for, validate_groups  # noqa: E402
+from ml.labels.splits import (  # noqa: E402
+    HELD_OUT_GROUPS,
+    test_rows,
+    training_rows,
+    validate_groups,
+)
 from ml.labels.weak import TRAINED_CLASSES  # noqa: E402
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir  # noqa: E402
 
@@ -82,9 +87,8 @@ def main() -> int:
 
     results: dict[str, dict] = {}
     for group in HELD_OUT_GROUPS:
-        _, test_states = split_for(group)
-        train = trained[~trained["state_name"].isin(test_states)]
-        test = trained[trained["state_name"].isin(test_states)]
+        train = training_rows(trained, group)
+        test = test_rows(trained, group)
 
         n_full, share_full = flare_confusion(fit(train, full), test, full)
         _, share_without = flare_confusion(fit(train, without), test, without)
