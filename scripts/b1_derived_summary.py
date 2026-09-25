@@ -30,6 +30,8 @@ OUT = ARTIFACT_DIR / "b1_derived.json"
 DOC = ROOT / "docs" / "b1_derived.md"
 STATE_GROUPS = ("group_a", "group_b", "group_c")
 EXTERNAL = "group_d_external"
+COUNTERFACTUALS = ARTIFACT_DIR / "counterfactuals.json"
+ABLATION = ARTIFACT_DIR / "b1_ablation.json"
 
 
 def macro_f1(results: dict, group: str) -> float:
@@ -48,6 +50,19 @@ def main() -> int:
     external = macro_f1(results, EXTERNAL)
     drop = mean - external
 
+    # These two artifacts store their values rounded to four places, so the
+    # differences below carry that rounding and are cited to three places at most.
+    counterfactuals = json.loads(COUNTERFACTUALS.read_text())
+    optimism = counterfactuals["random_split"]["macro_f1"] - mean
+    northeastern_shift = {
+        row["state"]: row["macro_f1_without"] - row["macro_f1_with"]
+        for row in counterfactuals["northeastern"]
+    }
+    overall = json.loads(ABLATION.read_text())["overall"]
+    ablation_points = 100 * (
+        overall["predicted_industrial_full"] - overall["predicted_industrial_without_recurrence"]
+    )
+
     payload = {
         "source": SOURCE.name,
         "state_group_macro_f1": {g: v for g, v in per_group.items()},
@@ -56,6 +71,9 @@ def main() -> int:
         "external_macro_f1": external,
         "external_drop_from_state_mean": drop,
         "drop_to_spread_ratio": drop / spread if spread else None,
+        "random_split_optimism_macro_f1": optimism,
+        "northeastern_removal_shift_macro_f1": northeastern_shift,
+        "recurrence_ablation_flare_to_industrial_points": ablation_points,
     }
     OUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -79,6 +97,12 @@ def main() -> int:
         f"| external group macro F1 | {external:.4f} |",
         f"| external drop from the state mean | {drop:.4f} |",
         f"| drop as a multiple of the spread | {drop / spread:.2f} |",
+        f"| random split optimism in macro F1 | {optimism:.4f} |",
+        *[
+            f"| macro F1 shift on removing {state} | {shift:.4f} |"
+            for state, shift in northeastern_shift.items()
+        ],
+        f"| flare predicted industrial, full minus no recurrence, points | {ablation_points:.1f} |",
         "",
         "Each of these is cited in prose and each was previously a subtraction a reader",
         "had to perform against cells already rounded for display. D106.",

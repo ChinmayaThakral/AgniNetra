@@ -35,7 +35,7 @@ import duckdb
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import average_precision_score, classification_report, confusion_matrix
 
 from ml.features.matrix import EXTERNAL_SQL, FEATURE_COLUMNS, FEATURE_SQL
 from ml.labels.splits import HELD_OUT_GROUPS, test_rows, training_rows, validate_groups
@@ -102,6 +102,17 @@ def main() -> int:
     print("\nleakage demonstration on group_a, macro F1:")
     print(f"  with the label defining columns: {leak_report['macro avg']['f1-score']:.4f}")
     print(f"  without them, the real baseline:  {clean_report['macro avg']['f1-score']:.4f}")
+    probabilities = clean_model.predict_proba(leak_test[columns])
+    average_precision = {
+        name: float(
+            average_precision_score(
+                leak_test["weak_label"] == name,
+                probabilities[:, list(clean_model.classes_).index(name)],
+            )
+        )
+        for name in TRAINED_CLASSES
+    }
+    print(f"  average precision, one class against the rest: {average_precision}")
 
     results: dict[str, dict] = {}
     print("\n=== option A, no class weighting, per group ===", flush=True)
@@ -169,6 +180,7 @@ def main() -> int:
                 "option_c_macro_f1": capped_results,
                 "leakage_macro_f1": leak_report["macro avg"]["f1-score"],
                 "clean_macro_f1": clean_report["macro avg"]["f1-score"],
+                "average_precision_group_a": average_precision,
                 "seed": SEED,
             },
             indent=1,
