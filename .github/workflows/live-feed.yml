@@ -1,0 +1,71 @@
+name: live-feed
+
+# Builds the AgniNetra Live feed. Nothing here publishes: the feed and the private
+# check are uploaded as workflow artifacts, visible only to the repository's members,
+# until the owner decides where the app goes public.
+#
+# Scheduled runs fire only from the default branch. The times are UTC: every thirty
+# minutes from 16:37 to 21:37 IST, since INSAT granules arrive about an hour after
+# acquisition, plus one run at 23:37 IST for the day's final state.
+
+on:
+  push:
+    branches: [live-mvp]
+    paths: ["apps/live/**", ".github/workflows/live-feed.yml"]
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "IST evening to build, YYYY-MM-DD; empty for today"
+        required: false
+  schedule:
+    - cron: "7,37 11-15 * * *"
+    - cron: "7 16 * * *"
+    - cron: "7 18 * * *"
+
+concurrency:
+  group: live-feed
+  cancel-in-progress: false
+
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - name: Evening date
+        id: day
+        run: echo "day=${{ inputs.date || '' }}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: data/live
+          key: live-${{ github.run_id }}
+          restore-keys: live-
+      - name: Build the feed
+        env:
+          MOSDAC_USERNAME: ${{ secrets.MOSDAC_USERNAME }}
+          MOSDAC_PASSWORD: ${{ secrets.MOSDAC_PASSWORD }}
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: |
+          args="--drop-raw"
+          if [ -n "${{ steps.day.outputs.day }}" ]; then args="$args --date ${{ steps.day.outputs.day }}"; fi
+          uv run python -m apps.live.pipeline.build_feed $args
+      - name: Private check against the official fire product
+        env:
+          MOSDAC_USERNAME: ${{ secrets.MOSDAC_USERNAME }}
+          MOSDAC_PASSWORD: ${{ secrets.MOSDAC_PASSWORD }}
+        run: |
+          args=""
+          if [ -n "${{ steps.day.outputs.day }}" ]; then args="--date ${{ steps.day.outputs.day }}"; fi
+          uv run python -m apps.live.pipeline.official_qa $args
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-feed-${{ github.run_id }}
+          path: apps/live/web/public/feed/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-qa-private-${{ github.run_id }}
+          path: data/live_qa/
+          retention-days: 14

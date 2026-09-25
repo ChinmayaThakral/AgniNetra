@@ -43,3 +43,6 @@ out/
 .DS_Store
 .idea/
 *.swp
+
+# AgniNetra Live: generated feeds, rebuilt by the scheduled job
+apps/live/web/public/feed/
