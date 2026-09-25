@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from ml.documents import provenance_line
 from ml.features.matrix import FEATURE_COLUMNS, FEATURE_SQL
-from ml.labels.splits import HELD_OUT_GROUPS
+from ml.labels.splits import HELD_OUT_GROUPS, test_rows, training_rows
 from ml.labels.weak import TRAINED_CLASSES
 from ml.paths import ARTIFACT_DIR, DUCKDB_PATH, ROOT, ensure_dir
 
@@ -100,10 +100,9 @@ def main() -> int:
     )
 
     northeastern_rows = []
-    for group, states in HELD_OUT_GROUPS.items():
-        test_states = set(states)
-        train = trained[~trained["state_name"].isin(test_states)]
-        test_all = trained[trained["state_name"].isin(test_states)]
+    for group in HELD_OUT_GROUPS:
+        train = training_rows(trained, group)
+        test_all = test_rows(trained, group)
         dropped = NORTHEASTERN[group]
         test_without = test_all[test_all["state_name"] != dropped]
         group_model = fit(train, columns)
@@ -152,6 +151,8 @@ def main() -> int:
         json.dumps(payload, indent=2, allow_nan=False)
     )
 
+    conformal = json.loads((ARTIFACT_DIR / "conformal_aoa_b2.json").read_text())
+    blocked = {g: conformal[g] for g in HELD_OUT_GROUPS}
     lines = [
         "# Two counterfactuals, measured instead of asserted",
         "",
@@ -168,9 +169,14 @@ def main() -> int:
         "| Split | Empirical coverage | Nominal | Empty sets |",
         "|---|---|---|---|",
         f"| random | {coverage:.4f} | {NOMINAL:.2f} | {empty:.2%} |",
-        "| group_a, spatially blocked | 0.9286 | 0.90 | 3.53 percent |",
-        "| group_b, spatially blocked | 0.8097 | 0.90 | 10.88 percent |",
-        "| group_c, spatially blocked | 0.8508 | 0.90 | 10.51 percent |",
+        # Owner decision C, 2026-09-25. These three rows were typed into this script
+        # and had drifted from the computation they summarise. They are now read from
+        # the one blocked conformal fit the rest of the report uses. D123.
+        *[
+            f"| {group}, spatially blocked | {row['coverage']:.4f} | {row['nominal']:.2f} "
+            f"| {row['empty_fraction']:.2%} |"
+            for group, row in blocked.items()
+        ],
         "",
         "## Does the northeastern state in each group depress the score?",
         "",
