@@ -50,3 +50,31 @@ def test_uniform_spread_needs_most_tiles():
     at_80, at_95 = _tiles_for_coverage(tiles)
     assert at_80 == 8
     assert at_95 == 10
+
+
+def _train_b4():
+    import importlib.util
+    import sys
+
+    from ml.paths import ROOT
+
+    spec = importlib.util.spec_from_file_location("train_b4", ROOT / "scripts" / "train_b4.py")
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["train_b4"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_repeated_detections_at_one_site_count_once() -> None:
+    """114 detections at two plants are two sites, not 114 independent chips. D124."""
+    b4 = _train_b4()
+    plant_a = [(82.721 + i * 0.0001, 24.131) for i in range(60)]
+    plant_b = [(82.801, 24.191 + i * 0.0001) for i in range(54)]
+    assert b4.distinct_sites(plant_a + plant_b) == 2
+
+
+def test_the_floor_applies_to_sites_as_well_as_detections() -> None:
+    b4 = _train_b4()
+    spread = [(80.0 + i * 0.05, 20.0) for i in range(b4.MIN_CLASS_SUPPORT)]
+    assert b4.distinct_sites(spread) == b4.MIN_CLASS_SUPPORT

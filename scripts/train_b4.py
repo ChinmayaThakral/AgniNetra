@@ -29,6 +29,7 @@ from pathlib import Path
 import duckdb
 import numpy as np
 from dotenv import load_dotenv
+from sklearn.cluster import DBSCAN
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_recall_fscore_support
 
@@ -59,6 +60,31 @@ SEED = 20260905
 # that spans most of the unit range, so the number carries no information the
 # support does not already give. Chosen before any metric was computed.
 MIN_CLASS_SUPPORT = 30
+
+# The floor also applies to distinct sites. Every chip is cut from one image date,
+# so repeated detections at one plant embed as near copies of one picture and add
+# no independent evidence. On the 2026-09-26 rerun 114 group_c industrial
+# detections came from about two sites, and a probe predicting industrial for
+# every row scored F1 0.987 on them. Sites are clustered the way
+# scripts/persistent_sources.py clusters them: great circle distance, 1000 m, every
+# point in some site. A fixed grid was tried first and split one plant across cell
+# boundaries. D124.
+SITE_RADIUS_M = 1000.0
+EARTH_RADIUS_M = 6371008.8
+
+
+def distinct_sites(points: list[tuple[float, float]]) -> int:
+    """Count sites among (longitude, latitude) points, chaining points within 1000 m."""
+    if not points:
+        return 0
+    radians = np.radians([[lat, lon] for lon, lat in points])
+    clusters = DBSCAN(
+        eps=SITE_RADIUS_M / EARTH_RADIUS_M,
+        min_samples=1,
+        metric="haversine",
+        algorithm="ball_tree",
+    ).fit_predict(radians)
+    return len(set(clusters))
 
 
 def _extract_within(archive: Path, destination: Path) -> None:
@@ -102,9 +128,11 @@ def detections_in_scene(footprint_wkt: str) -> list[tuple]:
     return connection.execute(
         f"""
         SELECT d.detection_id, d.longitude, d.latitude, c.state_name,
-               {weak_label_sql("c", "g")} AS weak_label
+               {weak_label_sql("c", "g")} AS weak_label,
+               bf.near_group_a OR bf.near_group_b OR bf.near_group_c AS near_held_out
         FROM a.detections d JOIN a.detection_context c USING (detection_id)
         LEFT JOIN a.detection_gem g USING (detection_id)
+        LEFT JOIN a.detection_buffer bf USING (detection_id)
         WHERE {weak_label_sql("c", "g")} IN ('flare', 'industrial', 'agricultural')
           AND ST_Within(geo_point(d.longitude, d.latitude), ST_GeomFromText(?))
         ORDER BY d.detection_id
@@ -156,12 +184,12 @@ def main() -> int:
     print(f"bands located: {len(bands)}")
 
     chips, kept = [], []
-    for detection_id, longitude, latitude, state, label in rows:
+    for detection_id, longitude, latitude, state, label, near in rows:
         try:
             chips.append(read_chip(bands, longitude=longitude, latitude=latitude))
         except ChipError:
             continue
-        kept.append((detection_id, state, label))
+        kept.append((detection_id, state, label, bool(near), longitude, latitude))
     print(f"chips cut: {len(chips)} of {len(rows)}")
     if not chips:
         print("BLOCKED: no chip fitted inside the scene", file=sys.stderr)
@@ -169,10 +197,16 @@ def main() -> int:
 
     model, torch = load_backbone()
     embeddings = embed_chips(model, torch, np.stack(chips))
-    labels = np.array([label for _, _, label in kept])
-    groups = np.array([membership.get(state, "train") for _, state, _ in kept])
+    labels = np.array([row[2] for row in kept])
+    groups = np.array([membership.get(row[1], "train") for row in kept])
+    near = np.array([row[3] for row in kept])
+    points = [(float(row[4]), float(row[5])) for row in kept]
 
-    train_mask = groups == "train"
+    # One probe serves every held out group, so a training row within the buffer of
+    # any of them is excluded, the same 2 km rule the other baselines use. D123.
+    train_mask = (groups == "train") & ~near
+    buffered = int(((groups == "train") & near).sum())
+    print(f"training rows excluded by the boundary buffer: {buffered}")
     if train_mask.sum() == 0 or len(set(labels[train_mask])) < 2:
         print("BLOCKED: the scene carries no usable training split", file=sys.stderr)
         return 2
@@ -195,15 +229,23 @@ def main() -> int:
         )
         for index, klass in enumerate(TRAINED_CLASSES):
             n = int(support[index])
-            if n < MIN_CLASS_SUPPORT:
-                entry[klass] = f"insufficient support, n={n}"
-                print(f"{group} {klass}: insufficient support, n={n}")
+            sites = distinct_sites(
+                [
+                    p
+                    for p, g, y in zip(points, groups, labels, strict=True)
+                    if g == group and y == klass
+                ]
+            )
+            if n < MIN_CLASS_SUPPORT or sites < MIN_CLASS_SUPPORT:
+                entry[klass] = f"insufficient support, n={n} from {sites} sites"
+                print(f"{group} {klass}: insufficient support, n={n} from {sites} sites")
             else:
                 entry[klass] = {
                     "precision": round(float(precision[index]), 4),
                     "recall": round(float(recall[index]), 4),
                     "f1": round(float(f1[index]), 4),
                     "support": n,
+                    "sites": sites,
                 }
                 print(
                     f"{group} {klass}: P {precision[index]:.3f} R {recall[index]:.3f} "
