@@ -84,17 +84,6 @@ def main() -> int:
         name = label_from_distances(flare_m, industrial_m, landcover_class, gem_m=gem_m).label
         independent_counts[name] = independent_counts.get(name, 0) + 1
 
-    # The stored column is kept visible rather than hidden: it is stale, nothing reads it
-    # any more, and until it is rebuilt a count of how far it has drifted belongs in the
-    # document that describes the labels.
-    stale_rows = int(
-        con.execute(
-            f"SELECT count(*) FROM detection_context c "
-            f"LEFT JOIN detection_gem g USING (detection_id) "
-            f"WHERE c.weak_label IS DISTINCT FROM {weak_label_sql('c', 'g')}"
-        ).fetchone()[0]
-    )
-
     print(f"detections with context: {total}\n")
     print(f"{'class':14s} {'count':>8s} {'share':>9s} {'background':>11s} {'lift':>8s}")
     disagreements = []
@@ -120,7 +109,6 @@ def main() -> int:
             print(f"    {line}")
     else:
         print("  the two implementations agree exactly")
-    print(f"stored column rows that differ from the label of record: {stale_rows}")
 
     failures: list[str] = []
     for label, share in shares.items():
@@ -148,8 +136,12 @@ def main() -> int:
         )
         labelled_n = int(
             con.execute(
-                f"SELECT count(*) FROM detection_context WHERE state_name IN ({placeholders}) "
-                "AND weak_label <> 'unlabelled'",
+                # Read the stored column until 2026-09-26, after D121 had moved every
+                # other count here to the label of record. D124.
+                f"SELECT count(*) FROM detection_context c "
+                f"LEFT JOIN detection_gem g USING (detection_id) "
+                f"WHERE c.state_name IN ({placeholders}) "
+                f"AND {weak_label_sql('c', 'g')} <> 'unlabelled'",
                 list(test_states),
             ).fetchone()[0]
         )
@@ -222,10 +214,9 @@ def main() -> int:
         f"Detections assigned to no state: {unassigned} ({unassigned / total:.2%}).",
         "",
         "The label is computed by `weak_label_sql` and checked against an independent",
-        "Python implementation of the same rule. The stored `weak_label` column in",
-        "`detection_context` predates the withdrawal of the wildfire class and carries",
-        f"no GEM term. It differs from the label of record in {stale_rows} rows and no",
-        "analysis reads it. D120, D121.",
+        "Python implementation of the same rule. No code writes or reads a stored",
+        "label; every count here, the held out group counts included, is computed from",
+        "the rule of record. D124.",
         "",
     ]
 

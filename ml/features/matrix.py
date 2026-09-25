@@ -36,9 +36,6 @@ LEAKING_COLUMNS: Final[tuple[str, ...]] = (
     "landcover_code",
     "landcover_class",
     "weak_label",
-    "label_source",
-    "label_rule",
-    "label_confidence",
 )
 
 # Excluded for transfer rather than for leakage.

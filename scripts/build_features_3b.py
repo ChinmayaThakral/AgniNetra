@@ -22,7 +22,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import duckdb
 
-from ml.labels.weak import label_from_distances
 from ml.paths import DUCKDB_PATH
 from ml.population import analysis_predicate
 from ml.reference.geo import install_geo
@@ -40,13 +39,13 @@ CREATE OR REPLACE TABLE detection_context (
     flare_m          DOUBLE,
     industrial_m     DOUBLE,
     landcover_code   SMALLINT,
-    landcover_class  VARCHAR,
-    weak_label       VARCHAR NOT NULL,
-    label_source     VARCHAR NOT NULL,
-    label_rule       VARCHAR NOT NULL,
-    label_confidence DOUBLE NOT NULL
+    landcover_class  VARCHAR
 );
 """
+
+# No label is stored. A stored copy of the label went stale twice, once when the
+# wildfire class was withdrawn and once when GEM joined the industrial rule, and
+# kept being read after it had. Every reader computes it with weak_label_sql. D124.
 
 # Candidate window for the nearest neighbour prefilter. 0.06 degrees is about
 # 6.6 km, wider than any label radius, so no candidate inside a radius is missed.
@@ -186,7 +185,6 @@ def main() -> int:
             flush=True,
         )
 
-    print("applying weak label rules", flush=True)
     joined = con.execute(
         "SELECT d.detection_id, s.state_name, d.flare_m, d.industrial_m, c.code "
         "FROM det_dist d "
@@ -198,26 +196,8 @@ def main() -> int:
     payload = []
     for detection_id, state_name, flare_m, industrial_m, code in joined:
         cover = class_name(None if code is None else int(code))
-        weak = label_from_distances(
-            None if flare_m is None else float(flare_m),
-            None if industrial_m is None else float(industrial_m),
-            cover,
-        )
-        payload.append(
-            (
-                detection_id,
-                state_name,
-                flare_m,
-                industrial_m,
-                code,
-                cover,
-                weak.label,
-                weak.source,
-                weak.rule,
-                weak.confidence,
-            )
-        )
-    con.executemany("INSERT INTO detection_context VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", payload)
+        payload.append((detection_id, state_name, flare_m, industrial_m, code, cover))
+    con.executemany("INSERT INTO detection_context VALUES (?, ?, ?, ?, ?, ?)", payload)
 
     written = int(con.execute("SELECT count(*) FROM detection_context").fetchone()[0])
     print(f"\ndetection_context rows: {written}")
