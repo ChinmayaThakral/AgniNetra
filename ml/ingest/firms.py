@@ -16,6 +16,7 @@ status before and after so that the true transaction cost is measured rather tha
 inferred.
 """
 
+import json
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -28,6 +29,29 @@ AVAILABILITY_URL: Final[str] = BASE + "/api/data_availability/csv/{key}/all"
 MAPKEY_STATUS_URL: Final[str] = BASE + "/mapserver/mapkey_status/?MAP_KEY={key}"
 
 MAX_DAY_RANGE: Final[int] = 5
+
+
+class TransactionStatusError(ValueError):
+    """The map key status body did not carry a readable transaction count."""
+
+
+def parse_transactions(status: str) -> int:
+    """Current transactions in the rolling window, from a map key status body.
+
+    The count is a rolling ten minute window rather than a running total, D19, so a
+    before and after pair measures a run's cost only when nothing else used the key
+    in between. Raises TransactionStatusError when the field is absent or not an
+    integer, rather than recording a guess.
+    """
+    try:
+        value = json.loads(status)["current_transactions"]
+    except (json.JSONDecodeError, KeyError, TypeError) as exc:
+        raise TransactionStatusError(f"no current_transactions in status: {exc}") from exc
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TransactionStatusError(f"current_transactions is not an integer: {value!r}")
+    return value
+
+
 RETRY_STATUSES: Final[frozenset[int]] = frozenset({429, 500, 502, 503, 504})
 MAX_ATTEMPTS: Final[int] = 5
 BACKOFF_BASE_SECONDS: Final[float] = 2.0

@@ -27,7 +27,9 @@ from ml.ingest.firms import (
     MIN_REQUEST_INTERVAL_SECONDS,
     FirmsClient,
     MissingMapKeyError,
+    TransactionStatusError,
     day_chunks,
+    parse_transactions,
 )
 from ml.ingest.load import insert_detections
 from ml.ingest.parse import INDIA_BBOX, parse_csv
@@ -62,11 +64,26 @@ def parse_args() -> argparse.Namespace:
         help="minimum seconds between requests, to hold the issue rate",
     )
     parser.add_argument(
+        "--database",
+        type=Path,
+        default=DUCKDB_PATH,
+        help="store to write, the project store unless a scratch copy is named",
+    )
+    parser.add_argument(
         "--availability-only",
         action="store_true",
         help="print availability and map key status, write nothing",
     )
     return parser.parse_args()
+
+
+def read_transactions(client: FirmsClient) -> int | None:
+    """The rolling transaction count, or None stored as NULL when unreadable."""
+    try:
+        return parse_transactions(client.mapkey_status())
+    except TransactionStatusError as exc:
+        print(f"transactions not recorded: {exc}", file=sys.stderr)
+        return None
 
 
 def main() -> int:
@@ -116,8 +133,8 @@ def main() -> int:
         print("\nBLOCKED: no source covers the requested window", file=sys.stderr)
         return 2
 
-    ensure_dir(DUCKDB_PATH.parent)
-    con = duckdb.connect(str(DUCKDB_PATH))
+    ensure_dir(args.database.parent)
+    con = duckdb.connect(str(args.database))
     create_schema(con)
 
     total_rows = 0
@@ -128,6 +145,9 @@ def main() -> int:
         chunks = day_chunks(segment.start, segment.end)
         segment_rows = 0
         segment_inserted = 0
+        # Read before the request baseline, so the status call is not counted as one
+        # of the run's requests.
+        transactions_before = read_transactions(client)
         requests_before = client.request_count
 
         for chunk_start, span in chunks:
@@ -138,8 +158,9 @@ def main() -> int:
 
         con.execute(
             "INSERT INTO ingest_runs (ingest_run_id, source, bbox, window_start, window_end, "
-            "request_count, row_count, rows_inserted, started_at, finished_at, notes) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "request_count, row_count, rows_inserted, transactions_before, "
+            "transactions_after, started_at, finished_at, notes) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 run_id,
                 segment.source,
@@ -149,6 +170,8 @@ def main() -> int:
                 client.request_count - requests_before,
                 segment_rows,
                 segment_inserted,
+                transactions_before,
+                read_transactions(client),
                 started,
                 datetime.now(UTC),
                 f"sensor {segment.sensor}",
