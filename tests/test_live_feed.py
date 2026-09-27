@@ -161,3 +161,14 @@ def test_fires_outside_india_are_dropped_before_scoring() -> None:
     kept, _ = feed.restrict_to_india([india, pakistan], locate)
     assert kept == [india]
     assert feed.build_match(kept)["insat_share"] == 1.0
+
+
+def test_netu_says_still_batting_only_when_insat_caught_something_later() -> None:
+    late = feed.build_match(
+        [fire(75.55, 30.55, 8, 0, "polar"), fire(75.95, 30.95, 11, 30, "insat")]
+    )
+    early = feed.build_match(
+        [fire(75.55, 30.55, 10, 30, "polar"), fire(75.95, 30.95, 10, 0, "insat")]
+    )
+    assert "still batting" in feed.netu_lines(late, None, False)[0]["text"]
+    assert all("still batting" not in line["text"] for line in feed.netu_lines(early, None, False))

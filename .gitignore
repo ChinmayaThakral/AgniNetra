@@ -46,3 +46,4 @@ out/
 
 # AgniNetra Live: generated feeds, rebuilt by the scheduled job
 apps/live/web/public/feed/
+apps/live/web/dist/

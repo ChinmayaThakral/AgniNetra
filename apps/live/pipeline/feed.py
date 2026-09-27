@@ -274,6 +274,7 @@ def build_districts(cells: list[dict]) -> list[dict]:
 # Every sentence Netu says. Placeholders are filled from the feed and nothing else.
 TEMPLATES = {
     "polar_all_out": "Polar satellites all out at {polar_last}. INSAT still batting.",
+    "both_quiet": "Polar satellites out at {polar_last}, and INSAT's last catch was {insat_last}.",
     "insat_share": "INSAT has caught {insat_pct} percent of today's fire cells so far.",
     "polar_share": "The 1:30 pm pass caught {polar_pct} percent. The evening was not its shift.",
     "quiet": "Quiet sky today. Netu is resting its eye.",
@@ -293,8 +294,13 @@ def netu_lines(match: dict, insat_delay_hours: float | None, heavy: bool) -> lis
         return lines
     if heavy:
         say("worried")
-    if match["polar_last_seen_ist"]:
-        say("polar_all_out", polar_last=match["polar_last_seen_ist"])
+    polar_last, insat_last = match["polar_last_seen_ist"], match["insat_last_seen_ist"]
+    if polar_last:
+        # "Still batting" is only true when INSAT caught something after the polar pass.
+        if insat_last and insat_last > polar_last:
+            say("polar_all_out", polar_last=polar_last)
+        else:
+            say("both_quiet", polar_last=polar_last, insat_last=insat_last or "none")
     if match["insat_share"] is not None:
         say("insat_share", insat_pct=round(100 * match["insat_share"]))
     if match["polar_share"] is not None:

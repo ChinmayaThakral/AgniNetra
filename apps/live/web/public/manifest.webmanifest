@@ -1,0 +1,10 @@
+{
+  "name": "AgniNetra",
+  "short_name": "AgniNetra",
+  "description": "See the fires the satellites miss.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#07090d",
+  "theme_color": "#07090d",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

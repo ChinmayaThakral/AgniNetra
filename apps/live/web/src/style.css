@@ -1,0 +1,46 @@
+:root {
+  color-scheme: dark;
+  --ground: #07090d;
+  --card: #10141c;
+  --line: #222a36;
+  --text: #e8edf5;
+  --muted: #8b95a6;
+  --ember: #ffb020;
+  --polar: #9ec5ff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ground); color: var(--text); }
+main { max-width: 760px; margin: 0 auto; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); display: grid; gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+h2 { margin: 0 0 6px; font-size: 1.2rem; }
+h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: 0.8rem; }
+.big { font-size: 1.4rem; margin: 6px 0; }
+.top { display: flex; gap: 14px; align-items: center; }
+.netu-line { margin: 4px 0; }
+.teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; text-align: center; gap: 8px; }
+.team-name { color: var(--muted); font-size: 0.9rem; }
+.score { font-size: 2.4rem; font-weight: 700; }
+.polar .score { color: var(--polar); }
+.insat .score { color: var(--ember); }
+.versus { color: var(--muted); }
+.status { font-size: 0.8rem; color: var(--muted); }
+.overs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.over { border: 1px solid var(--line); border-radius: 8px; padding: 6px; display: flex; justify-content: space-between; font-size: 0.85rem; }
+.over.new { border-color: var(--ember); }
+.fire-map { width: 100%; aspect-ratio: 1 / 1; display: block; border-radius: 10px; }
+.map-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.button, .choice { background: #1a2130; color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer; }
+.button:disabled { opacity: 0.4; cursor: default; }
+.share { justify-self: start; border-color: var(--ember); }
+.legend { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.how-sure { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid #5a4a1a; color: #ffcf70; margin-top: 8px; }
+.clues { padding-left: 20px; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.choice.right { border-color: #3fbf6f; }
+.choice.wrong { border-color: #e2361c; }
+.credits { font-size: 0.75rem; color: var(--muted); }
+.caveat { color: #ffcf70; }
