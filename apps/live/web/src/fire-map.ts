@@ -46,8 +46,12 @@ function drawOutlines(
 
 export interface MapOptions {
   bounds: Bounds;
-  // Show only cells first seen up to this IST hour, for the Fire Clock. Undefined shows all.
+  // Show only evening cells.
   untilEvening?: boolean;
+  // The Fire Clock: show only cells first seen at or before this IST time, "HH:MM".
+  clock?: string;
+  // A back trajectory to draw, for "What's that smoke?".
+  path?: [number, number][];
 }
 
 export function drawFireMap(
@@ -78,6 +82,7 @@ export function drawFireMap(
   ctx.globalCompositeOperation = "lighter";
   for (const cell of cells) {
     if (options.untilEvening === true && !cell.evening) continue;
+    if (options.clock !== undefined && cell.first_seen_ist > options.clock) continue;
     const [lon, lat] = cell.centre;
     const [x0, y0] = projection.point(lon - CELL_DEG / 2, lat + CELL_DEG / 2);
     const [x1, y1] = projection.point(lon + CELL_DEG / 2, lat - CELL_DEG / 2);
@@ -91,4 +96,26 @@ export function drawFireMap(
   ctx.globalAlpha = 1;
   ctx.shadowBlur = 0;
   ctx.globalCompositeOperation = "source-over";
+
+  if (options.path && options.path.length > 1) {
+    ctx.strokeStyle = "#9ec5ff";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    options.path.forEach(([lon, lat], i) => {
+      const [x, y] = projection.point(lon, lat);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const start = options.path[0];
+    if (start) {
+      const [x, y] = projection.point(start[0], start[1]);
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 }

@@ -20,6 +20,7 @@ function mercatorY(latitude: number): number {
 
 export interface Projection {
   point(longitude: number, latitude: number): [number, number];
+  invert(x: number, y: number): [number, number];
   scale: number;
 }
 
@@ -37,6 +38,12 @@ export function fit(bounds: Bounds, width: number, height: number, padding = 12)
       const x = offsetX + scale * ((longitude * Math.PI) / 180 - x0);
       const y = height - (offsetY + scale * (mercatorY(latitude) - y0));
       return [x, y];
+    },
+    invert(x, y) {
+      const longitude = ((x - offsetX) / scale + x0) * (180 / Math.PI);
+      const my = (height - y - offsetY) / scale + y0;
+      const latitude = (2 * Math.atan(Math.exp(my)) - Math.PI / 2) * (180 / Math.PI);
+      return [longitude, latitude];
     },
   };
 }

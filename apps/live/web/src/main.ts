@@ -7,7 +7,9 @@ import { moodOf, netuSvg } from "./netu";
 import { fit, INDIA, NORTH_INDIA, type Bounds } from "./projection";
 import { Boundaries, Feed } from "./schema";
 import { matchShareCard, shareCanvas } from "./share-card";
+import { smokeCard } from "./smoke-card";
 import { tomorrowCard } from "./tomorrow-card";
+import type { Point } from "./upwind";
 
 async function load<T>(path: string, parse: (value: unknown) => T): Promise<T> {
   const response = await fetch(path, { cache: "no-cache" });
@@ -46,8 +48,10 @@ async function start(): Promise<void> {
   let bounds: Bounds = NORTH_INDIA;
   let eveningOnly = false;
   let ring: [number, number] | null = null;
+  let clock: string | undefined;
+  let path: Point[] | undefined;
   const redraw = (): void => {
-    drawFireMap(canvas, boundaries, feed.cells, { bounds, untilEvening: eveningOnly });
+    drawFireMap(canvas, boundaries, feed.cells, { bounds, untilEvening: eveningOnly, clock, path });
     if (ring) {
       const ctx = canvas.getContext("2d");
       const projection = fit(bounds, canvas.clientWidth, canvas.clientHeight);
@@ -74,6 +78,27 @@ async function start(): Promise<void> {
     toggle("All India", () => (bounds = INDIA)),
     toggle("Evening only", () => (eveningOnly = !eveningOnly)),
   );
+  const clockLabel = el("span", "clock-label", "");
+  const play = el("button", "button", "Play the Fire Clock");
+  play.addEventListener("click", () => {
+    const slots: string[] = [];
+    for (let h = 10; h < 20; h += 1) slots.push(`${String(h).padStart(2, "0")}:00`, `${String(h).padStart(2, "0")}:30`);
+    let i = 0;
+    const tick = (): void => {
+      clock = slots[i];
+      clockLabel.textContent = clock ? `${clock} IST` : "";
+      redraw();
+      i += 1;
+      if (i < slots.length) window.setTimeout(tick, 350);
+      else {
+        clock = undefined;
+        clockLabel.textContent = "full day";
+        redraw();
+      }
+    };
+    tick();
+  });
+  controls.append(play, clockLabel);
   const legend = el("ul", "legend");
   for (const key of Object.keys(CLASS_LABELS) as (keyof typeof CLASS_LABELS)[]) {
     const item = el("li", "");
@@ -83,6 +108,16 @@ async function start(): Promise<void> {
     legend.append(item);
   }
   mapCard.append(canvas, controls, legend, howSure("low"));
+
+  const smoke = smokeCard(feed, (trace) => {
+    path = trace;
+    redraw();
+  });
+  canvas.addEventListener("click", (event) => {
+    const box = canvas.getBoundingClientRect();
+    const projection = fit(bounds, canvas.clientWidth, canvas.clientHeight);
+    smoke.trace(projection.invert(event.clientX - box.left, event.clientY - box.top));
+  });
 
   const share = el("button", "button share", "Share the match");
   share.addEventListener("click", () => {
@@ -99,6 +134,7 @@ async function start(): Promise<void> {
     matchBoard(feed),
     mapCard,
     share,
+    smoke.card,
     tomorrowCard(feed),
     heatleCard(feed, (centre) => {
       ring = centre;

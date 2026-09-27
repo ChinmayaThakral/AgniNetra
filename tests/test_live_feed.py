@@ -172,3 +172,16 @@ def test_netu_says_still_batting_only_when_insat_caught_something_later() -> Non
     )
     assert "still batting" in feed.netu_lines(late, None, False)[0]["text"]
     assert all("still batting" not in line["text"] for line in feed.netu_lines(early, None, False))
+
+
+def test_each_cell_carries_the_half_hour_it_was_first_seen(reference) -> None:
+    fires = [fire(75.55, 30.55, 11, 40, "insat"), fire(75.56, 30.56, 8, 5, "polar")]
+    cells = feed.build_cells(fires, reference, lambda **_: ("Punjab", "Ludhiana"))
+    assert cells[0]["first_seen_ist"] == "13:30"
+
+
+def test_validate_refuses_an_impossible_wind(reference) -> None:
+    broken = _minimal_feed(reference)
+    broken["wind"] = {"points": [[75.0, 30.0, [[12.0, 400]]]]}
+    with pytest.raises(ValueError):
+        feed.validate(broken)

@@ -15,6 +15,7 @@ export const Cell = z.object({
   how_sure: z.enum(["low", "medium"]),
   seen_by: z.array(z.enum(["polar", "insat"])),
   evening: z.boolean(),
+  first_seen_ist: z.string().regex(/^\d{2}:\d{2}$/),
 });
 
 export const Over = z.object({
@@ -68,6 +69,16 @@ export const Feed = z.object({
     answer: z.string(),
     choices: z.array(z.string()),
   }),
+  wind: z
+    .object({
+      grid_deg: z.number(),
+      hours_ist: z.array(z.string()),
+      points: z.array(
+        z.tuple([z.number(), z.number(), z.array(z.tuple([z.number().nullable(), z.number().nullable()]))]),
+      ),
+      source: z.string(),
+    })
+    .nullable(),
   attribution: z.array(z.string()).min(1),
   caveats: z.array(z.string()).min(1),
 });
@@ -91,3 +102,4 @@ export const Boundaries = z.object({
 export type Feed = z.infer<typeof Feed>;
 export type Cell = z.infer<typeof Cell>;
 export type Boundaries = z.infer<typeof Boundaries>;
+export type Wind = NonNullable<Feed["wind"]>;

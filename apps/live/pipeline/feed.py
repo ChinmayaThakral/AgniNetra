@@ -231,6 +231,7 @@ def build_cells(fires: list[Fire], reference: Reference, district_of) -> list[di
         lon, lat = cell_centre(cell)
         state, district = district_of(longitude=lon, latitude=lat)
         evening = [f for f in members if f.when_utc.astimezone(IST).hour >= 16]
+        first = min(slot_of(f.when_utc) for f in members)
         cells.append(
             {
                 "cell": f"{cell[0]}_{cell[1]}",
@@ -241,6 +242,7 @@ def build_cells(fires: list[Fire], reference: Reference, district_of) -> list[di
                 "how_sure": sure,
                 "seen_by": sorted({f.team for f in members}),
                 "evening": bool(evening),
+                "first_seen_ist": f"{first[0]:02d}:{first[1]:02d}",
             }
         )
     return cells
@@ -344,6 +346,7 @@ def validate(feed: dict) -> None:
             "how_sure",
             "seen_by",
             "evening",
+            "first_seen_ist",
         }:
             raise ValueError(f"cell carries unexpected fields: {sorted(c)}")
         if c["how_sure"] not in ("low", "medium"):
@@ -355,5 +358,9 @@ def validate(feed: dict) -> None:
     for line in feed["netu"]:
         if line["template"] not in TEMPLATES:
             raise ValueError(f"Netu said something outside the templates: {line}")
+    for point in feed.get("wind", {}).get("points", []):
+        for speed, direction in point[2]:
+            if speed is not None and (speed < 0 or not 0 <= direction <= 360):
+                raise ValueError(f"wind value out of range: {speed}, {direction}")
     if not feed.get("attribution") or not feed.get("caveats"):
         raise ValueError("attribution and caveats must travel with the data")

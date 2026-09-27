@@ -31,6 +31,12 @@ L1C = "3SIMG_L1C_ASIA_MER"
 FIRMS_NRT = ("VIIRS_SNPP_NRT", "VIIRS_NOAA20_NRT", "VIIRS_NOAA21_NRT", "MODIS_NRT")
 BBOX = ",".join(str(value) for value in INDIA_BBOX)
 AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
+FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+# Wind for "What's that smoke?", on a 1.5 degree grid over the ingest box. Each point is
+# one call against Open-Meteo's free limit of 10000 a day, so the grid is coarse and the
+# job fetches it once per run.
+WIND_GRID_DEG = 1.5
+WIND_CHUNK = 100
 DELHI = (77.21, 28.61)
 REQUEST_TIMEOUT_S = 60.0
 
@@ -163,3 +169,53 @@ class Districts:
             ).fetchall()
         )
         return found.get("state"), found.get("district")
+
+
+def wind_grid() -> dict:
+    """Hourly 10 m wind for the last six hours and the current hour, on a coarse grid.
+
+    Directions are meteorological: the bearing the wind blows from, in degrees.
+    """
+    west, south, east, north = INDIA_BBOX
+    points = [
+        (round(west + i * WIND_GRID_DEG, 2), round(south + j * WIND_GRID_DEG, 2))
+        for i in range(int((east - west) / WIND_GRID_DEG) + 1)
+        for j in range(int((north - south) / WIND_GRID_DEG) + 1)
+    ]
+    out, hours = [], None
+    for k in range(0, len(points), WIND_CHUNK):
+        chunk = points[k : k + WIND_CHUNK]
+        query = urllib.parse.urlencode(
+            {
+                "latitude": ",".join(str(lat) for _, lat in chunk),
+                "longitude": ",".join(str(lon) for lon, _ in chunk),
+                "hourly": "wind_speed_10m,wind_direction_10m",
+                "past_hours": 6,
+                "forecast_hours": 1,
+                "timezone": "Asia/Kolkata",
+                "wind_speed_unit": "kmh",
+            }
+        )
+        with urllib.request.urlopen(f"{FORECAST_URL}?{query}", timeout=REQUEST_TIMEOUT_S) as r:
+            body = json.load(r)
+        for (lon, lat), site in zip(chunk, body, strict=True):
+            hourly = site["hourly"]
+            hours = hourly["time"]
+            out.append(
+                [
+                    lon,
+                    lat,
+                    [
+                        [speed, direction]
+                        for speed, direction in zip(
+                            hourly["wind_speed_10m"], hourly["wind_direction_10m"], strict=True
+                        )
+                    ],
+                ]
+            )
+    return {
+        "grid_deg": WIND_GRID_DEG,
+        "hours_ist": hours or [],
+        "points": out,
+        "source": "Open-Meteo forecast API, CC BY 4.0",
+    }

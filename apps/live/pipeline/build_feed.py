@@ -32,7 +32,7 @@ from .feed import (
     restrict_to_india,
     validate,
 )
-from .sources import Districts, delhi_pm25_tomorrow, firms_fires, insat_fires
+from .sources import Districts, delhi_pm25_tomorrow, firms_fires, insat_fires, wind_grid
 
 PIPELINE = ROOT / "apps" / "live" / "pipeline"
 WEB_DATA = ROOT / "apps" / "live" / "web" / "public"
@@ -119,6 +119,9 @@ def main() -> int:
             "source": "CAMS global forecast via Open-Meteo, not an official forecast",
         },
         "heatle": heatle_for(day, pack),
+        # Wind is the last six hours before now, so it describes only the current
+        # evening. A rebuilt past evening carries none rather than the wrong hours.
+        "wind": wind_grid() if day == now.astimezone(IST).date() else None,
         "attribution": ATTRIBUTION + pack["attribution"],
         "caveats": list(CAVEATS),
     }
