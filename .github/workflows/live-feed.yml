@@ -51,6 +51,8 @@ jobs:
           args="--drop-raw"
           if [ -n "${{ steps.day.outputs.day }}" ]; then args="$args --date ${{ steps.day.outputs.day }}"; fi
           uv run python -m apps.live.pipeline.build_feed $args
+      - name: Daily social kit, for the owner to post by hand
+        run: uv run python -m apps.live.pipeline.social_kit
       - name: Private check against the official fire product
         env:
           MOSDAC_USERNAME: ${{ secrets.MOSDAC_USERNAME }}
@@ -68,4 +70,9 @@ jobs:
         with:
           name: live-qa-private-${{ github.run_id }}
           path: data/live_qa/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-social-${{ github.run_id }}
+          path: data/live_social/
           retention-days: 14

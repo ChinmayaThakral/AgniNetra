@@ -50,3 +50,12 @@ h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
 .stat { color: var(--ember); }
 .commentary { padding-left: 20px; font-size: 0.9rem; }
 .commentary li { margin: 4px 0; }
+body.watch { overflow: hidden; }
+#watch { max-width: none; height: 100vh; padding: 24px; display: grid; grid-template-columns: 1fr 420px; gap: 24px; }
+.watch-map { width: 100%; height: calc(100vh - 48px); border-radius: 16px; }
+.watch-side { display: flex; flex-direction: column; gap: 10px; }
+.watch-side h1 { margin: 0; font-size: 1.8rem; }
+.watch-team { font-size: 2.6rem; font-weight: 700; margin: 0; }
+.watch-team.polar { color: var(--polar); }
+.watch-team.insat { color: var(--ember); }
+.watch-clock { font-size: 1.4rem; color: var(--ember); }
