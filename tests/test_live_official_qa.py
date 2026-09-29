@@ -61,3 +61,31 @@ def test_the_check_writes_only_under_data() -> None:
     source = (PIPELINE / "official_qa.py").read_text()
     assert 'OUT = DATA_DIR / "live_qa"' in source
     assert "L2P_FIR" not in (PIPELINE / "build_feed.py").read_text()
+
+
+def test_no_downloaded_product_is_left_behind(tmp_path, monkeypatch) -> None:
+    import json
+    import sys
+    from types import SimpleNamespace
+
+    import apps.live.pipeline.official_qa as qa
+
+    name = "3SIMG_01NOV2026_1100_L2P_FIR_V01R00.kml"
+
+    def fake_download(granule_id, tokens, path) -> None:
+        path.write_text("<coordinates>75.5512,30.5534</coordinates>")
+
+    monkeypatch.setattr(qa, "OFFICIAL_CACHE", tmp_path / "fir")
+    monkeypatch.setattr(qa, "OURS_CACHE", tmp_path / "ours")
+    monkeypatch.setattr(qa, "OUT", tmp_path / "out")
+    monkeypatch.setattr(qa, "load_dotenv", lambda *_: None)
+    monkeypatch.setattr(qa, "TokenSource", lambda *_: None)
+    monkeypatch.setattr(qa, "Districts", lambda _: lambda **_: ("Punjab", "Ludhiana"))
+    monkeypatch.setattr(qa, "search", lambda *_: [SimpleNamespace(identifier=name, granule_id=1)])
+    monkeypatch.setattr(qa, "download", fake_download)
+    monkeypatch.setattr(sys, "argv", ["official_qa", "--date", "2026-11-01"])
+
+    assert qa.main() == 0
+    assert [p.name for p in (tmp_path / "fir").iterdir()] == [f"{name}.cells.json"]
+    report = json.loads((tmp_path / "out" / "2026-11-01.json").read_text())
+    assert report["hours"][0]["official"] == 1

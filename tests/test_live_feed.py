@@ -117,7 +117,12 @@ def _minimal_feed(reference) -> dict:
         "cells": feed.build_cells(fires, reference, lambda **_: ("Punjab", "Ludhiana")),
         "match": match,
         "netu": feed.netu_lines(match, None, False),
-        "attribution": ["x"],
+        "heatle": {
+            "clues": [{"kind": "place", "centre": [75.55, 30.55]}],
+            "answer": "coal mine",
+            "choices": ["coal mine", "cannot tell"],
+        },
+        "attribution": [feed.MOSDAC_CREDIT + ". Test."],
         "caveats": list(feed.CAVEATS),
     }
 
@@ -134,6 +139,11 @@ def test_validate_passes_a_well_formed_feed(reference) -> None:
         lambda f: f["match"].update(insat_share=3),
         lambda f: f["netu"].append({"template": "freeform", "text": "farmers are to blame"}),
         lambda f: f.update(attribution=[]),
+        lambda f: f.update(attribution=["NASA FIRMS only"]),
+        lambda f: f["cells"][0].update(centre=[75.5512, 30.5534]),
+        lambda f: f["cells"][0].update(**{"class": "wildfire"}),
+        lambda f: f["heatle"]["clues"][0].update(centre=[73.4678, 26.9272]),
+        lambda f: f["heatle"].update(answer="a named company"),
     ],
 )
 def test_validate_refuses_a_feed_that_breaks_a_rule(reference, breakage) -> None:
@@ -213,3 +223,9 @@ def test_a_past_evening_with_no_wind_still_validates(reference) -> None:
     ok = _minimal_feed(reference)
     ok["wind"] = None
     feed.validate(ok)
+
+
+def test_the_app_schema_knows_every_template_the_pipeline_can_say() -> None:
+    schema = (ROOT / "apps" / "live" / "web" / "src" / "schema.ts").read_text()
+    for name in [*feed.TEMPLATES, *feed.COMMENTARY]:
+        assert f'"{name}"' in schema, name

@@ -22,6 +22,9 @@ on:
     - cron: "7 16 * * *"
     - cron: "7 18 * * *"
 
+permissions:
+  contents: read
+
 concurrency:
   group: live-feed
   cancel-in-progress: false

@@ -26,6 +26,7 @@ from .feed import (
     build_cells,
     build_districts,
     build_match,
+    cell_centre,
     cell_of,
     commentary,
     netu_lines,
@@ -51,6 +52,8 @@ ATTRIBUTION = [
 def heatle_for(day: date, pack: dict) -> dict:
     """One verified site a day, clues in the order the game reveals them."""
     site = pack["heatle"][day.toordinal() % len(pack["heatle"])]
+    # The place clue is the 11 km cell, like every other location the app shows.
+    lon, lat = site["centre"]
     return {
         "clues": [
             {"kind": "rhythm", "night_share": site["night_share"]},
@@ -58,7 +61,7 @@ def heatle_for(day: date, pack: dict) -> dict:
             {"kind": "land_cover", "value": site["land_cover"]},
             {"kind": "state", "value": site["state"]},
             {"kind": "persistence", "detections_in_record": site["detections"]},
-            {"kind": "place", "centre": site["centre"]},
+            {"kind": "place", "centre": list(cell_centre(cell_of(longitude=lon, latitude=lat)))},
         ],
         "answer": site["answer"],
         "choices": [

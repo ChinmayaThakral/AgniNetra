@@ -82,13 +82,19 @@ def main() -> int:
             when = official_slot(granule.identifier)
             if not start <= when < end:
                 continue
-            path = OFFICIAL_CACHE / granule.identifier
-            if not path.exists():
+            # Only the cells are kept between runs. The downloaded product is deleted
+            # once read, so no raw MOSDAC file lingers in a cache, D126.
+            cells_path = OFFICIAL_CACHE / f"{granule.identifier}.cells.json"
+            if not cells_path.exists():
+                path = OFFICIAL_CACHE / granule.identifier
                 download(granule.granule_id, tokens, path)
-            for lon, lat in COORDINATES.findall(path.read_text(errors="replace")):
-                cell = cell_of(longitude=float(lon), latitude=float(lat))
-                if in_india(cell):
-                    official[when.astimezone(IST).hour].add(cell)
+                points = COORDINATES.findall(path.read_text(errors="replace"))
+                cells = sorted({cell_of(longitude=float(x), latitude=float(y)) for x, y in points})
+                cells_path.write_text(json.dumps(cells))
+                path.unlink()
+            for cell in json.loads(cells_path.read_text()):
+                if in_india(tuple(cell)):
+                    official[when.astimezone(IST).hour].add(tuple(cell))
 
     ours: dict[int, set] = defaultdict(set)
     for stored in sorted(OURS_CACHE.glob("*.detections.json")):

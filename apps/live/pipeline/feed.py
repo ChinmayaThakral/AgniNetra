@@ -372,6 +372,16 @@ def pm25_category(value: float | None) -> str | None:
     return None
 
 
+CLASSES = ("agricultural", "industrial", "flare", "unclassified")
+MOSDAC_CREDIT = "Data Source MOSDAC/SAC/ISRO. https://mosdac.gov.in"
+
+
+def on_grid(centre) -> bool:
+    """True when a point is exactly the centre of its 0.1 degree cell."""
+    lon, lat = centre
+    return list(cell_centre(cell_of(longitude=lon, latitude=lat))) == [lon, lat]
+
+
 def validate(feed: dict) -> None:
     """Raise if the feed breaks a rule the app promises. Run before every write."""
     if feed.get("schema") != SCHEMA:
@@ -391,6 +401,10 @@ def validate(feed: dict) -> None:
             raise ValueError(f"cell carries unexpected fields: {sorted(c)}")
         if c["how_sure"] not in ("low", "medium"):
             raise ValueError(f"confidence {c['how_sure']} is not allowed for a weak label")
+        if c["class"] not in CLASSES or not set(c["seen_by"]) <= {"polar", "insat"}:
+            raise ValueError(f"cell has an unknown class or team: {c}")
+        if not on_grid(c["centre"]):
+            raise ValueError(f"cell centre is not a cell centre: {c['centre']}")
     for key in ("polar_share", "insat_share"):
         value = feed["match"][key]
         if value is not None and not 0 <= value <= 1:
@@ -405,5 +419,13 @@ def validate(feed: dict) -> None:
         for speed, direction in point[2]:
             if speed is not None and (speed < 0 or not 0 <= direction <= 360):
                 raise ValueError(f"wind value out of range: {speed}, {direction}")
+    heatle = feed["heatle"]
+    if set(heatle) != {"clues", "answer", "choices"} or heatle["answer"] not in heatle["choices"]:
+        raise ValueError("heatle is malformed")
+    for clue in heatle["clues"]:
+        if "centre" in clue and not on_grid(clue["centre"]):
+            raise ValueError(f"heatle gives a place finer than a cell: {clue['centre']}")
     if not feed.get("attribution") or not feed.get("caveats"):
         raise ValueError("attribution and caveats must travel with the data")
+    if not any(MOSDAC_CREDIT in line for line in feed["attribution"]):
+        raise ValueError("the MOSDAC credit line is required")
