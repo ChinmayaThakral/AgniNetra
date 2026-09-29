@@ -1,5 +1,6 @@
 import { el } from "./dom";
 import type { Feed } from "./schema";
+import { heatleShareCard, shareCanvas } from "./share-card";
 
 // Heatle: one mystery hot spot a day, six clues in turn. Every answer is a site whose
 // identity was checked against imagery, and answers are categories, never company names.
@@ -86,6 +87,10 @@ export function heatleCard(feed: Feed, onPlace: (centre: [number, number]) => vo
       result.textContent = right
         ? `Solved on clue ${shown} of ${game.clues.length}. It is a ${game.answer}.`
         : `Not this time. It is a ${game.answer}.`;
+      const summary = right ? `Solved on clue ${shown} of ${game.clues.length}` : "Not solved today";
+      const share = el("button", "button share", "Share my Heatle");
+      share.addEventListener("click", () => void shareCanvas(heatleShareCard(feed, summary), `heatle-${feed.evening_ist}.png`));
+      card.append(share);
     });
     choices.append(button);
   }

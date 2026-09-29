@@ -185,3 +185,31 @@ def test_validate_refuses_an_impossible_wind(reference) -> None:
     broken["wind"] = {"points": [[75.0, 30.0, [[12.0, 400]]]]}
     with pytest.raises(ValueError):
         feed.validate(broken)
+
+
+def test_commentary_follows_each_over_and_never_runs_ahead_of_the_data() -> None:
+    match = feed.build_match(
+        [fire(75.55, 30.55, 8, 0, "polar"), fire(75.95, 30.95, 11, 0, "insat")]
+    )
+    lines = {line["over"]: line for line in feed.commentary(match, insat_newest_ist="17:00")}
+    assert lines["16:00"]["template"] == "polar_in_pavilion"
+    assert lines["16:30"]["template"] == "insat_up"
+    assert lines["17:00"]["template"] == "maiden"
+    assert lines["17:30"]["template"] == "not_yet"
+    later = {line["over"]: line for line in feed.commentary(match, insat_newest_ist="19:30")}
+    assert later["17:30"]["template"] == "maiden"
+    assert [line["template"] for line in later.values()].count("polar_in_pavilion") == 1
+    assert all(line["template"] in feed.COMMENTARY for line in lines.values())
+
+
+def test_validate_refuses_commentary_outside_the_templates(reference) -> None:
+    broken = _minimal_feed(reference)
+    broken["commentary"] = [{"over": "16:00", "template": "hype", "text": "What a blaze!"}]
+    with pytest.raises(ValueError):
+        feed.validate(broken)
+
+
+def test_a_past_evening_with_no_wind_still_validates(reference) -> None:
+    ok = _minimal_feed(reference)
+    ok["wind"] = None
+    feed.validate(ok)

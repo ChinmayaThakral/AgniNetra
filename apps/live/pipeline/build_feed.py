@@ -27,6 +27,7 @@ from .feed import (
     build_districts,
     build_match,
     cell_of,
+    commentary,
     netu_lines,
     pm25_category,
     restrict_to_india,
@@ -109,6 +110,9 @@ def main() -> int:
         "cells": cells,
         "districts": build_districts(cells),
         "netu": netu_lines(match, insat_delay, heavy=category in HEAVY_CATEGORIES),
+        "commentary": commentary(
+            match, None if insat_newest is None else insat_newest.astimezone(IST).strftime("%H:%M")
+        ),
         "tomorrow": {
             "city": "Delhi",
             "forecast_date": tomorrow["date"],

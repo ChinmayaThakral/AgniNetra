@@ -44,3 +44,9 @@ h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
 .choice.wrong { border-color: #e2361c; }
 .credits { font-size: 0.75rem; color: var(--muted); }
 .caveat { color: #ffcf70; }
+.player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.player { border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.player h3 { margin: 0 0 4px; color: var(--text); }
+.stat { color: var(--ember); }
+.commentary { padding-left: 20px; font-size: 0.9rem; }
+.commentary li { margin: 4px 0; }

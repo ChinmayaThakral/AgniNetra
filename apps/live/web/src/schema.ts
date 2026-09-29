@@ -55,6 +55,7 @@ export const Feed = z.object({
     }),
   ),
   netu: z.array(z.object({ template: z.string(), text: z.string() })),
+  commentary: z.array(z.object({ over: z.string(), template: z.string(), text: z.string() })),
   tomorrow: z.object({
     city: z.string(),
     forecast_date: z.string(),

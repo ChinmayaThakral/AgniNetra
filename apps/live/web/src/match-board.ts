@@ -1,4 +1,5 @@
 import { el, howSure, percent } from "./dom";
+import { commentaryList } from "./player-cards";
 import type { Feed } from "./schema";
 
 // The Evening Match. Scores are shares of the day's fire cells each satellite caught,
@@ -40,6 +41,7 @@ export function matchBoard(feed: Feed): HTMLElement {
     overs.append(item);
   }
   board.append(el("h3", "", "Over by over, INSAT share"), overs);
+  board.append(el("h3", "", "Commentary"), commentaryList(feed));
   board.append(howSure("low", "Share of 11 km fire cells caught. Weak labels. Not an official count."));
   return board;
 }

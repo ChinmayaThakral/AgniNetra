@@ -4,6 +4,7 @@ import { CLASS_COLOURS, CLASS_LABELS, drawFireMap } from "./fire-map";
 import { heatleCard } from "./heatle";
 import { matchBoard } from "./match-board";
 import { moodOf, netuSvg } from "./netu";
+import { playerCards } from "./player-cards";
 import { fit, INDIA, NORTH_INDIA, type Bounds } from "./projection";
 import { Boundaries, Feed } from "./schema";
 import { matchShareCard, shareCanvas } from "./share-card";
@@ -132,6 +133,7 @@ async function start(): Promise<void> {
   root.replaceChildren(
     header,
     matchBoard(feed),
+    playerCards(feed),
     mapCard,
     share,
     smoke.card,

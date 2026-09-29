@@ -285,6 +285,46 @@ TEMPLATES = {
 }
 
 
+# Ball by ball commentary, one line per over. Templates only, like Netu, and about the
+# satellites and their shares, never about fires as a score or about who lit them.
+COMMENTARY = {
+    "maiden": "{over} over: a maiden for INSAT. Share stays at {insat_pct} percent.",
+    "insat_up": "{over} over: INSAT's share climbs to {insat_pct} percent. Accha shot.",
+    "polar_in_pavilion": "{over} over: polar team still in the pavilion since {polar_last}.",
+    "polar_late": "{over} over: a polar pass joins in, share now {polar_pct} percent.",
+    "not_yet": "{over} over: no data for this over yet. INSAT runs about an hour behind.",
+}
+
+
+def commentary(match: dict, insat_newest_ist: str | None) -> list[dict]:
+    """One line per over, chosen by what the over's shares did."""
+    lines = []
+    polar_last = match["polar_last_seen_ist"]
+    said_pavilion = False
+    for over in match["overs"]:
+        pct = None if over["insat_share"] is None else round(100 * over["insat_share"])
+        if insat_newest_ist is None or over["over"] > insat_newest_ist:
+            key, values = "not_yet", {}
+        elif over["polar_new"]:
+            ppct = None if over["polar_share"] is None else round(100 * over["polar_share"])
+            key, values = "polar_late", {"polar_pct": ppct}
+        elif over["insat_new"]:
+            key, values = "insat_up", {"insat_pct": pct}
+        elif polar_last and not said_pavilion:
+            key, values = "polar_in_pavilion", {"polar_last": polar_last}
+            said_pavilion = True
+        else:
+            key, values = "maiden", {"insat_pct": pct}
+        lines.append(
+            {
+                "over": over["over"],
+                "template": key,
+                "text": COMMENTARY[key].format(over=over["over"], **values),
+            }
+        )
+    return lines
+
+
 def netu_lines(match: dict, insat_delay_hours: float | None, heavy: bool) -> list[dict]:
     lines = []
 
@@ -358,7 +398,10 @@ def validate(feed: dict) -> None:
     for line in feed["netu"]:
         if line["template"] not in TEMPLATES:
             raise ValueError(f"Netu said something outside the templates: {line}")
-    for point in feed.get("wind", {}).get("points", []):
+    for line in feed.get("commentary", []):
+        if line["template"] not in COMMENTARY:
+            raise ValueError(f"commentary outside the templates: {line}")
+    for point in (feed.get("wind") or {}).get("points", []):
         for speed, direction in point[2]:
             if speed is not None and (speed < 0 or not 0 <= direction <= 360):
                 raise ValueError(f"wind value out of range: {speed}, {direction}")

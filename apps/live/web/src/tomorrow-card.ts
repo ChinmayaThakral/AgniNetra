@@ -1,5 +1,6 @@
 import { el, howSure } from "./dom";
 import type { Feed } from "./schema";
+import { shareCanvas, tomorrowShareCard } from "./share-card";
 
 export function tomorrowCard(feed: Feed): HTMLElement {
   const t = feed.tomorrow;
@@ -17,5 +18,8 @@ export function tomorrowCard(feed: Feed): HTMLElement {
   card.append(el("p", "muted", `Will school go hybrid? ${t.school_hybrid}.`));
   card.append(el("p", "muted small", `${t.source}. For ${t.forecast_date}.`));
   card.append(howSure("low", "A global model forecast, not the official Delhi forecast."));
+  const share = el("button", "button share", "Share tomorrow");
+  share.addEventListener("click", () => void shareCanvas(tomorrowShareCard(feed), `agninetra-tomorrow-${t.forecast_date}.png`));
+  card.append(share);
   return card;
 }
