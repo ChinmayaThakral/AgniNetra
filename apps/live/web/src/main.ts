@@ -45,6 +45,8 @@ async function start(): Promise<void> {
 
   const mapCard = el("section", "card map-card");
   const canvas = el("canvas", "fire-map");
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Map of today's fire cells over India, each an 11 km square. The match scores above give the same shares in text.");
   const controls = el("div", "map-controls");
   let bounds: Bounds = NORTH_INDIA;
   let eveningOnly = false;

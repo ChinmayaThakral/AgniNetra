@@ -6,6 +6,19 @@ import { z } from "zod";
 
 const share = z.number().min(0).max(1).nullable();
 
+// The template names the pipeline allows, feed.py TEMPLATES and COMMENTARY. A test on the
+// Python side fails if either list gains a name this file does not carry.
+const NetuTemplate = z.enum([
+  "polar_all_out",
+  "both_quiet",
+  "insat_share",
+  "polar_share",
+  "quiet",
+  "worried",
+  "data_late",
+]);
+const CommentaryTemplate = z.enum(["maiden", "insat_up", "polar_in_pavilion", "polar_late", "not_yet"]);
+
 export const Cell = z.object({
   cell: z.string(),
   centre: z.tuple([z.number(), z.number()]),
@@ -16,7 +29,7 @@ export const Cell = z.object({
   seen_by: z.array(z.enum(["polar", "insat"])),
   evening: z.boolean(),
   first_seen_ist: z.string().regex(/^\d{2}:\d{2}$/),
-});
+}).strict();
 
 export const Over = z.object({
   over: z.string(),
@@ -54,8 +67,8 @@ export const Feed = z.object({
       evening_share: share,
     }),
   ),
-  netu: z.array(z.object({ template: z.string(), text: z.string() })),
-  commentary: z.array(z.object({ over: z.string(), template: z.string(), text: z.string() })),
+  netu: z.array(z.object({ template: NetuTemplate, text: z.string() })),
+  commentary: z.array(z.object({ over: z.string(), template: CommentaryTemplate, text: z.string() })),
   tomorrow: z.object({
     city: z.string(),
     forecast_date: z.string(),
@@ -75,7 +88,7 @@ export const Feed = z.object({
       grid_deg: z.number(),
       hours_ist: z.array(z.string()),
       points: z.array(
-        z.tuple([z.number(), z.number(), z.array(z.tuple([z.number().nullable(), z.number().nullable()]))]),
+        z.tuple([z.number(), z.number(), z.array(z.tuple([z.number().min(0).nullable(), z.number().min(0).max(360).nullable()]))]),
       ),
       source: z.string(),
     })

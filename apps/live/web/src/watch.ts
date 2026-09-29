@@ -35,6 +35,8 @@ async function start(): Promise<void> {
   let feed = await readFeed();
 
   const canvas = el("canvas", "watch-map");
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Fire Clock map of North India, replaying the evening's fire cells.");
   const side = el("aside", "watch-side");
   const clock = el("p", "watch-clock", "");
   root.replaceChildren(canvas, side);
