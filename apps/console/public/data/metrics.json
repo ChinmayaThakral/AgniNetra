@@ -157,8 +157,8 @@
   "persistent_clusters": 244
  },
  "notMeasured": {
-  "B3 INSAT-3DS contextual thresholds": "not measured, waiting on a MOSDAC order approval",
-  "B4 foundation model probe": "not measured, support below floor. The pipeline runs end to end on real imagery; one scene reaches 7 held out detections and no flare at all. Lifting it needs 39 tiles",
+  "B3 INSAT-3DS contextual thresholds": "not measured as a baseline. The contextual detector is built and drives the geostationary window, but it was never scored against B1 and B2 on the held out groups",
+  "B4 foundation model probe": "not measured, support below floor. The pipeline runs end to end on real imagery; one scene reaches 118 held out detections and no flare at all. Lifting it needs 38 tiles",
   "KAALCHAKRA against B1 and B2": "not measured, and not estimable from a polar orbiting record. Phase 6 ships as specification, prototype and observability argument",
   "diurnal shift 2020 to 2024": "not measured, 2020 not ingested",
   "flare kernel family": "unresolved, not confirmed. Three tests failed for three different reasons",
