@@ -22,9 +22,10 @@ Usage:
 
 import os
 
-# Pinned before any estimator library loads. Thread count changes the floating
-# point reduction order inside sklearn's histogram builders, and random_state does
-# not constrain it, so a fixed seed alone does not reproduce a fit. D59.
+# Pinned before any estimator library loads, as a precaution only. D59 blamed thread
+# count for fits that did not reproduce from their seed; the cause was an unordered
+# feature query, fixed by ordering it on detection_id, and thread count makes no
+# difference once rows arrive in a fixed order. D66.
 os.environ.setdefault("OMP_NUM_THREADS", "4")
 
 
