@@ -19,19 +19,6 @@ reference layers:
 
     uv run python scripts/export_console.py
 
-## Do not run a production build while the dev server is running
-
-`npm run build` writes into the same `.next/` directory that `npm run dev` is
-serving from. Running the build against a live dev server replaces the chunks the
-browser is asking for, and the page then loads with no CSS at all: unstyled serif
-text, no grid, no map. Nothing errors, the server keeps returning HTTP 200 for the
-document, and only the stylesheet requests 404.
-
-If that happens, stop the dev server, delete `.next`, and start it again. `.next`
-is a regenerable cache and holds nothing you need.
-
-    pkill -f "next dev" && rm -rf .next && npm run dev
-
 ## What it shows
 
 A MapLibre map of the sampled detections, coloured by predicted class. A timeline
