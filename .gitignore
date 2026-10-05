@@ -43,3 +43,6 @@ out/
 .DS_Store
 .idea/
 *.swp
+
+# Copied from node_modules at build, see scripts/copy-map-worker.mjs.
+apps/console/public/maplibre/

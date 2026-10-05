@@ -1,9 +1,11 @@
 "use client";
 
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
+
+maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 import { classColour, count, metres } from "@/lib/format";
 import type { Detection, Manifest, Source } from "@/lib/schema";
