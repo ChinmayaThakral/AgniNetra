@@ -228,11 +228,16 @@ def figure_coverage() -> None:
         axis.tick_params(labelsize=8.5)
         for spine in ("top", "right"):
             axis.spines[spine].set_visible(False)
+    # Computed, not typed: the typed shortfall still read 8 and 10 points after the refits
+    # moved them to 9 and 6.
+    short = [round(100 * (0.90 - c)) for c in coverage if c < 0.90]
+    words = {1: "one", 2: "two", 3: "three"}
     caption(
         fig,
         "Calibrated on a held out slice of the training states, never on the test group. "
         "A spatially blocked split breaks the exchangeability split conformal assumes, so the "
-        "guarantee does not hold:\ntwo of three groups undercover by 8 and 10 points. A random "
+        f"guarantee does not hold:\n{words[len(short)]} of {words[len(coverage)]} groups "
+        f"undercover by {' and '.join(str(s) for s in short)} points. A random "
         "split would have shown coverage near nominal and concealed it.",
     )
     fig.tight_layout(rect=(0, 0.15, 1, 1))
