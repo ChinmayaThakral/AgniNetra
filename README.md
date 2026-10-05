@@ -46,9 +46,21 @@ modelling them directly is the research contribution.
 
 Requires Python 3.11 and `uv`.
 
-    uv venv --python 3.11
-    uv pip install -r requirements.txt
+    uv sync --extra dev
     uv run pytest
+
+`pyproject.toml` declares every direct dependency, pinned. `requirements.lock.txt`
+freezes the full environment the published results were produced in, including the
+heavy imagery extra used only by baseline B4. To match that environment exactly:
+
+    uv venv --python 3.11
+    uv pip install -r requirements.lock.txt
+
+The console needs Node 22:
+
+    cd apps/console
+    npm ci
+    npm run build
 
 The FIRMS map key is read from `.env`, which is never committed. Copy
 `.env.example` to `.env` and fill it in. Without a key, ingestion is blocked and
@@ -59,11 +71,19 @@ reports itself as blocked rather than producing data.
 Project state, decisions and phase specifications are kept with the team rather
 than in this repository.
 
+## What a clone does not contain
+
+`docs/`, `context/` and `data/` stay on the team's machines. `data/` holds the
+DuckDB store and downloaded products, several of which may not be redistributed;
+`docs/` holds the report and the generated result documents. The tests that read
+them skip on a clone, and each skip message names the folder it is waiting for.
+Everything else runs from a clone.
+
 ## Attribution
 
 This project builds on six external data sources. Four of them require attribution
 as a licence condition rather than as a courtesy, so the notices below are
-reproduced in `docs/dataset_card.md` and in the console footer as well.
+reproduced in the console footer and in the dataset card as well.
 
 - **NASA FIRMS.** MODIS and VIIRS active fire data from NASA FIRMS, part of NASA's
   Earth Science Data and Information System. <https://firms.modaps.eosdis.nasa.gov/>
