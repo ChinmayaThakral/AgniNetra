@@ -61,7 +61,13 @@ def granule_count() -> dict[str, int]:
     derived = ROOT / "data" / "derived"
     if not derived.is_dir():
         return {}
-    return {d.name: len(list(d.glob("*.npz"))) for d in sorted(derived.iterdir()) if d.is_dir()}
+    # A `_pre_` folder is a superseded run kept for comparison, the same granules reduced
+    # before a fix; counting it would count those granules twice, as 400 against 270 did.
+    return {
+        d.name: len(list(d.glob("*.npz")))
+        for d in sorted(derived.iterdir())
+        if d.is_dir() and "_pre_" not in d.name
+    }
 
 
 def main() -> int:
