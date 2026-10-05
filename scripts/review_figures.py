@@ -185,12 +185,14 @@ def figure_pr_and_confusion() -> None:
             )
     axes[1].set_title("B1 confusion, row normalised, group_a", fontsize=11, loc="left")
     fig.colorbar(image, ax=axes[1], fraction=0.045)
+    # Read, not typed: the typed value stayed at 0.9998 after refits moved it to 0.9995.
+    leakage = json.loads((ARTIFACT_DIR / "b1_results.json").read_text())["leakage_macro_f1"]
     caption(
         fig,
         "Option A, no class weighting, fitted on the true prior. Flare is 1.16 percent of "
         "rows, so its curve sits low and that is the reported result rather than a defect.\n"
         "Features exclude the distances and land cover that define the weak label: including "
-        "them gives macro F1 0.9998, which is arithmetic rather than attribution.",
+        f"them gives macro F1 {leakage:.4f}, which is arithmetic rather than attribution.",
     )
     fig.tight_layout(rect=(0, 0.12, 1, 1))
     fig.savefig(FIG / "b1_pr_confusion.png", dpi=170)
