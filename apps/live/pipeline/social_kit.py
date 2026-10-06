@@ -59,11 +59,11 @@ FLAME = [
 
 CAPTIONS = {
     "match": (
-        "Evening Match, {day}. Polar satellites caught {polar} of today's fire cells and "
-        "were all out by {polar_last}. INSAT-3DS caught {insat}. The satellites clock out; "
-        "the smoke does not."
+        "Evening fire analysis, {day}. Polar satellites saw {polar} of today's fire cells, "
+        "with their last pass at {polar_last}. INSAT-3DS saw {insat}. The polar passes end in "
+        "the afternoon; the smoke does not."
     ),
-    "quiet": "Evening Match, {day}. A quiet sky over India today. Netu is resting its eye.",
+    "quiet": "Evening fire analysis, {day}. A quiet sky over India today.",
     "tomorrow": "Tomorrow in {city}: PM2.5 forecast about {pm25}, CPCB {category}.",
     "credits": (
         "How sure: low. Weak labels from maps, not an official count. Fires shown per 11 km "
@@ -129,15 +129,15 @@ def text(ax, x, y, s, size, colour=TEXT, weight="bold") -> None:
 def story(feed: dict, path: Path) -> None:
     fig, ax = canvas(1080, 1920)
     text(ax, 540, 1800, "AgniNetra", 44, EMBER)
-    text(ax, 540, 1710, "The Evening Match", 38)
+    text(ax, 540, 1710, "Evening fire analysis", 38)
     text(ax, 540, 1650, feed["evening_ist"], 24, MUTED, "normal")
     draw_netu(ax, 540, 1330, 360, mood(feed))
     match = feed["match"]
     text(ax, 540, 980, f"Polar {pct(match['polar_share'])}", 44, POLAR)
     text(ax, 540, 880, f"INSAT {pct(match['insat_share'])}", 44, EMBER)
-    text(ax, 540, 810, "share of today's fire cells each caught", 22, MUTED, "normal")
+    text(ax, 540, 810, "share of today's fire cells each saw", 22, MUTED, "normal")
     if match["polar_last_seen_ist"]:
-        text(ax, 540, 700, f"Polar all out at {match['polar_last_seen_ist']}", 28)
+        text(ax, 540, 700, f"Last polar pass {match['polar_last_seen_ist']}", 28)
     text(ax, 540, 330, "how sure: low. Weak labels. Not an official count.", 20, SURE)
     text(ax, 540, 250, "Data Source MOSDAC/SAC/ISRO. NASA FIRMS.", 16, MUTED, "normal")
     text(ax, 540, 210, "Boundaries (c) OpenStreetMap contributors, ODbL.", 16, MUTED, "normal")

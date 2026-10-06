@@ -1,10 +1,10 @@
-"""The Live feed: classification, aggregation, the match and Netu's lines.
+"""The Live feed: classification, aggregation, the evening comparison and Netu's lines.
 
 Pure functions only. Nothing here touches the network or the clock, so every rule the
 app promises is testable on fixed inputs. `build_feed.py` fetches and calls these.
 
 The rules the app does not bend are enforced here rather than in the interface:
-detections leave this module only as 0.1 degree cells, never as points; the match is
+detections leave this module only as 0.1 degree cells, never as points; the comparison is
 scored as shares, never counts; every sentence Netu says is a template filled from the
 feed; and no confidence is ever stated as high, because every class is a weak label.
 """
@@ -22,7 +22,7 @@ CELL_DEG = 0.1
 EARTH_RADIUS_M = 6371008.8
 INDUSTRIAL_RADIUS_M = 1000.0
 FLARE_RADIUS_M = 500.0
-# The window a fire must fall in to count for the day's match, and the evening overs.
+# The window a fire must fall in to count for the day, and the evening's half hours.
 MATCH_START_IST = 10
 MATCH_END_IST = 20
 OVER_SLOTS_IST = tuple((16 + i // 2, 30 * (i % 2)) for i in range(8))
@@ -146,12 +146,12 @@ def share(part: int, whole: int) -> float | None:
 
 
 def build_match(fires: list[Fire]) -> dict:
-    """The Evening Match, scored as shares of fire cells, never as counts.
+    """Which satellites saw the day's fires, as shares of fire cells and as cell counts.
 
-    The universe is every cell any satellite saw burning between 10:00 and 20:00 IST.
-    Each team's score is the share of that universe it caught. Overs are the half hours
-    from 16:00 to 19:30, each reporting the cumulative shares after that over. A team is
-    all out once its last detection of the day has passed.
+    The universe is every cell any satellite saw burning between 10:00 and 20:00 IST. Each
+    group's share is the part of that universe it saw. A cell both saw counts for both, so
+    the two shares add up to more than 100 percent by exactly the share seen by both. The
+    half hours from 16:00 to 19:30 each report the shares so far, cumulatively.
     """
     in_window = [f for f in fires if in_match_window(f.when_utc)]
     universe = {cell_of(longitude=f.longitude, latitude=f.latitude) for f in in_window}
@@ -191,6 +191,8 @@ def build_match(fires: list[Fire]) -> dict:
         "window_ist": f"{MATCH_START_IST:02d}:00 to {MATCH_END_IST:02d}:00",
         "polar_share": share(len(caught["polar"]), len(universe)),
         "insat_share": share(len(caught["insat"]), len(universe)),
+        "cells_total": len(universe),
+        "cells_both": len(caught["polar"] & caught["insat"]),
         "polar_last_seen_ist": _ist(last_seen["polar"]),
         "insat_last_seen_ist": _ist(last_seen["insat"]),
         "overs": overs,
@@ -205,7 +207,7 @@ def restrict_to_india(fires: list[Fire], locate) -> tuple[list[Fire], dict]:
     """Keep fires whose cell centre lies in an Indian state, and the lookup for each cell.
 
     The download box is a rectangle, and 41 percent of what it returns lies outside India,
-    D23, so without this the match would score Pakistani and Bangladeshi fires. Deciding by
+    D23, so without this the comparison would count Pakistani and Bangladeshi fires. Deciding by
     the cell centre rather than the point keeps a border cell whole on one side.
     """
     places: dict[tuple[int, int], tuple[str | None, str | None]] = {}
@@ -276,24 +278,26 @@ def build_districts(cells: list[dict]) -> list[dict]:
 
 # Every sentence Netu says. Placeholders are filled from the feed and nothing else.
 TEMPLATES = {
-    "polar_all_out": "Polar satellites all out at {polar_last}. INSAT still batting.",
-    "both_quiet": "Polar satellites out at {polar_last}, and INSAT's last catch was {insat_last}.",
-    "insat_share": "INSAT has caught {insat_pct} percent of today's fire cells so far.",
-    "polar_share": "The 1:30 pm pass caught {polar_pct} percent. The evening was not its shift.",
+    "polar_all_out": (
+        "The last polar satellite pass was at {polar_last}. Since then only INSAT-3DS is watching."
+    ),
+    "both_quiet": "Last polar pass at {polar_last}. INSAT-3DS last saw a fire at {insat_last}.",
+    "insat_share": "INSAT-3DS has seen {insat_pct} percent of today's fire cells so far.",
+    "polar_share": "Polar satellites saw {polar_pct} percent, nearly all on their afternoon pass.",
     "quiet": "Quiet sky today. No fire cells seen yet.",
     "worried": "Delhi's air looks heavy tomorrow. Netu is worried, not excited.",
     "data_late": "INSAT data here is from {insat_age}. Live layer: NASA FIRMS.",
 }
 
 
-# Ball by ball commentary in Hinglish, one line per over. Templates only, like Netu, and
-# about the satellites and their shares, never about fires as a score or about who lit them.
+# The evening, half hour by half hour, in plain words. Templates only, like Netu, and about
+# the satellites and what they saw, never about who lit a fire.
 COMMENTARY = {
-    "maiden": "{over} over: INSAT ke liye maiden over. Share {insat_pct} percent pe tika hai.",
-    "insat_up": "{over} over: INSAT ka share badhkar {insat_pct} percent. Accha catch, INSAT.",
-    "polar_in_pavilion": "{over} over: polar team {polar_last} se pavilion mein baithi hai.",
-    "polar_late": "{over} over: ek polar pass aaya, polar share ab {polar_pct} percent.",
-    "not_yet": "{over} over: is over ka data abhi baaki hai. INSAT lagbhag ek ghanta peeche hai.",
+    "maiden": "{over}: no new fires seen by INSAT-3DS. It has seen {insat_pct} percent so far.",
+    "insat_up": "{over}: INSAT-3DS saw new fires. It has now seen {insat_pct} percent.",
+    "polar_in_pavilion": "{over}: no polar satellite has passed over since {polar_last}.",
+    "polar_late": "{over}: a polar satellite passed over. Polar has now seen {polar_pct} percent.",
+    "not_yet": "{over}: INSAT-3DS data for this half hour has not arrived; it runs an hour behind.",
 }
 
 
@@ -339,7 +343,7 @@ def netu_lines(match: dict, insat_delay_hours: float | None, heavy: bool) -> lis
         say("worried")
     polar_last, insat_last = match["polar_last_seen_ist"], match["insat_last_seen_ist"]
     if polar_last:
-        # "Still batting" is only true when INSAT caught something after the polar pass.
+        # "Only INSAT-3DS is watching" is said only when it saw something after the polar pass.
         if insat_last and insat_last > polar_last:
             say("polar_all_out", polar_last=polar_last)
         else:

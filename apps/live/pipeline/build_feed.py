@@ -22,6 +22,7 @@ from ml.paths import DATA_DIR, ENV_PATH, ROOT
 
 from .build_chips import CLOSE_M, WIDE_M
 from .feed import (
+    AIR_CITIES,
     CAVEATS,
     IST,
     SCHEMA,
@@ -44,6 +45,7 @@ PIPELINE = ROOT / "apps" / "live" / "pipeline"
 WEB_DATA = ROOT / "apps" / "live" / "web" / "public"
 CACHE = DATA_DIR / "live" / "insat_l1c"
 HEAVY_CATEGORIES = ("Very Poor", "Severe")
+PLACES = {name: (lon, lat) for name, lon, lat in AIR_CITIES}
 ATTRIBUTION = [
     "Data Source MOSDAC/SAC/ISRO. https://mosdac.gov.in. INSAT-3DS detections are this "
     "project's own value added product.",
@@ -174,6 +176,8 @@ def main() -> int:
         "air": [
             {
                 "city": a["city"],
+                "lon": PLACES[a["city"]][0],
+                "lat": PLACES[a["city"]][1],
                 "pm25_24h_mean": a["pm25_24h_mean"],
                 "cpcb_category": pm25_category(a["pm25_24h_mean"]),
             }
