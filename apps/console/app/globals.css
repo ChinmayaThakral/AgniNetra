@@ -36,6 +36,8 @@ a { color: var(--accent); }
   flex-wrap: wrap;
 }
 .masthead .sub { color: var(--muted); font-size: 0.78rem; }
+.site-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.4rem; font-size: 0.8rem; }
+.site-links a { color: var(--accent, #b85c00); }
 
 .body { display: grid; grid-template-columns: minmax(0, 1fr) 24rem; min-height: 0; }
 @media (max-width: 1000px) { .body { grid-template-columns: 1fr; } }
