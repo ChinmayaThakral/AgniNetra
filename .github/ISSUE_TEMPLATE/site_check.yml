@@ -1,0 +1,33 @@
+name: Hot spot check
+description: Report what a recurring hot spot really is, or ask for one to be checked.
+labels: [site-check, data]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Coordinates or the Swipe spot
+      description: Latitude and longitude to four decimals, as the console or Swipe shows them.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What you think it is
+      options:
+        - Steel or iron plant
+        - Coal mine
+        - Brick kiln
+        - Power plant
+        - Gas flare
+        - Other industry
+        - Not industry (farm or forest fire, town)
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Imagery, a map link, a public registry entry or local knowledge. Please do not name private individuals.
+    validations:
+      required: true

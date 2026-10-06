@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AgniNetra console",
+  title: "AgniNetra research console",
   description:
-    "Thermal source attribution over India. Displays precomputed phase 4 results.",
+    "What is burning over India, and how sure the model is: thermal source attribution from satellite detections.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

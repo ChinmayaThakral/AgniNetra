@@ -26,8 +26,8 @@ is burning: a refinery gas flare, a steel plant, a cement kiln and a farmer burn
 stubble all arrive as the same row in the feed. AgniNetra labels every one of those hot
 spots over India as **flare**, **industrial** or **agricultural**, measures how far that
 can be trusted, and shows it in two apps: a research console for the evidence, and a
-public app that turns India's evening crop burning into a cricket match between
-satellites.
+public app that shows each evening which fires India's satellites saw, and which they
+missed, as a set of games anyone can learn from.
 
 Built by Chinmaya Thakral.
 
@@ -36,7 +36,7 @@ Built by Chinmaya Thakral.
 | Branch | What it is | Live at | Built with | Deploys with |
 |---|---|---|---|---|
 | [`console`](https://github.com/ChinmayaThakral/AgniNetra/tree/console) (default) | The research: data pipeline, labels, models, evaluation, the dataset export, and the console that shows the results | [agninetra-console.chinmayathakral.com](https://agninetra-console.chinmayathakral.com) | Python, DuckDB, scikit-learn, Next.js, MapLibre | Nixpacks, `nixpacks.toml` |
-| [`agninetra`](https://github.com/ChinmayaThakral/AgniNetra/tree/agninetra) | Everything on `console`, plus **AgniNetra Live** in `apps/live/`: the evening fire match, Heatle, Swipe and Netu | [agninetra.chinmayathakral.com](https://agninetra.chinmayathakral.com) | TypeScript, Vite, a Python feed server | Docker, `Dockerfile` |
+| [`agninetra`](https://github.com/ChinmayaThakral/AgniNetra/tree/agninetra) | Everything on `console`, plus **AgniNetra Live** in `apps/live/`: the evening fire analysis, Heatle, Swipe and Netu | [agninetra.chinmayathakral.com](https://agninetra.chinmayathakral.com) | TypeScript, Vite, a Python feed server | Docker, `Dockerfile` |
 
 Changes flow one way: `console` is merged into `agninetra`, never the reverse. The
 research branch therefore stays exactly what the research report describes, while the
@@ -54,25 +54,27 @@ precomputed, so a number on screen and a number in the report have one source.
 
 ## AgniNetra Live
 
-<p align="center"><img src=".github/assets/live.jpg" alt="AgniNetra Live on a desktop: the evening match between the polar satellites and INSAT-3DS, the fire map, and the Heatle game." width="100%"></p>
+<p align="center"><img src=".github/assets/live.jpg" alt="AgniNetra Live on a desktop: which satellites saw the evening's fires, the fire map, and the Heatle game." width="100%"></p>
 
 <img src=".github/assets/netu.svg" alt="Netu" width="44" align="left">
 
-**Netu**, a one-eyed flame, hosts a match every evening. NASA's polar satellites pass at
-fixed times and are "all out" by mid afternoon; India's own geostationary INSAT-3DS keeps
-batting through the evening, when most stubble is burned. A team scores by the **share**
-of fires it catches, never by how many fires there are.
+**Netu**, a one-eyed flame, explains each evening. NASA's polar satellites see small fires
+but pass over at fixed times, the last one in the early afternoon; India's own
+geostationary INSAT-3DS sees only larger fires but looks every 30 minutes, through the
+evening, when most stubble is burned.
 
-- **The Evening Match**, refreshed every thirty minutes from 16:37 IST: scores, over by over shares, Hinglish commentary and a Fire Clock that fills the map.
-- **Heatle**, one verified mystery site a day, six clues including Sentinel-2 pictures.
-- **Swipe**, 258 satellite pictures of recurring night time hot spots to label; eight verified sites are hidden gold questions.
-- **Tomorrow card** with the next day's PM2.5 forecast for 22 cities, **"What's that smoke?"** upwind lookup, share images, **Smog Wrapped** in December, light and dark themes.
-- **Netu as a pet** that levels up as you play and follows your city's air.
+- **Who saw today's fires**, refreshed every thirty minutes from 16:37 IST: one bar splitting the day's fire cells into seen by polar satellites only, by both, and by INSAT-3DS only, with the evening told half hour by half hour in plain words.
+- **The fire map**, with regions, daytime and evening filters and a Fire Clock that replays the day, all inside the map.
+- **Your air**: pick one of 22 cities, or share your location, and the map closes in on it with tomorrow's PM2.5 forecast, the fires around it and where its air came from.
+- **Heatle**, one verified mystery site a day with a lesson in every clue, and practice rounds.
+- **Swipe**, community labelling of the persistent hot spots no map explains. Players sign in with Google and qualify on 50 registry checked Heatle rounds first; each spot comes with its coordinates, dates seen, season and nearest mapped features.
+- **Netu as a pet** that levels up as you play, **Smog Wrapped** in December, light and dark themes, and optional sync across devices.
 
 Its rules are built in: farm fires only ever appear per district or 11 km cell, never per
 field; points come from seeing fires, never from burning; industry is "likely industrial
-heat", never "polluter"; and there are no accounts. A player's history stays in their own
-browser, can be exported to a file and imported elsewhere, and is never sent to a server.
+heat", never "polluter". Accounts are optional and only needed to label: without one,
+nothing leaves the browser; with one, only the email address, the labels and the game
+progress are kept, and one tap deletes them.
 
 ## What we found
 

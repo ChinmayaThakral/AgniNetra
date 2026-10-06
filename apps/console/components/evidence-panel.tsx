@@ -105,7 +105,7 @@ export function EvidencePanel({
           {detection.outsideApplicability === null ? (
             <span>not assessable, a feature is unobserved</span>
           ) : detection.outsideApplicability ? (
-            <span style={{ color: "#b00020" }}>outside, treat with caution</span>
+            <span style={{ color: "var(--alarm)" }}>outside, treat with caution</span>
           ) : (
             "inside"
           )}

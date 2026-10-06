@@ -129,13 +129,15 @@ export function ConsoleClient({
   sources,
   manifest,
   heldOutCoverage,
+  guide,
   panels = [],
 }: {
   detections: Detection[];
   sources: Source[];
   manifest: Manifest;
   heldOutCoverage: number | null;
-  panels?: { title: string; node: ReactNode; startOpen?: boolean }[];
+  guide: ReactNode;
+  panels?: { title: string; node: ReactNode }[];
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -144,6 +146,7 @@ export function ConsoleClient({
   const [active, setActive] = useState<Set<string>>(new Set(CLASSES));
   const [abstainOnly, setAbstainOnly] = useState(false);
   const [dayIndex, setDayIndex] = useState<number>(-1);
+  const [tab, setTab] = useState("Start here");
   // Read during render, not set from the effect, which cost a second render.
   const webgl2Available = useSyncExternalStore(neverChanges, hasWebgl2, () => true);
   const shownError = webgl2Available ? mapError : NO_WEBGL2;
@@ -225,6 +228,35 @@ export function ConsoleClient({
       map.current = null;
     };
   }, []);
+
+  // The basemap follows the page theme: dimmed and desaturated in the dark, with the
+  // outline and the abstention rings drawn light so they stay visible.
+  useEffect(() => {
+    const instance = map.current;
+    if (!instance) return;
+    const apply = () => {
+      if (!instance.isStyleLoaded()) return;
+      const dark = getComputedStyle(document.documentElement).colorScheme === "dark";
+      if (instance.getLayer("basemap")) {
+        instance.setPaintProperty("basemap", "raster-brightness-max", dark ? 0.42 : 1);
+        instance.setPaintProperty("basemap", "raster-saturation", dark ? -0.5 : 0);
+      }
+      if (instance.getLayer("india-outline")) {
+        instance.setPaintProperty("india-outline", "line-color", dark ? "#c9ced6" : "#3b3b38");
+      }
+      if (instance.getLayer("detections")) {
+        instance.setPaintProperty("detections", "circle-stroke-color", dark ? "#f2f2f2" : "#1b1b1a");
+      }
+    };
+    const observer = new MutationObserver(apply);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    instance.on("idle", apply);
+    apply();
+    return () => {
+      observer.disconnect();
+      instance.off("idle", apply);
+    };
+  }, [visible]);
 
   useEffect(() => {
     const instance = map.current;
@@ -322,7 +354,10 @@ export function ConsoleClient({
       instance.on("click", "detections", (event) => {
         const id = event.features?.[0]?.properties?.["id"];
         const found = detections.find((d) => d.id === id);
-        if (found) setSelected(found);
+        if (found) {
+          setSelected(found);
+          setTab("Evidence");
+        }
       });
       instance.on("mouseenter", "detections", () => {
         instance.getCanvas().style.cursor = "pointer";
@@ -354,6 +389,78 @@ export function ConsoleClient({
   };
 
   const unregistered = sources.filter((s) => !s.registered);
+
+  const tabs: { title: string; node: ReactNode; flat?: boolean }[] = [
+    { title: "Start here", node: guide },
+    {
+      title: "Evidence",
+      flat: true,
+      node: (
+        <EvidencePanel
+          detection={selected}
+          nominal={manifest.conformalNominal}
+          heldOutGroup={manifest.heldOutGroup}
+          heldOutCoverage={heldOutCoverage}
+        />
+      ),
+    },
+    {
+      title: "Sources",
+      node: (
+        <>
+          <div className="row">
+            <span className="k">recurring locations</span>
+            <span className="v">{sources.length}</span>
+          </div>
+          <div className="row">
+            <span className="k">with no registry match</span>
+            <span className="v" style={{ color: "var(--alarm)" }}>
+              {unregistered.length}
+            </span>
+          </div>
+          <p className="note">
+            <strong>Scope:</strong> {manifest.persistentSourceScope}
+          </p>
+          <p className="note">{manifest.persistentSourceRule}</p>
+          <p className="note">Click a row to fly the map to it.</p>
+          <div className="srlist">
+            {unregistered.map((s) => (
+              <button
+                className="srrow"
+                key={`${s.lon},${s.lat}`}
+                onClick={() => map.current?.flyTo({ center: [s.lon, s.lat], zoom: 11 })}
+                type="button"
+              >
+                <span>
+                  {s.state ?? "unassigned"} {s.lat.toFixed(3)}, {s.lon.toFixed(3)}
+                </span>
+                <span>
+                  {s.detections} det, spread {metres(s.spreadM)}, nearest{" "}
+                  {metres(s.nearestAssetM)}
+                </span>
+              </button>
+            ))}
+          </div>
+        </>
+      ),
+    },
+    ...panels,
+    {
+      title: "Export",
+      node: (
+        <>
+          <p className="note">
+            {count(visible.length)} detections match the current filters. The export
+            carries the posterior, the prediction set and the applicability flag, and
+            writes {"not measured"} where a value was not computed.
+          </p>
+          <button onClick={download} type="button">
+            Download filtered CSV
+          </button>
+        </>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -392,69 +499,27 @@ export function ConsoleClient({
           ) : null}
         </div>
         <aside className="aside">
-          <Panel flat title="Detection evidence">
-            <EvidencePanel
-              detection={selected}
-              nominal={manifest.conformalNominal}
-              heldOutGroup={manifest.heldOutGroup}
-              heldOutCoverage={heldOutCoverage}
-            />
-          </Panel>
-
-          <Panel title="Persistent sources">
-            <div className="row">
-              <span className="k">recurring locations</span>
-              <span className="v">{sources.length}</span>
-            </div>
-            <div className="row">
-              <span className="k">with no registry match</span>
-              <span className="v" style={{ color: "#b00020" }}>
-                {unregistered.length}
-              </span>
-            </div>
-            <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
-              <strong>Scope:</strong> {manifest.persistentSourceScope}
-            </p>
-            <p style={{ fontSize: "0.74rem", color: "var(--muted)" }}>
-              {manifest.persistentSourceRule}
-            </p>
-            <div className="srlist">
-              {unregistered.map((s) => (
-                <button
-                  className="srrow"
-                  key={`${s.lon},${s.lat}`}
-                  onClick={() => map.current?.flyTo({ center: [s.lon, s.lat], zoom: 11 })}
-                  type="button"
-                >
-                  <span>
-                    {s.state ?? "unassigned"} {s.lat.toFixed(3)}, {s.lon.toFixed(3)}
-                  </span>
-                  <span>
-                    {s.detections} det, spread {metres(s.spreadM)}, nearest{" "}
-                    {metres(s.nearestAssetM)}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </Panel>
-
-          <Panel title="Export">
-            <p style={{ fontSize: "0.76rem", color: "var(--muted)" }}>
-              {count(visible.length)} detections match the current filters.
-              The export carries the posterior, the prediction set and the
-              applicability flag, and writes {"not measured"} where a value was not
-              computed.
-            </p>
-            <button onClick={download} type="button">
-              Download filtered CSV
-            </button>
-          </Panel>
-
-          {panels.map((panel) => (
-            <Panel key={panel.title} startOpen={panel.startOpen ?? true} title={panel.title}>
-              {panel.node}
-            </Panel>
-          ))}
+          <nav aria-label="Console sections" className="tabbar" role="tablist">
+            {tabs.map((t) => (
+              <button
+                aria-selected={t.title === tab}
+                className="tabbutton"
+                key={t.title}
+                onClick={() => setTab(t.title)}
+                role="tab"
+                type="button"
+              >
+                {t.title}
+              </button>
+            ))}
+          </nav>
+          {tabs
+            .filter((t) => t.title === tab)
+            .map((t) => (
+              <Panel flat={t.flat} key={t.title} title={t.title}>
+                {t.node}
+              </Panel>
+            ))}
         </aside>
       </div>
 
