@@ -34,6 +34,10 @@ export default async function Page() {
             Thermal source attribution over India. Displays precomputed phase 4
             results, the phase 5 geostationary window, and runs no model.
           </div>
+          <nav className="site-links" aria-label="AgniNetra sites">
+            <a href="https://agninetra.chinmayathakral.com">AgniNetra Live, the evening fire match</a>
+            <a href="https://github.com/ChinmayaThakral/AgniNetra">Code and data</a>
+          </nav>
         </div>
         <div className="sub" style={{ textAlign: "right" }}>
           Detections: held out group <strong>{manifest.heldOutGroup}</strong>,{" "}

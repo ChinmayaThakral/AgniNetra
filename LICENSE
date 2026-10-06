@@ -40,8 +40,7 @@ https://creativecommons.org/licenses/by/4.0/
 DATASET: BHARATTHERMAL-1, ODbL 1.0
 
 The dataset is licensed under the Open Database License 1.0, in full and as one
-database. It is held for a research publication in preparation and is not yet
-distributed.
+database. `scripts/export_kaggle.py` builds the released files.
 
 https://opendatacommons.org/licenses/odbl/1-0/
 
