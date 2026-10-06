@@ -19,6 +19,7 @@ data off the server.
 import argparse
 import gzip
 import html
+import json
 import mimetypes
 import os
 import re
@@ -36,9 +37,11 @@ from pathlib import Path
 
 from ml.paths import DATA_DIR, ROOT
 
+from .community import MAX_BODY, Community
 from .pipeline.feed import IST
 
 DIST = ROOT / "apps" / "live" / "web" / "dist"
+COMMUNITY: Community | None = None
 FEED_DIR = DATA_DIR / "live" / "feed"
 SOCIAL_DIR = DATA_DIR / "live_social"
 ROUTES: tuple[tuple[str, Path], ...] = (("/feed/", FEED_DIR), ("/social/", SOCIAL_DIR), ("/", DIST))
@@ -118,6 +121,7 @@ SECURITY_HEADERS = (
     ("X-Content-Type-Options", "nosniff"),
     ("Referrer-Policy", "no-referrer"),
     ("X-Frame-Options", "SAMEORIGIN"),
+    ("Permissions-Policy", "geolocation=(self), camera=(), microphone=(), payment=()"),
     (
         "Content-Security-Policy",
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
@@ -194,7 +198,43 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self) -> None:
+        if self.path.startswith("/api/"):
+            self.api()
+            return
         self.respond(with_body=True)
+
+    def do_POST(self) -> None:
+        self.api()
+
+    def do_PUT(self) -> None:
+        self.api()
+
+    def do_DELETE(self) -> None:
+        self.api()
+
+    def api(self) -> None:
+        if COMMUNITY is None:
+            status, reply = 503, {"error": "Community labelling is not switched on here."}
+        else:
+            length = int(self.headers.get("Content-Length") or 0)
+            if length > MAX_BODY:
+                status, reply = 413, {"error": "Request too large."}
+            else:
+                body = self.rfile.read(length) if length else b""
+                # Behind the proxy the visitor's address is the first forwarded one. It is
+                # used only to count requests for the rate limit, and never written down.
+                forwarded = self.headers.get("X-Forwarded-For", "")
+                ip = forwarded.split(",")[0].strip() or self.client_address[0]
+                headers = {"authorization": self.headers.get("Authorization", "")}
+                path = urllib.parse.urlsplit(self.path).path
+                status, reply = COMMUNITY.handle(self.command, path, headers, body, ip)
+        payload = json.dumps(reply).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(payload)
 
     def do_HEAD(self) -> None:
         self.respond(with_body=False)
@@ -319,6 +359,16 @@ def main() -> int:
         log(f"no built app in {DIST.relative_to(ROOT)}; run npm run build in apps/live/web")
         return 1
     FEED_DIR.mkdir(parents=True, exist_ok=True)
+    global COMMUNITY
+    client_id, secret = os.environ.get("GOOGLE_CLIENT_ID", ""), os.environ.get("QUALIFY_SECRET", "")
+    if client_id and len(secret) >= 32:
+        try:
+            COMMUNITY = Community(client_id=client_id, secret=secret)
+            log("community labelling on")
+        except ValueError as exc:
+            log(f"community labelling off: {exc}; QUALIFY_SECRET must match the pack's")
+    else:
+        log("community labelling off: GOOGLE_CLIENT_ID and QUALIFY_SECRET are not both set")
     if not args.no_build:
         threading.Thread(target=run_schedule, args=(threading.Event(),), daemon=True).start()
     server = ThreadingHTTPServer(("0.0.0.0", args.port), Handler)
