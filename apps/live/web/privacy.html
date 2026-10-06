@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07090d" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <title>Privacy, AgniNetra</title>
+    <style>
+      :root { color-scheme: dark light; --ground: #07090d; --card: #10141c; --line: #222a36; --text: #e8edf5; --muted: #8b95a6; --ember: #ffb020; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+      @media (prefers-color-scheme: light) { :root { --ground: #f4f1ea; --card: #ffffff; --line: #e0dacd; --text: #1b1f27; --muted: #5d6676; --ember: #b86a00; } }
+      body { margin: 0; background: var(--ground); color: var(--text); line-height: 1.6; }
+      main { max-width: 720px; margin: 0 auto; padding: 32px 18px 48px; }
+      h1 { font-size: 1.7rem; margin: 0 0 4px; }
+      h2 { font-size: 1.1rem; margin: 28px 0 6px; color: var(--ember); }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 18px 14px; margin-top: 18px; }
+      .muted { color: var(--muted); }
+      code { font-size: 0.9em; }
+      a { color: inherit; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p><a href="./">Back to AgniNetra Live</a></p>
+      <h1>Privacy</h1>
+      <p class="muted">AgniNetra Live, by Chinmaya Thakral. Last changed 6 October 2026.</p>
+
+      <div class="card">
+        <h2>The short version</h2>
+        <p>There are no accounts, no sign up and no tracking. Nothing you do in the app is sent to us. Your game history lives in your own browser, and you can export it, move it or delete it yourself.</p>
+      </div>
+
+      <h2>What stays in your browser</h2>
+      <p>The app keeps these in your browser's local storage, under names beginning <code>agninetra.v1.</code>:</p>
+      <ul>
+        <li>the city whose air Netu follows, and your light or dark choice;</li>
+        <li>the days you opened the app, with that day's air forecast category for your city;</li>
+        <li>your Heatle results and streak, your Swipe answers, and your Netu's points.</li>
+      </ul>
+      <p>None of it leaves your device. Smog Wrapped is worked out on your device from these records. Clearing your browser's site data for this address removes all of it.</p>
+
+      <h2>Moving to another browser</h2>
+      <p>Because nothing is stored on a server, a new browser starts empty. Use <strong>Your data</strong> in the app to export a file, then import it in the other browser. The file is yours; we never see it.</p>
+
+      <h2>What the server sees</h2>
+      <p>The server only sends out the same files to everyone: the app, the evening's fire feed, the satellite pictures and the map outlines. Nothing you do in the app is sent back to it. The app writes no record of requests or addresses. Like any website, your request passes through the hosting network on its way, which handles your address only to deliver the page.</p>
+
+      <h2>No third parties</h2>
+      <p>The app loads no analytics, advertising, fonts or scripts from anyone else. Sharing an image uses your own device's share sheet.</p>
+
+      <h2>Where the data comes from</h2>
+      <p>Fire detections: NASA FIRMS and this project's own detector run on INSAT-3DS images from MOSDAC, ISRO. Air forecast: Copernicus Atmosphere Monitoring Service through Open-Meteo. Pictures: Copernicus Sentinel-2. Map outlines: OpenStreetMap contributors. Every figure is a satellite estimate, not an official count, and farm fires are only ever shown per district or 11 km cell, never per field.</p>
+
+      <h2>Questions</h2>
+      <p>Open an issue on the project's <a href="https://github.com/ChinmayaThakral/AgniNetra">GitHub repository</a>.</p>
+    </main>
+  </body>
+</html>

@@ -119,7 +119,15 @@ export function swipeCard(pack: SwipePack, today: string): HTMLElement {
     const score = goldScore(pack.items, answers);
     void shareCanvas(swipeShareCard(today, Object.keys(answers).length, score.right, score.judged), `agninetra-swipe-${today}.png`);
   });
-  card.append(stage, caption, buttons, status, howSure("low", "Candidates from our map rules, not findings."), share);
+  card.append(
+    stage,
+    caption,
+    buttons,
+    status,
+    el("p", "muted small", "Your answers stay in this browser and are never sent anywhere. Export them under Your data to keep them."),
+    howSure("low", "Candidates from our map rules, not findings."),
+    share,
+  );
   describe();
   show();
   return card;

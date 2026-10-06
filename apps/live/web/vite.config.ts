@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         app: resolve(__dirname, "index.html"),
         watch: resolve(__dirname, "watch.html"),
+        privacy: resolve(__dirname, "privacy.html"),
       },
     },
   },

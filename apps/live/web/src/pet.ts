@@ -1,11 +1,11 @@
 import { z } from "zod";
+import { PetRecord } from "./records";
 import { recall, remember } from "./store";
 
 // Netu as a pet. Playing, never burning, earns it experience: points for seeing, rule 2.
 // Its progress lives on this phone only.
 
-const PetState = z.object({ xp: z.number().int().min(0) });
-export type PetState = z.infer<typeof PetState>;
+export type PetState = z.infer<typeof PetRecord>;
 
 export const REWARDS = { swipe: 1, swipeGoldRight: 2, heatlePlayed: 1, heatleSolved: 5 } as const;
 
@@ -39,7 +39,7 @@ export function nextLevelXp(xp: number): number | null {
 }
 
 export function petState(): PetState {
-  return recall("pet", (v) => PetState.parse(v), { xp: 0 });
+  return recall("pet", (v) => PetRecord.parse(v), { xp: 0 });
 }
 
 export function award(kind: keyof typeof REWARDS): PetState {
