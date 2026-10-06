@@ -151,3 +151,34 @@ th:first-child, td:first-child { text-align: left; }
 
 .geo .caveats { margin: 0.3rem 0 0; padding-left: 1rem; font-size: 0.74rem; color: var(--muted); }
 .geo .caveats li { margin-bottom: 0.3rem; }
+
+/* Side column windows. Each can be minimised to its title or maximised over the page. */
+.panel { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; margin-bottom: 0.7rem; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.45rem 0.6rem 0.45rem 0.75rem; }
+.panel-head h2 { margin: 0; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.panel-tools { display: flex; gap: 0.3rem; }
+.panel-tools button { padding: 0.2rem 0.35rem; line-height: 0; color: var(--muted); }
+.panel-tools button:hover { color: var(--ink); }
+.panel-body { padding: 0 0.75rem 0.75rem; }
+.panel.flat .panel-body > .card { border: 0; background: none; padding: 0; margin: 0; }
+.panel.flat .panel-body > .card > h3:first-child { display: none; }
+.panel .foot { border-top: 0; padding: 0; }
+.modelgrid { display: grid; gap: 0.7rem; }
+.panel.max { position: fixed; inset: 4.5rem 6vw 2rem; z-index: 60; overflow-y: auto; background: var(--bg); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.25); margin: 0; }
+.panel.max .panel-head { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--line); z-index: 1; }
+.panel.max .panel-body { padding: 1rem 1.25rem 1.5rem; }
+.panel.max .modelgrid { grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+.panel.max .srlist { max-height: none; }
+.panel-backdrop { position: fixed; inset: 0; z-index: 59; background: rgba(20, 20, 18, 0.35); }
+
+/* A wide screen holds the console on one screen: the map fills the left, the windows
+   scroll on the right, and the filter bar stays at the bottom. */
+@media (min-width: 1000px) {
+  .shell { height: 100vh; min-height: 0; overflow: hidden; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .masthead { padding: 0.5rem 1rem; }
+  .masthead .site-links { margin-top: 0.2rem; }
+  .body { grid-template-columns: minmax(0, 1fr) 27rem; min-height: 0; }
+  .mapwrap, .map { min-height: 0; height: 100%; }
+  .aside { max-height: none; height: 100%; overflow-y: auto; padding: 0.7rem; }
+  .scrub { padding: 0.45rem 1rem; }
+}

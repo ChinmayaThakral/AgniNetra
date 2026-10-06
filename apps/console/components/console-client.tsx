@@ -3,13 +3,14 @@
 import * as maplibregl from "maplibre-gl";
 import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 import { classColour, count, metres } from "@/lib/format";
 import type { Detection, Manifest, Source } from "@/lib/schema";
 import { EvidencePanel } from "./evidence-panel";
+import { Panel } from "./panel";
 
 const CLASSES = ["flare", "industrial", "agricultural"] as const;
 
@@ -128,11 +129,13 @@ export function ConsoleClient({
   sources,
   manifest,
   heldOutCoverage,
+  panels = [],
 }: {
   detections: Detection[];
   sources: Source[];
   manifest: Manifest;
   heldOutCoverage: number | null;
+  panels?: { title: string; node: ReactNode; startOpen?: boolean }[];
 }) {
   const container = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -256,6 +259,19 @@ export function ConsoleClient({
         return;
       }
 
+      // India's outline as India draws it. The basemap shows the international view of
+      // the northern border, so the official outline is drawn over it.
+      instance.addSource("india", {
+        type: "geojson",
+        data: "/data/india-outline.json",
+        attribution: "National outline: Natural Earth, India's point of view",
+      });
+      instance.addLayer({
+        id: "india-outline",
+        type: "line",
+        source: "india",
+        paint: { "line-color": "#3b3b38", "line-width": 1.3, "line-opacity": 0.8 },
+      });
       instance.addSource("detections", { type: "geojson", data: detectionData });
       instance.addSource("sources", { type: "geojson", data: sourceData });
       instance.addLayer({
@@ -376,15 +392,16 @@ export function ConsoleClient({
           ) : null}
         </div>
         <aside className="aside">
-          <EvidencePanel
-            detection={selected}
-            nominal={manifest.conformalNominal}
-            heldOutGroup={manifest.heldOutGroup}
-            heldOutCoverage={heldOutCoverage}
-          />
+          <Panel flat title="Detection evidence">
+            <EvidencePanel
+              detection={selected}
+              nominal={manifest.conformalNominal}
+              heldOutGroup={manifest.heldOutGroup}
+              heldOutCoverage={heldOutCoverage}
+            />
+          </Panel>
 
-          <div className="card">
-            <h3>Persistent sources</h3>
+          <Panel title="Persistent sources">
             <div className="row">
               <span className="k">recurring locations</span>
               <span className="v">{sources.length}</span>
@@ -419,10 +436,9 @@ export function ConsoleClient({
                 </button>
               ))}
             </div>
-          </div>
+          </Panel>
 
-          <div className="card">
-            <h3>Export</h3>
+          <Panel title="Export">
             <p style={{ fontSize: "0.76rem", color: "var(--muted)" }}>
               {count(visible.length)} detections match the current filters.
               The export carries the posterior, the prediction set and the
@@ -432,7 +448,13 @@ export function ConsoleClient({
             <button onClick={download} type="button">
               Download filtered CSV
             </button>
-          </div>
+          </Panel>
+
+          {panels.map((panel) => (
+            <Panel key={panel.title} startOpen={panel.startOpen ?? true} title={panel.title}>
+              {panel.node}
+            </Panel>
+          ))}
         </aside>
       </div>
 
