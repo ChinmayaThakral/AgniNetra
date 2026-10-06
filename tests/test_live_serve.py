@@ -75,3 +75,14 @@ def test_only_hashed_assets_are_cached_for_long() -> None:
     assert "immutable" in serve.cache_control("/assets/app-euDPXx79.js")
     for path in ("/", "/sw.js", "/feed/latest.json", "/chips/s1.webp"):
         assert serve.cache_control(path) == "no-cache"
+
+
+def test_only_recent_evenings_are_served_one_by_one() -> None:
+    now = at(10, 0)
+    assert serve.feed_file_served("latest.json", now)
+    assert serve.feed_file_served("season.json", now)
+    assert serve.feed_file_served("days.json", now)
+    assert serve.feed_file_served("2026-10-20.json", now)
+    assert serve.feed_file_served("2026-10-17.json", now)
+    assert not serve.feed_file_served("2026-10-16.json", now)
+    assert not serve.feed_file_served("../2026-10-20.json", now)

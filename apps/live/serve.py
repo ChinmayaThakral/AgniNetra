@@ -21,6 +21,7 @@ import gzip
 import html
 import mimetypes
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -106,6 +107,36 @@ def resolve(url_path: str, routes: tuple[tuple[str, Path], ...]) -> Path | None:
     return None
 
 
+# The app's day switcher reaches back two evenings; one more allows for the hours after
+# midnight before the new day's first build. Older evenings stay on the volume for Smog
+# Wrapped's season file but are not served one by one.
+FEED_DAYS_SERVED = 4
+FEED_DAY = re.compile(r"(\d{4}-\d{2}-\d{2})\.json")
+SECURITY_HEADERS = (
+    ("X-Content-Type-Options", "nosniff"),
+    ("Referrer-Policy", "no-referrer"),
+    ("X-Frame-Options", "SAMEORIGIN"),
+    (
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; "
+        "form-action 'none'; frame-ancestors 'self'",
+    ),
+)
+
+
+def feed_file_served(name: str, today: datetime) -> bool:
+    """Whether a file in the feed folder is served: the latest feed, the season, and the
+    evenings of the last FEED_DAYS_SERVED days."""
+    if name in ("latest.json", "season.json", "days.json"):
+        return True
+    match = FEED_DAY.fullmatch(name)
+    if not match:
+        return False
+    recent = {str(today.date() - timedelta(days=k)) for k in range(FEED_DAYS_SERVED)}
+    return match.group(1) in recent
+
+
 def cache_control(url_path: str) -> str:
     # Vite names every built asset by its content hash, so a changed file is a new URL.
     if url_path.startswith("/assets/"):
@@ -155,6 +186,11 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: object) -> None:
         return
 
+    def end_headers(self) -> None:
+        for name, value in SECURITY_HEADERS:
+            self.send_header(name, value)
+        super().end_headers()
+
     def do_GET(self) -> None:
         self.respond(with_body=True)
 
@@ -163,6 +199,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def respond(self, *, with_body: bool) -> None:
         target = resolve(self.path, ROUTES)
+        if (
+            target is not None
+            and target.parent == FEED_DIR.resolve()
+            and not feed_file_served(target.name, datetime.now(IST))
+        ):
+            target = None
         if target is None:
             self.send_error(HTTPStatus.NOT_FOUND)
             return
@@ -208,7 +250,6 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-cache")
         self.send_header("Content-Type", kind)
         self.send_header("Content-Length", str(len(payload)))
-        self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         if with_body:
             self.wfile.write(payload)
