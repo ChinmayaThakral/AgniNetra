@@ -1,0 +1,14 @@
+name: Idea or feature
+description: Suggest something the console, Live or the pipeline could do.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Who it helps, and how
