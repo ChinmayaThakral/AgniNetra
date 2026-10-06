@@ -191,6 +191,8 @@ def main() -> int:
     # Smog Wrapped's season file is rebuilt from every evening on disk, so it is never
     # ahead of the feeds it summarises.
     evenings = [json.loads(p.read_text()) for p in sorted(out_dir.glob("20??-??-??.json"))]
+    # Which evenings exist, so the app's day switcher never asks for one that does not.
+    (out_dir / "days.json").write_text(json.dumps([e["evening_ist"] for e in evenings]))
     (out_dir / "season.json").write_text(
         json.dumps(season_stats(evenings), separators=(",", ":"), allow_nan=False)
     )

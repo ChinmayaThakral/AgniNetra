@@ -7,7 +7,31 @@
   --muted: #8b95a6;
   --ember: #ffb020;
   --polar: #9ec5ff;
+  --button: #1a2130;
+  --inset: #0b0e14;
+  --note: #ffcf70;
+  --note-line: #5a4a1a;
+  --map-ground: #07090d;
+  --map-district: rgba(120, 140, 170, 0.18);
+  --map-state: rgba(150, 170, 200, 0.45);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #f4f1ea;
+  --card: #ffffff;
+  --line: #e0dacd;
+  --text: #1b1f27;
+  --muted: #5d6676;
+  --ember: #b86a00;
+  --polar: #2a64c8;
+  --button: #f1ede4;
+  --inset: #ece7dc;
+  --note: #8a5a00;
+  --note-line: #e3c98a;
+  --map-ground: #fbfaf6;
+  --map-district: rgba(70, 80, 100, 0.14);
+  --map-state: rgba(60, 70, 90, 0.45);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--ground); color: var(--text); }
@@ -32,18 +56,18 @@ h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
 .over.new { border-color: var(--ember); }
 .fire-map { width: 100%; aspect-ratio: 1 / 1; display: block; border-radius: 10px; }
 .map-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-.button, .choice { background: #1a2130; color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer; }
+.button, .choice { background: var(--button); color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer; }
 .button:disabled { opacity: 0.4; cursor: default; }
 .share { justify-self: start; border-color: var(--ember); }
 .legend { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
-.how-sure { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid #5a4a1a; color: #ffcf70; margin-top: 8px; }
+.how-sure { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--note-line); color: var(--note); margin-top: 8px; }
 .clues { padding-left: 20px; }
 .choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .choice.right { border-color: #3fbf6f; }
 .choice.wrong { border-color: #e2361c; }
 .credits { font-size: 0.75rem; color: var(--muted); }
-.caveat { color: #ffcf70; }
+.caveat { color: var(--note); }
 .player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
 .player { border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
 .player h3 { margin: 0 0 4px; color: var(--text); }
@@ -60,8 +84,8 @@ body.watch { overflow: hidden; }
 .watch-team.insat { color: var(--ember); }
 .watch-clock { font-size: 1.4rem; color: var(--ember); }
 .city-picker { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
-.city-picker select { background: #1a2130; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font: inherit; }
-.swipe-stage { touch-action: none; user-select: none; display: grid; place-items: center; border-radius: 12px; overflow: hidden; background: #0b0e14; outline-offset: 4px; }
+.city-picker select { background: var(--button); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font: inherit; }
+.swipe-stage { touch-action: none; user-select: none; display: grid; place-items: center; border-radius: 12px; overflow: hidden; background: var(--inset); outline-offset: 4px; }
 .chip { width: 100%; max-width: 360px; height: auto; aspect-ratio: 1 / 1; display: block; border-radius: 10px; image-rendering: auto; }
 .heatle-chip { max-width: 260px; margin-top: 6px; }
 .chip-credit { display: block; margin-top: 4px; }
@@ -70,3 +94,36 @@ body.watch { overflow: hidden; }
 .pet-facts { flex: 1; }
 .pet-bar { width: 100%; height: 10px; accent-color: var(--ember); }
 .wrapped { border-color: var(--ember); }
+
+.top { flex-wrap: wrap; }
+.top-tools { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.day-nav { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
+.day { color: var(--text); text-decoration: none; padding: 5px 12px; border-radius: 999px; font-size: 0.85rem; }
+.day.current { background: var(--ember); color: #10141c; font-weight: 600; }
+.day.missing { opacity: 0.35; pointer-events: none; }
+.icon-button { background: var(--button); color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 0.85rem; cursor: pointer; }
+.site-links { display: flex; gap: 12px; font-size: 0.85rem; }
+.site-links a { color: var(--muted); }
+.site-links a:hover { color: var(--text); }
+.dashboard, .column { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.tabs { display: grid; gap: 10px; }
+.tab-bar { display: flex; gap: 6px; }
+.tab { flex: 1; background: var(--button); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px; font: inherit; cursor: pointer; }
+.tab[aria-selected="true"] { border-color: var(--ember); color: var(--ember); font-weight: 600; }
+details.credits summary { cursor: pointer; color: var(--muted); padding: 4px 0; }
+details.credits { padding: 0 4px; }
+a { color: var(--polar); }
+
+/* A wide screen holds the whole evening at once: three columns, each scrolling on its own. */
+@media (min-width: 1100px) {
+  body { height: 100vh; overflow: hidden; }
+  main { max-width: 1680px; height: 100vh; padding: 12px 20px; grid-template-rows: auto minmax(0, 1fr); gap: 12px; }
+  .top svg { width: 64px; height: 77px; }
+  .top { flex-wrap: nowrap; }
+  .netu-lines { flex: 1; min-width: 0; }
+  .netu-line { margin: 0 0 1px; font-size: 0.88rem; }
+  .top-tools { flex-wrap: nowrap; flex-shrink: 0; }
+  .dashboard { grid-template-columns: minmax(330px, 1fr) minmax(400px, 1.3fr) minmax(330px, 1fr); min-height: 0; height: 100%; }
+  .column { overflow-y: auto; min-height: 0; height: 100%; padding-right: 4px; scrollbar-width: thin; }
+  .map-card .fire-map { width: min(100%, calc(100vh - 290px)); margin: 0 auto; }
+}

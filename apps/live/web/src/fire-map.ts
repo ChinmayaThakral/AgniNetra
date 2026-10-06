@@ -68,18 +68,23 @@ export function drawFireMap(
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  ctx.fillStyle = "#07090d";
+  // Colours come from the page theme, so the map follows the light and dark switch.
+  const css = getComputedStyle(canvas);
+  const colour = (name: string, fallback: string): string => css.getPropertyValue(name).trim() || fallback;
+  const light = document.documentElement.dataset.theme === "light";
+  ctx.fillStyle = colour("--map-ground", "#07090d");
   ctx.fillRect(0, 0, width, height);
 
   const projection = fit(options.bounds, width, height);
   ctx.lineWidth = 0.4;
-  ctx.strokeStyle = "rgba(120, 140, 170, 0.18)";
+  ctx.strokeStyle = colour("--map-district", "rgba(120, 140, 170, 0.18)");
   drawOutlines(ctx, projection, boundaries, "district");
   ctx.lineWidth = 0.9;
-  ctx.strokeStyle = "rgba(150, 170, 200, 0.45)";
+  ctx.strokeStyle = colour("--map-state", "rgba(150, 170, 200, 0.45)");
   drawOutlines(ctx, projection, boundaries, "state");
 
-  ctx.globalCompositeOperation = "lighter";
+  // Glow adds light on a dark ground and would wash out on a pale one.
+  ctx.globalCompositeOperation = light ? "source-over" : "lighter";
   for (const cell of cells) {
     if (options.untilEvening === true && !cell.evening) continue;
     if (options.clock !== undefined && cell.first_seen_ist > options.clock) continue;
@@ -98,7 +103,7 @@ export function drawFireMap(
   ctx.globalCompositeOperation = "source-over";
 
   if (options.path && options.path.length > 1) {
-    ctx.strokeStyle = "#9ec5ff";
+    ctx.strokeStyle = colour("--polar", "#9ec5ff");
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 5]);
     ctx.beginPath();
@@ -112,7 +117,7 @@ export function drawFireMap(
     const start = options.path[0];
     if (start) {
       const [x, y] = projection.point(start[0], start[1]);
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = colour("--text", "#ffffff");
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
       ctx.fill();

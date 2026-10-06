@@ -1,4 +1,5 @@
 import "./style.css";
+import { allowedDays, applyTheme, chosenDay, currentTheme, dataCard, dayNav, siteLinks, tabs, themeButton } from "./chrome";
 import { el, howSure } from "./dom";
 import { CLASS_COLOURS, CLASS_LABELS, drawFireMap } from "./fire-map";
 import { heatleCard } from "./heatle";
@@ -32,17 +33,27 @@ function failure(root: HTMLElement, message: string): void {
 async function start(): Promise<void> {
   const root = document.getElementById("app");
   if (!root) return;
+  applyTheme(currentTheme());
   let feed: Feed;
   let boundaries: Boundaries;
+  let latest: string;
   try {
     [feed, boundaries] = await Promise.all([
       load("feed/latest.json", (v) => Feed.parse(v)),
       load("data/boundaries.json", (v) => Boundaries.parse(v)),
     ]);
+    latest = feed.evening_ist;
+    const day = chosenDay(window.location.search, latest);
+    if (day !== latest) feed = await load(`feed/${day}.json`, (v) => Feed.parse(v));
   } catch (error) {
     failure(root, error instanceof Error ? error.message : "unknown error");
     return;
   }
+  const viewingToday = feed.evening_ist === latest;
+  // Which of the two evenings before today the server still has, so a missing one is shown
+  // as missing rather than as a link that fails.
+  const held = await load("feed/days.json", (v) => z.array(z.string()).parse(v)).catch(() => [latest]);
+  const available = new Set([latest, ...held.filter((day) => allowedDays(latest).includes(day))]);
   // Swipe is extra: without its pack the evening still loads, just without the game.
   const swipe = await load("game/swipe.json", (v) => SwipePack.parse(v)).catch(() => null);
   const season = await load("feed/season.json", (v) => Season.parse(v)).catch(() => null);
@@ -56,6 +67,7 @@ async function start(): Promise<void> {
   // Each day the app is opened is kept on this phone with the city's forecast category,
   // which Smog Wrapped counts in December.
   const recordVisit = (): void => {
+    if (!viewingToday) return;
     const visits = recall("visits", (v) => VisitRecord.parse(v), {});
     remember("visits", { ...visits, [feed.evening_ist]: cityAir(feed, city).category });
   };
@@ -83,6 +95,9 @@ async function start(): Promise<void> {
   picker.append(select);
   lines.append(picker);
   header.append(lines);
+  const tools = el("div", "top-tools");
+  tools.append(dayNav(latest, feed.evening_ist, available), themeButton(), siteLinks());
+  header.append(tools);
   let tomorrow = tomorrowCard(feed, city);
   select.addEventListener("change", () => {
     city = select.value;
@@ -113,7 +128,7 @@ async function start(): Promise<void> {
       const projection = fit(bounds, canvas.clientWidth, canvas.clientHeight);
       const [x, y] = projection.point(ring[0], ring[1]);
       if (ctx) {
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue("--text").trim() || "#ffffff";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(x, y, 14, 0, Math.PI * 2);
@@ -180,29 +195,40 @@ async function start(): Promise<void> {
     void shareCanvas(matchShareCard(feed, canvas), `agninetra-${feed.evening_ist}.png`);
   });
 
-  const footer = el("footer", "credits");
+  const footer = el("details", "credits");
+  footer.append(el("summary", "", "Sources, credits and caveats"));
   for (const text of feed.caveats) footer.append(el("p", "caveat", text));
   for (const text of [...feed.attribution, boundaries.attribution]) footer.append(el("p", "", text));
   footer.append(el("p", "", `Feed built ${feed.generated_utc} UTC.`));
 
-  root.replaceChildren(
-    header,
+  // On a wide screen the page is one dashboard of three columns, each scrolling on its own;
+  // on a phone the same columns simply stack.
+  const matchColumn = el("div", "column");
+  matchColumn.append(
     ...(season && wrappedTime(feed.evening_ist, window.location.search) ? [wrappedCard(season, city)] : []),
     matchBoard(feed),
-    playerCards(feed),
-    mapCard,
-    share,
-    smoke.card,
     tomorrow,
-    heatleCard(feed, (centre) => {
-      ring = centre;
-      bounds = INDIA;
-      redraw();
-    }),
-    ...(swipe ? [swipeCard(swipe, feed.evening_ist)] : []),
-    petCard(() => moodOf(feed, city)),
-    footer,
+    playerCards(feed),
   );
+  const mapColumn = el("div", "column");
+  mapColumn.append(mapCard, share, smoke.card);
+  const games: [string, HTMLElement][] = [
+    [
+      "Heatle",
+      heatleCard(feed, (centre) => {
+        ring = centre;
+        bounds = INDIA;
+        redraw();
+      }),
+    ],
+    ...(swipe ? [["Swipe", swipeCard(swipe, feed.evening_ist)] as [string, HTMLElement]] : []),
+    ["Netu", petCard(() => moodOf(feed, city))],
+  ];
+  const playColumn = el("div", "column");
+  playColumn.append(tabs(games, "tab"), dataCard(), footer);
+  const dashboard = el("div", "dashboard");
+  dashboard.append(matchColumn, mapColumn, playColumn);
+  root.replaceChildren(header, dashboard);
   redraw();
   window.addEventListener("resize", redraw);
 }
