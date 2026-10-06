@@ -9,9 +9,27 @@ export interface Bounds {
 }
 
 export const INDIA: Bounds = { west: 68, east: 97.5, south: 6.5, north: 37.5 };
-// The widest zoom the app offers. A state, never a village: the map cannot be zoomed to
-// the scale at which a field could be found, which is the first rule of the app.
 export const NORTH_INDIA: Bounds = { west: 72, east: 81, south: 26, north: 37.1 };
+
+export const REGIONS: [string, Bounds][] = [
+  ["India", INDIA],
+  ["North", NORTH_INDIA],
+  ["West", { west: 68, east: 78.5, south: 15, north: 27 }],
+  ["Central", { west: 74, east: 85, south: 17, north: 27 }],
+  ["East", { west: 81, east: 97.5, south: 18, north: 29.5 }],
+  ["South", { west: 72.5, east: 81, south: 7.5, north: 19 }],
+];
+
+// The closest zoom the app offers: about 500 km across, a region around a city. A state,
+// never a village: the map cannot be zoomed to the scale at which a field could be found,
+// which is the first rule of the app.
+export const CLOSEST_KM = 250;
+
+export function around([longitude, latitude]: [number, number], km = CLOSEST_KM): Bounds {
+  const dLat = Math.max(km, CLOSEST_KM) / 111.32;
+  const dLon = dLat / Math.max(Math.cos((latitude * Math.PI) / 180), 0.2);
+  return { west: longitude - dLon, east: longitude + dLon, south: latitude - dLat, north: latitude + dLat };
+}
 
 function mercatorY(latitude: number): number {
   const phi = (latitude * Math.PI) / 180;

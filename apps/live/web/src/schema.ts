@@ -43,6 +43,8 @@ export const Over = z.object({
 // the city list existed still have to load.
 export const Air = z.object({
   city: z.string(),
+  lon: z.number().min(60).max(100).optional(),
+  lat: z.number().min(0).max(40).optional(),
   pm25_24h_mean: z.number().min(0).nullable(),
   cpcb_category: z.string().nullable(),
 });
@@ -62,6 +64,9 @@ export const Feed = z.object({
     insat_share: share,
     polar_last_seen_ist: z.string().nullable(),
     insat_last_seen_ist: z.string().nullable(),
+    // Counts arrived after the first feeds; without them the split is worked out from shares.
+    cells_total: z.number().int().min(0).optional(),
+    cells_both: z.number().int().min(0).optional(),
     overs: z.array(Over),
   }),
   cells: z.array(Cell),

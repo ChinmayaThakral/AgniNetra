@@ -10,7 +10,22 @@
     <title>AgniNetra</title>
   </head>
   <body>
-    <main id="app"><p class="card">Loading the evening feed.</p></main>
+    <style>
+      #loader { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; background: #07090d; color: #8b95a6; font: 0.95rem system-ui, sans-serif; z-index: 10; }
+      :root[data-theme="light"] #loader { background: #f4f1ea; color: #5d6676; }
+      #loader[hidden] { display: none; }
+      #loader svg { animation: loader-dance 0.9s ease-in-out infinite; transform-origin: 50% 90%; }
+      #loader .shadow { width: 46px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, 0.35); animation: loader-shadow 0.9s ease-in-out infinite; }
+      @keyframes loader-dance { 0%, 100% { transform: translateY(0) rotate(-8deg) scaleY(1); } 25% { transform: translateY(-16px) rotate(0deg) scaleY(1.05); } 50% { transform: translateY(0) rotate(8deg) scaleY(0.94); } 75% { transform: translateY(-16px) rotate(0deg) scaleY(1.05); } }
+      @keyframes loader-shadow { 0%, 50%, 100% { transform: scaleX(1); opacity: 0.6; } 25%, 75% { transform: scaleX(0.7); opacity: 0.3; } }
+      @media (prefers-reduced-motion: reduce) { #loader svg, #loader .shadow { animation: none; } }
+    </style>
+    <div id="loader" role="status">
+      <svg viewBox="0 0 100 120" width="84" height="101" aria-hidden="true"><defs><radialGradient id="loader-flame" cx="50%" cy="70%" r="60%"><stop offset="0%" stop-color="#ffe08a"/><stop offset="60%" stop-color="#ff8a2b"/><stop offset="100%" stop-color="#e2361c"/></radialGradient></defs><path d="M50 4 C62 30 88 44 84 78 C81 104 64 116 50 116 C36 116 19 104 16 78 C13 52 34 42 38 20 C44 32 50 30 50 4 Z" fill="url(#loader-flame)"/><circle cx="50" cy="58" r="13" fill="#fff"/><circle cx="52" cy="60" r="6" fill="#111"/></svg>
+      <span class="shadow"></span>
+      <span>Netu is fetching the evening.</span>
+    </div>
+    <main id="app"></main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

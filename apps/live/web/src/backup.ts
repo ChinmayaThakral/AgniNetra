@@ -2,8 +2,9 @@ import { z } from "zod";
 import { HeatleRecord, PetRecord, SwipeRecord, Theme, VisitRecord } from "./records";
 import { recall, remember } from "./store";
 
-// Everything Live keeps lives on one device, D139, so moving to another browser is a file
-// the player carries themselves: exported here, imported there. Nothing goes to a server.
+// Without an account, everything Live keeps lives on one device, D139, so moving to another
+// browser is a file the player carries themselves: exported here, imported there. The same
+// merge rule runs on the server when a signed in player syncs, D142.
 
 export const BackupData = z.object({
   pet: PetRecord.optional(),

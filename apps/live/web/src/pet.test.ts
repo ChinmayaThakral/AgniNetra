@@ -11,7 +11,7 @@ describe("Netu's levels", () => {
 
   it("unlock one item per level after the first, never losing one", () => {
     expect(itemsAt(1)).toEqual([]);
-    expect(itemsAt(3)).toEqual(["cricket cap", "sunglasses"]);
+    expect(itemsAt(3)).toEqual(["sun cap", "sunglasses"]);
   });
 
   it("know the next threshold, and that the last level has none", () => {

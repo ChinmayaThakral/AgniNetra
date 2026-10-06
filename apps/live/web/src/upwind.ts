@@ -54,7 +54,7 @@ export function backTrajectory(origin: Point, wind: Wind): Point[] {
   return path;
 }
 
-function kmBetween([lon1, lat1]: Point, [lon2, lat2]: Point): number {
+export function kmBetween([lon1, lat1]: Point, [lon2, lat2]: Point): number {
   const meanLat = (((lat1 + lat2) / 2) * Math.PI) / 180;
   const dx = (lon2 - lon1) * KM_PER_DEG * Math.cos(meanLat);
   const dy = (lat2 - lat1) * KM_PER_DEG;

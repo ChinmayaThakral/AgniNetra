@@ -44,14 +44,23 @@ function drawOutlines(
   ctx.stroke();
 }
 
+export type TimeFilter = "all" | "evening" | "day";
+
+export interface Mark {
+  at: [number, number];
+  label: string;
+}
+
 export interface MapOptions {
   bounds: Bounds;
-  // Show only evening cells.
-  untilEvening?: boolean;
+  // Evening cells only, daytime cells only, or both.
+  time?: TimeFilter;
   // The Fire Clock: show only cells first seen at or before this IST time, "HH:MM".
   clock?: string;
   // A back trajectory to draw, for "What's that smoke?".
   path?: [number, number][];
+  // Places to point out: the player's city or location, a Heatle site.
+  marks?: Mark[];
 }
 
 export function drawFireMap(
@@ -90,7 +99,8 @@ export function drawFireMap(
   // Glow adds light on a dark ground and would wash out on a pale one.
   ctx.globalCompositeOperation = light ? "source-over" : "lighter";
   for (const cell of cells) {
-    if (options.untilEvening === true && !cell.evening) continue;
+    if (options.time === "evening" && !cell.evening) continue;
+    if (options.time === "day" && cell.evening) continue;
     if (options.clock !== undefined && cell.first_seen_ist > options.clock) continue;
     const [lon, lat] = cell.centre;
     const [x0, y0] = projection.point(lon - CELL_DEG / 2, lat + CELL_DEG / 2);
@@ -125,6 +135,27 @@ export function drawFireMap(
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
       ctx.fill();
+    }
+  }
+
+  for (const mark of options.marks ?? []) {
+    const [x, y] = projection.point(mark.at[0], mark.at[1]);
+    ctx.strokeStyle = colour("--text", "#ffffff");
+    ctx.fillStyle = colour("--text", "#ffffff");
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, 9, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    if (mark.label) {
+      ctx.font = "600 12px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = colour("--map-ground", "#07090d");
+      ctx.strokeText(mark.label, x + 13, y + 4);
+      ctx.fillText(mark.label, x + 13, y + 4);
     }
   }
 }

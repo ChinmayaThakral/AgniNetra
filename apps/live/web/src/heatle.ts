@@ -37,7 +37,7 @@ const LAND_COVER_WORDS: Record<string, string> = {
 };
 
 // What each kind of site is like, said when it is the answer and when it is a wrong guess.
-const ABOUT: Record<string, string> = {
+export const ABOUT: Record<string, string> = {
   "steel or iron plant":
     "Steel and sponge iron plants run their furnaces day and night. They are large and bright, and from space show long sheds, stacks and heaps of ore.",
   "coal mine":
@@ -87,6 +87,10 @@ export function clueText(clue: Record<string, unknown>): string {
       const span = numberField(clue, "span_km");
       return span === null ? "A view from space" : `A view from space, ${span} km across`;
     }
+    case "spread": {
+      const spread = numberField(clue, "spread_m");
+      return spread === null ? "Size not measured" : `The hot spots there spread over about ${(spread / 1000).toFixed(1)} km`;
+    }
     case "place": {
       const state = stringField(clue, "state");
       return state ? `It is in ${state}. Its 11 km cell is now ringed on the map` : "Its place is now ringed on the map";
@@ -126,6 +130,13 @@ export function clueLesson(clue: Record<string, unknown>): string {
         : "Look for long sheds and stacks for a plant, dark pits and terraces for a mine, or one lone hot pad for a flare.";
     case "state":
       return "Some states are known for certain industries: Jharkhand and Odisha for coal and steel, Gujarat and Assam for oil and gas.";
+    case "spread": {
+      const spread = numberField(clue, "spread_m");
+      if (spread === null) return "";
+      return spread >= 2000
+        ? "A wide hot area is a big site: a mine with many working faces, or a large steel works."
+        : "A tight hot area points to one furnace, one stack or a single flare.";
+    }
     case "persistence":
       return "Seen many times at the same spot, so it is a fixed source, not a one off fire.";
     case "place":
@@ -133,6 +144,26 @@ export function clueLesson(clue: Record<string, unknown>): string {
     default:
       return "";
   }
+}
+
+export function clueItem(clue: Record<string, unknown>): HTMLLIElement {
+  const item = el("li", "");
+  item.append(el("span", "clue-text", clueText(clue)));
+  const src = stringField(clue, "src");
+  // Only the app's own chips are ever shown; the feed validator refuses anything else.
+  if (clue.kind === "image" && src && /^chips\/(q\/)?[a-z0-9_]+\.webp$/.test(src)) {
+    const picture = el("img", "chip heatle-chip");
+    picture.src = src;
+    picture.alt = `${clueText(clue)}, of the mystery site`;
+    picture.width = 256;
+    picture.height = 256;
+    item.append(picture);
+    const acquired = stringField(clue, "acquired");
+    if (acquired) item.append(el("span", "muted small chip-credit", `Sentinel-2, ${acquired}. Contains modified Copernicus Sentinel data.`));
+  }
+  const lesson = clueLesson(clue);
+  if (lesson) item.append(el("span", "clue-lesson", lesson));
+  return item;
 }
 
 function pickOther(pack: HeatlePack, current: Puzzle): Puzzle {
@@ -163,23 +194,7 @@ export function heatleCard(feed: Feed, pack: HeatlePack | null, onPlace: (centre
     const reveal = (): void => {
       const clue = puzzle.clues[shown];
       if (!clue) return;
-      const item = el("li", "");
-      item.append(el("span", "clue-text", clueText(clue)));
-      const src = stringField(clue, "src");
-      // Only the app's own chips are ever shown; the feed validator refuses anything else.
-      if (clue.kind === "image" && src && /^chips\/[a-z0-9_]+\.webp$/.test(src)) {
-        const picture = el("img", "chip heatle-chip");
-        picture.src = src;
-        picture.alt = `${clueText(clue)}, of the mystery site`;
-        picture.width = 256;
-        picture.height = 256;
-        item.append(picture);
-        const acquired = stringField(clue, "acquired");
-        if (acquired) item.append(el("span", "muted small chip-credit", `Sentinel-2, ${acquired}. Contains modified Copernicus Sentinel data.`));
-      }
-      const lesson = clueLesson(clue);
-      if (lesson) item.append(el("span", "clue-lesson", lesson));
-      clues.append(item);
+      clues.append(clueItem(clue));
       if (clue.kind === "place") {
         const centre = clue.centre;
         if (Array.isArray(centre) && typeof centre[0] === "number" && typeof centre[1] === "number") onPlace([centre[0], centre[1]]);

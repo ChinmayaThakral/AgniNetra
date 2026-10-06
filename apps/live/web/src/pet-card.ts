@@ -22,7 +22,7 @@ export function petCard(mood: () => Mood): HTMLElement {
     bar.max = next === null ? 1 : next - floor;
     bar.value = next === null ? 1 : xp - floor;
     facts.append(bar, el("p", "small", next === null ? `${plural(xp, "point")}. Top level reached.` : `${plural(xp, "point")}, ${next - xp} to level ${level + 1}`));
-    facts.append(el("p", "small", wearing.length ? `Wearing: ${wearing.join(", ")}` : "Nothing to wear yet. Play to earn a cricket cap."));
+    facts.append(el("p", "small", wearing.length ? `Wearing: ${wearing.join(", ")}` : "Nothing to wear yet. Play to earn a sun cap."));
     body.append(facts);
     const share = el("button", "button share", "Share my Netu");
     share.addEventListener("click", () => {

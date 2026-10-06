@@ -27,7 +27,7 @@
 
       <div class="card">
         <h2>The short version</h2>
-        <p>There are no accounts, no sign up and no tracking. Nothing you do in the app is sent to us. Your game history lives in your own browser, and you can export it, move it or delete it yourself.</p>
+        <p>You can use everything except community labelling without an account, and then nothing you do is sent to us. If you choose to sign in with Google, we keep your email address, your qualifying rounds, your Swipe labels and a copy of your game progress, and you can delete all of it in one tap. There is no tracking and no advertising.</p>
       </div>
 
       <h2>What stays in your browser</h2>
@@ -35,18 +35,34 @@
       <ul>
         <li>the city whose air Netu follows, and your light or dark choice;</li>
         <li>the days you opened the app, with that day's air forecast category for your city;</li>
-        <li>your Heatle results and streak, your Swipe answers, and your Netu's points.</li>
+        <li>your Heatle results and streak, the spots you labelled in Swipe, and your Netu's points;</li>
+        <li>if you signed in, a random session key that proves it to the server.</li>
       </ul>
-      <p>None of it leaves your device. Smog Wrapped is worked out on your device from these records. Clearing your browser's site data for this address removes all of it.</p>
+      <p>Smog Wrapped is worked out on your device from these records. Clearing your browser's site data for this address removes all of it.</p>
 
-      <h2>Moving to another browser</h2>
-      <p>Because nothing is stored on a server, a new browser starts empty. Use <strong>Your data</strong> in the app to export a file, then import it in the other browser. The file is yours; we never see it.</p>
+      <h2>Your location</h2>
+      <p>"Use my location" asks your browser for your position and uses it on your device only, to centre the map and trace the air. It is never sent to the server and never stored.</p>
+
+      <h2>If you sign in with Google</h2>
+      <p>Signing in is optional. It exists so community labels can be trusted: each label comes from one real person, nobody can vote twice, and a label counts only from someone who first proved their eye on qualifying rounds. Google sends the app a signed token; our server asks Google to confirm it and keeps only the email address in it. We never see your password, name, photo or contacts.</p>
+      <p>The server then keeps, in one database on its own disk:</p>
+      <ul>
+        <li>your email address and when you first signed in;</li>
+        <li>each qualifying round you played: the site, how many clues you used, and whether you solved it;</li>
+        <li>each Swipe label you gave: the spot, your answer and when;</li>
+        <li>a copy of the game progress listed above, so it follows you to another device;</li>
+        <li>a hash of your session key, never the key itself; sessions end after 30 days.</li>
+      </ul>
+      <p>Labels are combined offline into suggested names for the unidentified spots, and a suggestion joins the project's data only after it is checked against imagery. Published labels never carry an email address. Under <strong>Your data</strong>, <strong>Delete my account</strong> removes your email, rounds, labels and progress from the server at once. Signing out ends the session on this device.</p>
+
+      <h2>Moving to another browser without an account</h2>
+      <p>Use <strong>Your data</strong> to export a file, then import it in the other browser. The file is yours; it never reaches the server.</p>
 
       <h2>What the server sees</h2>
-      <p>The server only sends out the same files to everyone: the app, the evening's fire feed, the satellite pictures and the map outlines. Nothing you do in the app is sent back to it. The app writes no record of requests or addresses. Like any website, your request passes through the hosting network on its way, which handles your address only to deliver the page.</p>
+      <p>Without an account, the server only sends out the same files to everyone: the app, the evening's fire feed, the satellite pictures and the map outlines. The app writes no record of requests or addresses. To slow down abuse, the server counts requests per address for one minute in memory and forgets them. Like any website, your request passes through the hosting network on its way, which handles your address only to deliver the page.</p>
 
       <h2>No third parties</h2>
-      <p>The app loads no analytics, advertising, fonts or scripts from anyone else. Sharing an image uses your own device's share sheet.</p>
+      <p>The app loads no analytics, advertising, fonts or scripts from anyone else. Signing in takes you to Google's own page and back; no Google script runs on this site. Sharing an image uses your own device's share sheet.</p>
 
       <h2>Where the data comes from</h2>
       <p>Fire detections: NASA FIRMS and this project's own detector run on INSAT-3DS images from MOSDAC, ISRO. Air forecast: Copernicus Atmosphere Monitoring Service through Open-Meteo. Pictures: Copernicus Sentinel-2. Map outlines: OpenStreetMap contributors. Every figure is a satellite estimate, not an official count, and farm fires are only ever shown per district or 11 km cell, never per field.</p>

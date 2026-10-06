@@ -12,10 +12,10 @@ export const REWARDS = { swipe: 1, swipeGoldRight: 2, heatlePlayed: 1, heatleSol
 // Experience needed to reach each level, and what Netu wears from that level on.
 export const LEVELS: { xp: number; item: string | null }[] = [
   { xp: 0, item: null },
-  { xp: 10, item: "cricket cap" },
+  { xp: 10, item: "sun cap" },
   { xp: 30, item: "sunglasses" },
   { xp: 60, item: "smog scarf" },
-  { xp: 120, item: "umpire's hat" },
+  { xp: 120, item: "explorer's hat" },
   { xp: 250, item: "golden eye" },
 ];
 

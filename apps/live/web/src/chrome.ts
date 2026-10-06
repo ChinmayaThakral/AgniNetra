@@ -1,4 +1,3 @@
-import { exportFile, importFile } from "./backup";
 import { previousDay } from "./days";
 import { el } from "./dom";
 import { Theme } from "./records";
@@ -39,7 +38,14 @@ export function dayNav(latest: string, chosen: string, available: Set<string>): 
   for (const day of allowedDays(latest)) {
     const link = el("a", day === chosen ? "day current" : "day", label(day));
     if (day === chosen) link.setAttribute("aria-current", "page");
-    if (available.has(day)) link.href = day === latest ? "./" : `./?day=${day}`;
+    if (available.has(day)) {
+      link.href = day === latest ? "./" : `./?day=${day}`;
+      // Netu dances while the other evening loads.
+      link.addEventListener("click", () => {
+        const loader = document.getElementById("loader");
+        if (loader && day !== chosen) loader.hidden = false;
+      });
+    }
     else {
       link.classList.add("missing");
       link.title = "This evening is not on the server yet; it fills in after the next build.";
@@ -118,48 +124,4 @@ export function tabs(panels: [string, HTMLElement][], key: string): HTMLElement 
   box.append(bar, ...panels.map(([, panel]) => panel));
   show(panels.some(([title]) => title === saved) ? saved : (panels[0]?.[0] ?? ""));
   return box;
-}
-
-export function dataCard(): HTMLElement {
-  const card = el("section", "card data-card");
-  card.append(
-    el("h2", "", "Your data"),
-    el(
-      "p",
-      "muted small",
-      "Your streaks, Swipe answers and Netu live only in this browser. Nothing is sent to a server, so to move them to another browser or phone, export a file here and import it there.",
-    ),
-  );
-  const row = el("div", "choices");
-  const save = el("button", "button", "Export my data");
-  save.addEventListener("click", () => {
-    const url = URL.createObjectURL(exportFile());
-    const link = el("a", "");
-    link.href = url;
-    link.download = `agninetra-my-data-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
-  });
-  const picker = el("input", "");
-  picker.type = "file";
-  picker.accept = "application/json,.json";
-  picker.hidden = true;
-  const status = el("p", "small", "");
-  picker.addEventListener("change", () => {
-    const file = picker.files?.[0];
-    if (!file) return;
-    importFile(file)
-      .then(() => {
-        status.textContent = "Imported. Reloading with your data.";
-        window.setTimeout(() => window.location.reload(), 800);
-      })
-      .catch((error: unknown) => {
-        status.textContent = error instanceof Error ? error.message : "That file could not be read.";
-      });
-  });
-  const load = el("button", "button", "Import a file");
-  load.addEventListener("click", () => picker.click());
-  row.append(save, load, picker);
-  card.append(row, status);
-  return card;
 }

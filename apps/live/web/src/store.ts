@@ -1,5 +1,5 @@
 // The only module that touches browser storage, by the owner's decision D139: a player's
-// own history stays on this phone and is never sent anywhere. Every value is parsed on the
+// own history stays on this device unless they sign in to sync it, D142. Every value is parsed on the
 // way back in, and any failure, private mode, a full disk or a value from an older
 // version, falls back to the default instead of breaking the page.
 

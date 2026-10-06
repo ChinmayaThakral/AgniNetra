@@ -37,10 +37,10 @@ const EYES: Record<Mood, string> = {
 // What Netu wears, unlocked by playing. Drawn after the eye so a cap or a scarf sits on top.
 // Static markup from this file only, like the rest of Netu.
 const WEAR: Record<string, string> = {
-  "cricket cap": '<path d="M31 36 Q48 16 66 34 Z" fill="#1e3a8a"/><path d="M60 33 L82 38 L80 41 L58 37 Z" fill="#1e3a8a"/>',
+  "sun cap": '<path d="M31 36 Q48 16 66 34 Z" fill="#1e3a8a"/><path d="M60 33 L82 38 L80 41 L58 37 Z" fill="#1e3a8a"/>',
   sunglasses: '<circle cx="50" cy="59" r="15" fill="#111" opacity="0.9"/><path d="M35 57 L22 54 M65 57 L78 54" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="45" cy="54" r="3" fill="#fff" opacity="0.6"/>',
   "smog scarf": '<path d="M19 88 Q50 100 81 88 L81 96 Q50 108 19 96 Z" fill="#94a3b8"/><path d="M30 92 L30 100 M44 95 L44 103 M58 95 L58 103 M70 92 L70 100" stroke="#64748b" stroke-width="2"/>',
-  "umpire's hat": '<ellipse cx="50" cy="31" rx="27" ry="5" fill="#f1f5f9"/><path d="M36 31 Q36 15 50 15 Q64 15 64 31 Z" fill="#f1f5f9"/><path d="M36 28 L64 28" stroke="#1f2937" stroke-width="2"/>',
+  "explorer's hat": '<ellipse cx="50" cy="31" rx="27" ry="5" fill="#f1f5f9"/><path d="M36 31 Q36 15 50 15 Q64 15 64 31 Z" fill="#f1f5f9"/><path d="M36 28 L64 28" stroke="#1f2937" stroke-width="2"/>',
   "golden eye": '<circle cx="50" cy="58" r="15" fill="none" stroke="#f59e0b" stroke-width="3"/>',
 };
 

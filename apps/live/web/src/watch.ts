@@ -1,12 +1,13 @@
 import "./style.css";
 import { el, percent } from "./dom";
+import { eveningLines } from "./evening";
 import { drawFireMap } from "./fire-map";
 import { moodOf, netuSvg } from "./netu";
 import { NORTH_INDIA } from "./projection";
 import { Boundaries, Feed } from "./schema";
 
-// The Watch Party screen, for a stream: 16:9, no controls, the Fire Clock looping over the
-// day, the score and the latest commentary. It re-reads the feed every five minutes, so
+// The watch screen, for a stream: 16:9, no controls, the Fire Clock looping over the
+// day, the shares and the evening in plain words. It re-reads the feed every five minutes, so
 // one browser source can run the whole evening. Nothing here differs from the app in what
 // it shows; it only lays it out for a broadcast.
 
@@ -45,14 +46,14 @@ async function start(): Promise<void> {
     const score = el("div", "watch-score");
     score.append(
       el("p", "watch-team polar", `Polar ${percent(feed.match.polar_share)}`),
-      el("p", "watch-team insat", `INSAT ${percent(feed.match.insat_share)}`),
-      el("p", "muted", "share of today's fire cells each caught"),
+      el("p", "watch-team insat", `INSAT-3DS ${percent(feed.match.insat_share)}`),
+      el("p", "muted", "share of today's fire cells each saw"),
     );
-    const lines = el("ol", "commentary");
-    for (const line of feed.commentary.slice(-4)) lines.append(el("li", "", line.text));
+    const lines = el("ul", "commentary");
+    for (const line of eveningLines(feed)) lines.append(el("li", "", line));
     side.replaceChildren(
       netuSvg(moodOf(feed), 120),
-      el("h1", "", "AgniNetra Watch Party"),
+      el("h1", "", "AgniNetra, the evening fire analysis"),
       el("p", "muted", feed.evening_ist),
       score,
       clock,

@@ -1,5 +1,4 @@
 import { plural } from "./dom";
-import { CLASS_COLOURS, CLASS_LABELS } from "./fire-map";
 import { type Mood, netuSvg } from "./netu";
 import type { Feed } from "./schema";
 
@@ -39,33 +38,6 @@ function frame(title: string, subtitle: string, sure: string, body: (ctx: Canvas
   return canvas;
 }
 
-function pct(share: number | null): string {
-  return share === null ? "-" : `${Math.round(share * 100)}%`;
-}
-
-export function matchShareCard(feed: Feed, map: HTMLCanvasElement): HTMLCanvasElement {
-  return frame("The Evening Match", feed.evening_ist, "low. Weak labels from maps. Not an official count.", (ctx) => {
-    line(ctx, `Polar ${pct(feed.match.polar_share)}`, 430, 72, "#9ec5ff");
-    line(ctx, `INSAT ${pct(feed.match.insat_share)}`, 530, 72, CLASS_COLOURS.agricultural);
-    line(ctx, "share of today's fire cells each caught", 590, 32, "#9aa3b2");
-    const mapHeight = 900;
-    const mapWidth = Math.min(W - 80, (map.width / map.height) * mapHeight);
-    ctx.drawImage(map, (W - mapWidth) / 2, 650, mapWidth, mapHeight);
-  });
-}
-
-export function tomorrowShareCard(feed: Feed, air: { city: string; pm25: number | null; category: string | null }): HTMLCanvasElement {
-  const t = feed.tomorrow;
-  return frame(`Tomorrow in ${air.city}`, t.forecast_date, "low. A global model forecast, not the official one.", (ctx) => {
-    line(ctx, air.pm25 === null ? "PM2.5 not measured" : `PM2.5 about ${Math.round(air.pm25)}`, 560, 96);
-    if (air.pm25 !== null) line(ctx, "micrograms per cubic metre, 24 hour mean", 630, 32, "#9aa3b2");
-    line(ctx, air.category ? `CPCB: ${air.category}` : "Category not measured", 780, 64, "#ffcf70");
-    line(ctx, `Tonight's evening fire cells: ${t.evening_fire_cells}`, 940, 44);
-    line(ctx, `School hybrid? ${t.school_hybrid}`, 1040, 40, "#9aa3b2");
-    line(ctx, "CAMS forecast via Open-Meteo", 1140, 30, "#6f7888");
-  });
-}
-
 export function heatleShareCard(feed: Feed, result: string, streak = 0): HTMLCanvasElement {
   return frame("Heatle", feed.evening_ist, "medium. Answers checked against satellite imagery.", (ctx) => {
     line(ctx, result, 700, 52);
@@ -74,18 +46,6 @@ export function heatleShareCard(feed: Feed, result: string, streak = 0): HTMLCan
     line(ctx, "What is it?", 900, 44, "#ffb020");
   });
 }
-
-
-export function swipeShareCard(day: string, looked: number, right: number, judged: number): HTMLCanvasElement {
-  return frame("Swipe", day, "low. Candidates from map rules, not findings.", (ctx) => {
-    line(ctx, `I looked at ${plural(looked, "hot spot")}`, 620, 64);
-    line(ctx, judged ? `My eye on checked sites: ${right} of ${judged}` : "No checked sites seen yet", 740, 44, "#ffcf70");
-    line(ctx, "Helping find the heat sources", 900, 40, "#9aa3b2");
-    line(ctx, "the maps are missing.", 960, 40, "#9aa3b2");
-    line(ctx, "Pictures: contains modified Copernicus Sentinel data.", 1100, 28, "#6f7888");
-  });
-}
-
 
 async function svgImage(svg: SVGSVGElement): Promise<{ image: HTMLImageElement; release: () => void }> {
   const text = new XMLSerializer().serializeToString(svg);
@@ -106,27 +66,6 @@ export async function petShareCard(mood: Mood, level: number, xp: number, wearin
   release();
   return canvas;
 }
-
-export interface SmokeSummary {
-  cells: number;
-  byClass: Partial<Record<keyof typeof CLASS_LABELS, number>>;
-  nearestKm: number | null;
-}
-
-// Where the smoke came from, never where the player is: counts and distances only.
-export function smokeShareCard(day: string, smoke: SmokeSummary): HTMLCanvasElement {
-  return frame("What's that smoke?", day, "low. Forecast wind and weak labels. Not an official count.", (ctx) => {
-    line(ctx, `The air passed ${plural(smoke.cells, "fire cell")}`, 560, 60);
-    line(ctx, "in the last six hours", 630, 40, "#9aa3b2");
-    let y = 780;
-    for (const [key, count] of Object.entries(smoke.byClass)) {
-      line(ctx, `${CLASS_LABELS[key as keyof typeof CLASS_LABELS]}: ${count}`, y, 44, "#ffcf70");
-      y += 70;
-    }
-    if (smoke.nearestKm !== null) line(ctx, `Nearest about ${smoke.nearestKm} km upwind`, y + 40, 40);
-  });
-}
-
 
 export function wrappedShareCard(
   year: string,
