@@ -86,3 +86,11 @@ def test_only_recent_evenings_are_served_one_by_one() -> None:
     assert serve.feed_file_served("2026-10-17.json", now)
     assert not serve.feed_file_served("2026-10-16.json", now)
     assert not serve.feed_file_served("../2026-10-20.json", now)
+
+
+def test_only_the_switcher_evenings_missing_from_the_volume_are_backfilled(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(serve, "FEED_DIR", tmp_path)
+    (tmp_path / "2026-10-19.json").write_text("{}")
+    assert serve.missing_evenings(at(10, 0)) == ["2026-10-18"]

@@ -118,6 +118,9 @@ def main() -> int:
     parser.add_argument(
         "--out", type=Path, default=WEB_DATA / "feed", help="directory the feed is written to"
     )
+    parser.add_argument(
+        "--keep-latest", action="store_true", help="add a past evening without replacing latest"
+    )
     args = parser.parse_args()
     load_dotenv(ENV_PATH)
     started = time.monotonic()
@@ -187,7 +190,8 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     text = json.dumps(feed, separators=(",", ":"), allow_nan=False)
     (out_dir / f"{day}.json").write_text(text)
-    (out_dir / "latest.json").write_text(text)
+    if not args.keep_latest:
+        (out_dir / "latest.json").write_text(text)
     # Smog Wrapped's season file is rebuilt from every evening on disk, so it is never
     # ahead of the feeds it summarises.
     evenings = [json.loads(p.read_text()) for p in sorted(out_dir.glob("20??-??-??.json"))]

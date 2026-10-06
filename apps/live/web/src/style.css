@@ -102,7 +102,7 @@ body.watch { overflow: hidden; }
 .day-nav { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
 .day { color: var(--text); text-decoration: none; padding: 5px 12px; border-radius: 999px; font-size: 0.85rem; }
 .day.current { background: var(--ember); color: #10141c; font-weight: 600; }
-.day.missing { opacity: 0.35; pointer-events: none; }
+.day.missing { opacity: 0.35; cursor: help; }
 .icon-button { background: var(--button); color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 0.85rem; cursor: pointer; }
 .site-links { display: flex; gap: 12px; font-size: 0.85rem; }
 .site-links a { color: var(--muted); }

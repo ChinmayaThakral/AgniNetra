@@ -40,7 +40,11 @@ export function dayNav(latest: string, chosen: string, available: Set<string>): 
     const link = el("a", day === chosen ? "day current" : "day", label(day));
     if (day === chosen) link.setAttribute("aria-current", "page");
     if (available.has(day)) link.href = day === latest ? "./" : `./?day=${day}`;
-    else link.classList.add("missing");
+    else {
+      link.classList.add("missing");
+      link.title = "This evening is not on the server yet; it fills in after the next build.";
+      link.setAttribute("aria-disabled", "true");
+    }
     nav.append(link);
   }
   return nav;

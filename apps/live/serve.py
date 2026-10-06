@@ -111,6 +111,8 @@ def resolve(url_path: str, routes: tuple[tuple[str, Path], ...]) -> Path | None:
 # midnight before the new day's first build. Older evenings stay on the volume for Smog
 # Wrapped's season file but are not served one by one.
 FEED_DAYS_SERVED = 4
+# Evenings before today the app's day switcher offers.
+DAYS_BACK = 2
 FEED_DAY = re.compile(r"(\d{4}-\d{2}-\d{2})\.json")
 SECURITY_HEADERS = (
     ("X-Content-Type-Options", "nosniff"),
@@ -263,13 +265,15 @@ def not_modified_since(header: str, modified: float) -> bool:
     return int(modified) <= int(since.timestamp())
 
 
-def build_once() -> None:
+def build_once(day: str | None = None) -> None:
+    """Build tonight's feed and social kit, or, given a past day, add that evening only."""
     started = time.monotonic()
-    log("feed build started")
-    steps = (
-        ["apps.live.pipeline.build_feed", "--drop-raw", "--out", str(FEED_DIR)],
-        ["apps.live.pipeline.social_kit", "--feed", str(FEED_DIR / "latest.json")],
-    )
+    log(f"feed build started{f' for {day}' if day else ''}")
+    feed = ["apps.live.pipeline.build_feed", "--drop-raw", "--out", str(FEED_DIR)]
+    if day:
+        steps = [[*feed, "--date", day, "--keep-latest"]]
+    else:
+        steps = [feed, ["apps.live.pipeline.social_kit", "--feed", str(FEED_DIR / "latest.json")]]
     for step in steps:
         try:
             done = subprocess.run(
@@ -284,9 +288,20 @@ def build_once() -> None:
     log(f"feed build finished in {time.monotonic() - started:.0f} s")
 
 
+def missing_evenings(today: datetime) -> list[str]:
+    """The evenings the day switcher offers before today that the volume does not hold."""
+    days = [str(today.date() - timedelta(days=k)) for k in range(1, DAYS_BACK + 1)]
+    return [day for day in days if not (FEED_DIR / f"{day}.json").exists()]
+
+
 def run_schedule(stop: threading.Event) -> None:
     if not (FEED_DIR / "latest.json").exists():
         build_once()
+    # A fresh volume holds only tonight, so the switcher's earlier evenings are built once.
+    for day in missing_evenings(datetime.now(IST)):
+        if stop.is_set():
+            return
+        build_once(day)
     while not stop.is_set():
         at = next_run(datetime.now(IST))
         log(f"next feed build at {at:%Y-%m-%d %H:%M} IST")
