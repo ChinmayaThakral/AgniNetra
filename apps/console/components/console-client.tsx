@@ -178,6 +178,12 @@ export function ConsoleClient({
           [97.5, 37.5],
         ],
         fitBoundsOptions: { padding: 24 },
+        // Panning and zooming stay around India, the only place the data covers.
+        maxBounds: [
+          [55.0, -2.0],
+          [110.0, 45.0],
+        ],
+        renderWorldCopies: false,
       });
     } catch (error) {
       // Without this the throw propagates out of the effect and React unmounts
