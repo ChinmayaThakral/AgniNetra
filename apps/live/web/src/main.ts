@@ -2,7 +2,7 @@ import "./style.css";
 import { allowedDays, applyTheme, chosenDay, currentTheme, dataCard, dayNav, siteLinks, tabs, themeButton } from "./chrome";
 import { el, howSure } from "./dom";
 import { CLASS_COLOURS, CLASS_LABELS, drawFireMap } from "./fire-map";
-import { heatleCard } from "./heatle";
+import { HeatlePack, heatleCard } from "./heatle";
 import { matchBoard } from "./match-board";
 import { moodOf, netuSvg } from "./netu";
 import { itemsAt, levelOf, petState } from "./pet";
@@ -57,6 +57,7 @@ async function start(): Promise<void> {
   // Swipe is extra: without its pack the evening still loads, just without the game.
   const swipe = await load("game/swipe.json", (v) => SwipePack.parse(v)).catch(() => null);
   const season = await load("feed/season.json", (v) => Season.parse(v)).catch(() => null);
+  const practice = await load("game/heatle.json", (v) => HeatlePack.parse(v)).catch(() => null);
 
   // The city Netu follows is remembered on this phone only.
   const cities = feed.air?.map((a) => a.city) ?? [feed.tomorrow.city];
@@ -215,7 +216,7 @@ async function start(): Promise<void> {
   const games: [string, HTMLElement][] = [
     [
       "Heatle",
-      heatleCard(feed, (centre) => {
+      heatleCard(feed, practice, (centre) => {
         ring = centre;
         bounds = INDIA;
         redraw();

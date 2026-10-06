@@ -131,3 +131,11 @@ a { color: var(--polar); }
   .column { overflow-y: auto; min-height: 0; height: 100%; padding-right: 4px; scrollbar-width: thin; }
   .map-card .fire-map { width: min(100%, calc(100vh - 290px)); margin: 0 auto; }
 }
+
+.clues li { margin-bottom: 8px; }
+.clue-text { display: block; }
+.clue-lesson { display: block; color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+.heatle-feedback { margin: 10px 0 4px; }
+.heatle-feedback.right { color: #3fbf6f; }
+:root[data-theme="light"] .heatle-feedback.right { color: #1f8a4c; }
+.choice:disabled { opacity: 0.55; cursor: default; }

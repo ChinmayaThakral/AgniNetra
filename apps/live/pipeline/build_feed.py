@@ -54,13 +54,17 @@ ATTRIBUTION = [
 
 
 def heatle_for(day: date, pack: dict) -> dict:
-    """One verified site a day, clues in the order the game reveals them.
+    """One verified site a day."""
+    return heatle_puzzle(pack["heatle"][day.toordinal() % len(pack["heatle"])])
+
+
+def heatle_puzzle(site: dict) -> dict:
+    """A verified site's puzzle, clues in the order the game reveals them.
 
     With Sentinel-2 chips for the site, the fourth and fifth clues are the picture,
     close and then zoomed out, and the last names the state and rings the cell. Without
     them, the state and the site's history stand in for the pictures.
     """
-    site = pack["heatle"][day.toordinal() % len(pack["heatle"])]
     # The place clue is the 11 km cell, like every other location the app shows.
     lon, lat = site["centre"]
     clues: list[dict] = [

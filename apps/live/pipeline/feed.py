@@ -419,6 +419,17 @@ def on_grid(centre) -> bool:
     return list(cell_centre(cell_of(longitude=lon, latitude=lat))) == [lon, lat]
 
 
+def validate_heatle(heatle: dict) -> None:
+    """One Heatle puzzle: well formed, places no finer than a cell, pictures only the app's own."""
+    if set(heatle) != {"clues", "answer", "choices"} or heatle["answer"] not in heatle["choices"]:
+        raise ValueError("heatle is malformed")
+    for clue in heatle["clues"]:
+        if "centre" in clue and not on_grid(clue["centre"]):
+            raise ValueError(f"heatle gives a place finer than a cell: {clue['centre']}")
+        if clue.get("kind") == "image" and not CHIP_PATH.fullmatch(str(clue.get("src", ""))):
+            raise ValueError(f"heatle image is not one of the app's own chips: {clue.get('src')}")
+
+
 def validate(feed: dict) -> None:
     """Raise if the feed breaks a rule the app promises. Run before every write."""
     if feed.get("schema") != SCHEMA:
@@ -457,13 +468,7 @@ def validate(feed: dict) -> None:
             if speed is not None and (speed < 0 or not 0 <= direction <= 360):
                 raise ValueError(f"wind value out of range: {speed}, {direction}")
     heatle = feed["heatle"]
-    if set(heatle) != {"clues", "answer", "choices"} or heatle["answer"] not in heatle["choices"]:
-        raise ValueError("heatle is malformed")
-    for clue in heatle["clues"]:
-        if "centre" in clue and not on_grid(clue["centre"]):
-            raise ValueError(f"heatle gives a place finer than a cell: {clue['centre']}")
-        if clue.get("kind") == "image" and not CHIP_PATH.fullmatch(str(clue.get("src", ""))):
-            raise ValueError(f"heatle image is not one of the app's own chips: {clue.get('src')}")
+    validate_heatle(heatle)
     if any(c.get("kind") == "image" for c in heatle["clues"]) and not any(
         "Copernicus Sentinel" in line for line in feed.get("attribution", [])
     ):
