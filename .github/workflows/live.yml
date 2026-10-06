@@ -1,0 +1,45 @@
+name: live
+
+# Checks AgniNetra Live on every push to its branch. The app runs on the owner's server
+# from the Dockerfile and rebuilds its own feed through the evening, D140, so nothing here
+# needs a secret or publishes anything.
+
+on:
+  push:
+    branches: [agninetra]
+  pull_request:
+    branches: [agninetra]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync --extra dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run python scripts/check_conventions.py
+      - run: uv run pytest
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/live/web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/live/web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build

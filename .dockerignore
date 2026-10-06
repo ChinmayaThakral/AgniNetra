@@ -1,0 +1,9 @@
+.git
+.venv
+data
+ml/artifacts
+**/node_modules
+**/dist
+**/__pycache__
+apps/live/web/public/feed
+apps/console

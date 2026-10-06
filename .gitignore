@@ -5,6 +5,9 @@ data/
 # empty. Negated after the broad data/ rule, which caught it as collateral. D69.
 !apps/console/public/data/
 !apps/console/public/data/**
+# Live's boundary file, for the same reason: the scheduled job and the app both read it.
+!apps/live/web/public/data/
+!apps/live/web/public/data/**
 *.duckdb
 *.duckdb.wal
 *.parquet
