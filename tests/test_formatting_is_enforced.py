@@ -11,11 +11,13 @@ while linting nothing for weeks because it was deprecated and silently prompted.
 `scripts/check_conventions.py` covered every tracked file and no test ran it. A check
 that exists as a command somebody must remember is not a check.
 
-There is no CI in this project, so the test suite is the enforcement layer. These skip
-rather than fail when ruff is absent, because a fresh clone must be able to run the
-suite, which is the D72 lesson.
+CI now runs the suite on every push to main, and locally the suite is still the
+enforcement layer. These skip rather than fail when ruff is absent, because a fresh
+clone must be able to run the suite, which is the D72 lesson. Under CI a missing ruff
+is a failure instead, so the check cannot pass there by being skipped.
 """
 
+import os
 import shutil
 import subprocess
 
@@ -24,7 +26,9 @@ import pytest
 from ml.tracked import ROOT
 
 RUFF = shutil.which("ruff")
-pytestmark = pytest.mark.skipif(RUFF is None, reason="ruff is not installed in this environment")
+pytestmark = pytest.mark.skipif(
+    RUFF is None and not os.environ.get("CI"), reason="ruff is not installed in this environment"
+)
 
 
 def _ruff(*args: str) -> subprocess.CompletedProcess[str]:

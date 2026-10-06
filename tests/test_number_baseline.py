@@ -55,3 +55,18 @@ def test_the_report_has_no_untriaged_pin() -> None:
     for key, pin in baseline.items():
         if pin["category"] != "untriaged":
             assert len(pin["reason"]) > 10, f"{key}: a categorised pin needs its reason"
+
+
+def test_every_headline_claim_agrees_with_its_artifact() -> None:
+    """The registry rows name a published value and the artifact key behind it.
+
+    The table reported twelve disagreements for weeks, because it was printed into a
+    document and read by no test. A red that nothing fails on is not a check.
+    """
+    disagreeing = [row for row in tracer.check_registry() if not row[4]]
+    assert not disagreeing, "published headline values disagree with their artifacts: " + (
+        ", ".join(
+            f"{label} published {published} stored {stored}"
+            for label, _, published, stored, _ in disagreeing
+        )
+    )

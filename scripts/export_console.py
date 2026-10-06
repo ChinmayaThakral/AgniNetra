@@ -17,9 +17,10 @@ Usage:
 
 import os
 
-# Pinned before any estimator library loads. Thread count changes the floating
-# point reduction order inside sklearn's histogram builders, and random_state does
-# not constrain it, so a fixed seed alone does not reproduce a fit. D59.
+# Pinned before any estimator library loads, as a precaution only. D59 blamed thread
+# count for fits that did not reproduce from their seed; the cause was an unordered
+# feature query, fixed by ordering it on detection_id, and thread count makes no
+# difference once rows arrive in a fixed order. D66.
 os.environ.setdefault("OMP_NUM_THREADS", "4")
 
 
@@ -206,6 +207,9 @@ def main() -> int:
 
     b1 = json.loads((ARTIFACT_DIR / "b1_results.json").read_text())
     uncertainty = json.loads((ARTIFACT_DIR / "conformal_aoa_b2.json").read_text())
+    b4 = json.loads((ARTIFACT_DIR / "b4_results.json").read_text())
+    b4_support = json.loads((ARTIFACT_DIR / "b4_support.json").read_text())
+    b4_rows = sum(group["rows"] for group in b4["groups"].values())
 
     metrics = {
         "source": "ml/artifacts/b1_results.json and conformal_aoa_b2.json, phase 4",
@@ -238,13 +242,16 @@ def main() -> int:
         # These are published in the interface, so they drift the moment a phase
         # closes and nobody rereads them. Three of the five were stale here: B4 now
         # runs end to end, phase 6 is decided rather than not started, and the
-        # applicability domain is assessed on observed rows only.
+        # applicability domain is assessed on observed rows only. The B4 figures are
+        # read from its artifacts because the typed ones went stale a second time.
         "notMeasured": {
-            "B3 INSAT-3DS contextual thresholds": "not measured, waiting on a MOSDAC "
-            "order approval",
-            "B4 foundation model probe": "not measured, support below floor. The "
-            "pipeline runs end to end on real imagery; one scene reaches 7 held out "
-            "detections and no flare at all. Lifting it needs 39 tiles",
+            "B3 INSAT-3DS contextual thresholds": "not measured as a baseline. The "
+            "contextual detector is built and drives the geostationary window, but it "
+            "was never scored against B1 and B2 on the held out groups",
+            "B4 foundation model probe": f"{b4['b4_status']}. The pipeline runs end to "
+            f"end on real imagery; one scene reaches {b4_rows} held out detections and "
+            f"no flare at all. Lifting it needs {b4_support['tiles_for_80_percent']} "
+            "tiles",
             "KAALCHAKRA against B1 and B2": "not measured, and not estimable from a "
             "polar orbiting record. Phase 6 ships as specification, prototype and "
             "observability argument",

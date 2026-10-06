@@ -1,9 +1,11 @@
 "use client";
 
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+
+maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 import { classColour, count, metres } from "@/lib/format";
 import type { Detection, Manifest, Source } from "@/lib/schema";
@@ -98,6 +100,29 @@ function toCsv(rows: Detection[]): string {
   return [header.join(","), ...lines].join("\n");
 }
 
+// MapLibre has needed a WebGL 2 context since version 5 and no longer ships a
+// supported() helper, so the check is direct. Support cannot change while the page
+// is open, so the probe runs once and the store reading it never notifies. The
+// server cannot probe and assumes support; hydration corrects the message.
+let webgl2: boolean | undefined;
+
+function hasWebgl2(): boolean {
+  if (webgl2 === undefined) {
+    try {
+      webgl2 = document.createElement("canvas").getContext("webgl2") !== null;
+    } catch {
+      webgl2 = false;
+    }
+  }
+  return webgl2;
+}
+
+const neverChanges = () => () => {};
+
+const NO_WEBGL2 =
+  "This browser could not create a WebGL context, which MapLibre requires. " +
+  "Every panel below still works; only the map is unavailable.";
+
 export function ConsoleClient({
   detections,
   sources,
@@ -116,6 +141,9 @@ export function ConsoleClient({
   const [active, setActive] = useState<Set<string>>(new Set(CLASSES));
   const [abstainOnly, setAbstainOnly] = useState(false);
   const [dayIndex, setDayIndex] = useState<number>(-1);
+  // Read during render, not set from the effect, which cost a second render.
+  const webgl2Available = useSyncExternalStore(neverChanges, hasWebgl2, () => true);
+  const shownError = webgl2Available ? mapError : NO_WEBGL2;
 
   const dates = useMemo(
     () => Array.from(new Set(detections.map((d) => d.date))).sort(),
@@ -133,26 +161,9 @@ export function ConsoleClient({
 
   useEffect(() => {
     const node = container.current;
-    if (!node || map.current) return;
-
-    // MapLibre 5 needs a WebGL 2 context and no longer ships a supported()
-    // helper, so the check is direct. Done before construction so an unsupported
-    // browser gets a sentence rather than a blank rectangle.
-    const probe = document.createElement("canvas");
-    const hasWebgl2 = (() => {
-      try {
-        return probe.getContext("webgl2") !== null;
-      } catch {
-        return false;
-      }
-    })();
-    if (!hasWebgl2) {
-      setMapError(
-        "This browser could not create a WebGL context, which MapLibre requires. " +
-          "Every panel below still works; only the map is unavailable.",
-      );
-      return;
-    }
+    // Checked before construction so an unsupported browser gets a sentence
+    // rather than a blank rectangle.
+    if (!node || map.current || !hasWebgl2()) return;
 
     let instance: maplibregl.Map;
     try {
@@ -171,7 +182,10 @@ export function ConsoleClient({
     } catch (error) {
       // Without this the throw propagates out of the effect and React unmounts
       // the whole subtree, taking the panels with it. Measured: a headless run
-      // with no GPU lost .mapwrap and .aside together.
+      // with no GPU lost .mapwrap and .aside together. A failed construction is
+      // only known by attempting it, which is this effect's job, and the render
+      // the rule warns about is the one that shows the message.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMapError(
         `The map failed to initialise: ${
           error instanceof Error ? error.message : String(error)
@@ -342,10 +356,10 @@ export function ConsoleClient({
               violation rather than surface it. See D69.
             </div>
           )}
-          {mapError ? (
+          {shownError ? (
             <div className="maperror">
               <strong>Map unavailable</strong>
-              <p>{mapError}</p>
+              <p>{shownError}</p>
               <p>
                 The detections are still loaded and every panel, filter and export
                 works. This message replaces the map rather than hiding it, for the

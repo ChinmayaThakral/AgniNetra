@@ -11,27 +11,33 @@ Built by Chinmaya Thakral.
 NASA FIRMS publishes thermal anomaly detections: a hot pixel with a location, a
 time, brightness temperatures and a fire radiative power value. The feed cannot
 say what is burning. A refinery flare, a sponge iron kiln, a cement precalciner,
-crop residue burning and a forest fire all arrive looking the same. A fire
-response consumer therefore receives an alert stream dominated by routine
-industrial heat, and stops reading it.
+crop residue burning and a forest fire all arrive looking the same. That is the
+premise of this project: an alert stream crowded with routine industrial heat is hard
+to act on.
 
 ## The approach
 
-The discriminating signal is not in the pixel. It is in the recurrence process at
-a location. A flare burns nightly for months with low radiative power variance.
-Crop residue burning has a sharp seasonal envelope and a strong diurnal
-concentration. A wildfire is bursty, self exciting, spatially expanding, and does
-not return to the same pixel next year. Industrial batch processes are periodic
-with campaign structure. Those are four different point process signatures, and
-modelling them directly is the research contribution.
+Each detection is labelled by rule from public maps, a flare catalogue,
+industrial features, energy assets and land cover, with no hand labels, and the
+classifiers are tested on whole groups of states they never saw. The project set
+out to read the source from how a location burns over time. Measured on the polar
+orbiting record, that signal is bounded by when the satellites look: they sample
+six moments of the day, so time of day separates farm fires from continuous
+sources but not flares from industry. A contextual fire detector for India's
+geostationary INSAT-3DS satellite looks at the evening hours the polar record
+misses.
 
 ## Deliverables
 
-1. BharatThermal-1, an open multi sensor benchmark for thermal source attribution
-   over India with a spatially blocked evaluation protocol.
-2. KAALCHAKRA, a latent class marked spatio temporal point process, benchmarked
-   against four baselines.
-3. A web console that demonstrates the result.
+1. BharatThermal-1, a multi sensor benchmark for thermal source attribution over
+   India with a spatially blocked evaluation protocol, held for publication and
+   not yet distributed.
+2. Baselines: gradient boosted trees and density clustering, measured; an imagery
+   probe, run end to end and refused on support; and KAALCHAKRA, a latent class
+   point process, specified but not built, because its central term cannot be
+   tested on polar orbiting data.
+3. A contextual fire detector for INSAT-3DS.
+4. A web console that displays the precomputed results.
 
 ## Layout
 
@@ -40,15 +46,28 @@ modelling them directly is the research contribution.
     scripts/    entry point scripts for backfills and exports
     tests/      pytest suite
     data/       local data store, never committed
-    docs/       figures and write up
+    docs/       figures and write up, kept with the team, not in a clone
 
 ## Running it
 
 Requires Python 3.11 and `uv`.
 
-    uv venv --python 3.11
-    uv pip install -r requirements.txt
+    uv sync --extra dev
     uv run pytest
+
+`pyproject.toml` declares every direct dependency, pinned. `requirements.lock.txt`
+freezes the full environment the published results were produced in, including the
+heavy imagery extra used only by baseline B4. To match that environment exactly,
+in a fresh clone:
+
+    uv venv --python 3.11
+    uv pip install -r requirements.lock.txt
+
+The console needs Node 22:
+
+    cd apps/console
+    npm ci
+    npm run build
 
 The FIRMS map key is read from `.env`, which is never committed. Copy
 `.env.example` to `.env` and fill it in. Without a key, ingestion is blocked and
@@ -59,11 +78,19 @@ reports itself as blocked rather than producing data.
 Project state, decisions and phase specifications are kept with the team rather
 than in this repository.
 
+## What a clone does not contain
+
+`docs/`, `context/` and `data/` stay on the team's machines. `data/` holds the
+DuckDB store and downloaded products, several of which may not be redistributed;
+`docs/` holds the report and the generated result documents. The tests that read
+them skip on a clone, and each skip message names the folder it is waiting for.
+Everything else runs from a clone.
+
 ## Attribution
 
 This project builds on six external data sources. Four of them require attribution
 as a licence condition rather than as a courtesy, so the notices below are
-reproduced in `docs/dataset_card.md` and in the console footer as well.
+reproduced in the console footer and in the dataset card as well.
 
 - **NASA FIRMS.** MODIS and VIIRS active fire data from NASA FIRMS, part of NASA's
   Earth Science Data and Information System. <https://firms.modaps.eosdis.nasa.gov/>

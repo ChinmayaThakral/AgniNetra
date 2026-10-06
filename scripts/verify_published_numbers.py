@@ -369,27 +369,30 @@ def classify(
 
 
 # Headline claims mapped to the source that must still produce them. This is where
-# a stale digit actually shows, because both sides name the same quantity.
+# a stale digit actually shows, because both sides name the same quantity. The
+# published side is what the report and results print today. Twelve of these had
+# drifted after the refits while the table sat unread; a test now fails on any row
+# that disagrees.
 REGISTRY: tuple[tuple[str, str, str, float], ...] = (
-    ("b1 group_a macro F1", "b1_results", "option_a.group_a.macro avg.f1-score", 0.661),
-    ("b1 group_b macro F1", "b1_results", "option_a.group_b.macro avg.f1-score", 0.612),
-    ("b1 group_c macro F1", "b1_results", "option_a.group_c.macro avg.f1-score", 0.651),
-    ("b1 leakage macro F1", "b1_results", "leakage_macro_f1", 0.9996),
-    ("b1 clean macro F1", "b1_results", "clean_macro_f1", 0.6609),
-    ("b2 industrial F1", "conformal_aoa_b2", "b2_industrial.f1", 0.518),
-    ("b2 industrial precision", "conformal_aoa_b2", "b2_industrial.precision", 0.396),
-    ("b2 industrial recall", "conformal_aoa_b2", "b2_industrial.recall", 0.746),
-    ("conformal group_b coverage", "conformal_aoa_b2", "group_b.coverage", 0.8103),
-    ("conformal group_c coverage", "conformal_aoa_b2", "group_c.coverage", 0.8472),
+    ("b1 group_a macro F1", "b1_results", "option_a.group_a.macro avg.f1-score", 0.659),
+    ("b1 group_b macro F1", "b1_results", "option_a.group_b.macro avg.f1-score", 0.608),
+    ("b1 group_c macro F1", "b1_results", "option_a.group_c.macro avg.f1-score", 0.639),
+    ("b1 leakage macro F1", "b1_results", "leakage_macro_f1", 0.9995),
+    ("b1 clean macro F1", "b1_results", "clean_macro_f1", 0.6585),
+    ("b2 industrial F1", "conformal_aoa_b2", "b2_industrial.f1", 0.506),
+    ("b2 industrial precision", "conformal_aoa_b2", "b2_industrial.precision", 0.383),
+    ("b2 industrial recall", "conformal_aoa_b2", "b2_industrial.recall", 0.742),
+    ("conformal group_b coverage", "conformal_aoa_b2", "group_b.coverage", 0.8108),
+    ("conformal group_c coverage", "conformal_aoa_b2", "group_c.coverage", 0.8408),
     ("persistent source count", "persistent_sources", "chosen_radius_m", 500.0),
-    ("b4 train rows", "b4_results", "train_rows", 440.0),
-    ("b4 tiles for 80 percent", "b4_support", "tiles_for_80_percent", 39.0),
-    ("b1 ablation with recurrence", "b1_ablation", "overall.predicted_industrial_full", 0.874),
+    ("b4 train rows", "b4_results", "train_rows", 565.0),
+    ("b4 tiles for 80 percent", "b4_support", "tiles_for_80_percent", 38.0),
+    ("b1 ablation with recurrence", "b1_ablation", "overall.predicted_industrial_full", 0.884),
     (
         "b1 ablation without recurrence",
         "b1_ablation",
         "overall.predicted_industrial_without_recurrence",
-        0.794,
+        0.802,
     ),
 )
 

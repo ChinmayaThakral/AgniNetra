@@ -45,8 +45,8 @@ export function ModelCard({
           </tbody>
         </table>
         <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "0.5rem" }}>
-          {metrics.resampling}. Flare holds about 1.16 percent of rows, so its recall
-          is low and that is the reported result rather than a defect. Feature set
+          {metrics.resampling}. Flare is by far the rarest class, so its recall is
+          low and that is the reported result rather than a defect. Feature set
           excludes the reference distances that define the weak label: including them
           gives macro F1 {fraction(metrics.leakageMacroF1, 4)} against{" "}
           {fraction(metrics.cleanMacroF1, 4)}, which is arithmetic rather than
@@ -90,9 +90,10 @@ export function ModelCard({
         </table>
         <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "0.5rem" }}>
           Split conformal assumes exchangeability between calibration and test. A
-          spatially blocked split breaks it by construction, and two of three groups
-          undercover. The nominal level is not achieved and is shown beside the
-          measured one rather than in place of it.
+          spatially blocked split breaks it by construction, and{" "}
+          {Object.values(metrics.uncertainty).filter((row) => row.coverage < row.nominal).length} of{" "}
+          {Object.values(metrics.uncertainty).length} groups undercover. The nominal level is
+          not achieved and is shown beside the measured one rather than in place of it.
         </p>
       </div>
 

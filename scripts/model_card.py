@@ -190,7 +190,10 @@ def main() -> None:
         "",
         "## Not measured",
         "",
-        "Baseline B3 waits on a MOSDAC order approval.",
+        "Baseline B3 is **not measured** as a baseline. MOSDAC access opened on "
+        "2026-09-07 and the contextual detector is built and drives the geostationary "
+        "work, D78 to D81, but it was never scored against B1 and B2 on the held out "
+        "groups.",
         "",
         "KAALCHAKRA against B1 and B2 is **not measured**, and the evidence for that "
         "is measured: one observability measurement, with three consequences for the "

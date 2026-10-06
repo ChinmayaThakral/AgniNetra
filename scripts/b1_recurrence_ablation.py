@@ -17,11 +17,10 @@ Writes docs/b1_recurrence_ablation.md and ml/artifacts/b1_ablation.json.
 import json
 import os
 
-# HistGradientBoostingClassifier reduces histograms across OpenMP threads, and the
-# floating point order of that reduction depends on the thread count. A fixed seed
-# is therefore not sufficient for reproducibility: the same fit gives 73.98, 76.02
-# and 76.42 percent flare confusion at 1, 2 and 8 threads. Pinned before sklearn is
-# imported, because the runtime reads it at load. D59.
+# Pinned before sklearn is imported, as a precaution only. D59 read the 73.98, 76.02
+# and 76.42 percent flare confusion at 1, 2 and 8 threads as a thread effect; those
+# runs also varied row order, which was the real cause. With the feature query ordered
+# on detection_id the fits are identical at any thread count. D66.
 THREADS = "4"
 os.environ.setdefault("OMP_NUM_THREADS", THREADS)
 

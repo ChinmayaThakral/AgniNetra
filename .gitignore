@@ -29,8 +29,8 @@ __pycache__/
 .mypy_cache/
 .ipynb_checkpoints/
 
-# uv regenerates this on every run and it tracks pyproject dependencies,
-# which are empty here. requirements.txt is the source of truth for pins.
+# uv regenerates this from pyproject.toml, whose direct dependencies are pinned.
+# The full environment behind the published results is requirements.lock.txt.
 uv.lock
 
 # Node
@@ -47,3 +47,6 @@ out/
 # AgniNetra Live: generated feeds, rebuilt by the scheduled job
 apps/live/web/public/feed/
 apps/live/web/dist/
+
+# Copied from node_modules at build, see scripts/copy-map-worker.mjs.
+apps/console/public/maplibre/

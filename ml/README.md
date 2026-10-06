@@ -6,18 +6,22 @@ evaluation.
 ## Layout
 
     paths.py        the single path resolver, imported everywhere
+    population.py   the analysis population, defined once
+    tracked.py      the tracked file enumeration every guard uses
+    documents.py    which documents a check may read
     ingest/         FIRMS client, parsing, deterministic ids, the DuckDB schema
     reference/      flare, asset, land use and land cover layers
     features/       thermal, spatial, recurrence and temporal feature builders
     labels/         weak label rules and the spatially blocked split protocol
-    models/         baselines B1, B2 and B4
-    stpp/           KAALCHAKRA, the latent class point process
-    eval/           metrics, calibration, conformal sets, applicability domain
-    fusion/         INSAT-3DS collocation, from phase 5
+    fusion/         INSAT-3DS reading, detection, geolocation and collocation
+    imagery/        Sentinel-2 acquisition, chips and embeddings for baseline B4
+    eval/           reserved, empty
     artifacts/      trained models and exports, never committed
 
-Directories appear as their phase creates them. A directory listed here that does
-not exist yet has not been built yet, and that is expected.
+The baselines are fitted by scripts rather than a package: `scripts/train_b1.py`,
+`scripts/conformal_aoa_b2.py` and `scripts/train_b4.py`. KAALCHAKRA, the latent
+class point process, was not built: its excitation term is not testable in a polar
+orbiting record, so phase 6 closed as a specification.
 
 ## Rules that matter here
 

@@ -7,9 +7,10 @@ Usage:
 
 import os
 
-# Pinned before any estimator library loads. Thread count changes the floating
-# point reduction order inside sklearn's histogram builders, and random_state does
-# not constrain it, so a fixed seed alone does not reproduce a fit. D59.
+# Pinned before any estimator library loads, as a precaution only. D59 blamed thread
+# count for fits that did not reproduce from their seed; the cause was an unordered
+# feature query, fixed by ordering it on detection_id, and thread count makes no
+# difference once rows arrive in a fixed order. D66.
 os.environ.setdefault("OMP_NUM_THREADS", "4")
 
 
@@ -185,12 +186,14 @@ def figure_pr_and_confusion() -> None:
             )
     axes[1].set_title("B1 confusion, row normalised, group_a", fontsize=11, loc="left")
     fig.colorbar(image, ax=axes[1], fraction=0.045)
+    # Read, not typed: the typed value stayed at 0.9998 after refits moved it to 0.9995.
+    leakage = json.loads((ARTIFACT_DIR / "b1_results.json").read_text())["leakage_macro_f1"]
     caption(
         fig,
         "Option A, no class weighting, fitted on the true prior. Flare is 1.16 percent of "
         "rows, so its curve sits low and that is the reported result rather than a defect.\n"
         "Features exclude the distances and land cover that define the weak label: including "
-        "them gives macro F1 0.9998, which is arithmetic rather than attribution.",
+        f"them gives macro F1 {leakage:.4f}, which is arithmetic rather than attribution.",
     )
     fig.tight_layout(rect=(0, 0.12, 1, 1))
     fig.savefig(FIG / "b1_pr_confusion.png", dpi=170)
@@ -226,11 +229,16 @@ def figure_coverage() -> None:
         axis.tick_params(labelsize=8.5)
         for spine in ("top", "right"):
             axis.spines[spine].set_visible(False)
+    # Computed, not typed: the typed shortfall still read 8 and 10 points after the refits
+    # moved them to 9 and 6.
+    short = [round(100 * (0.90 - c)) for c in coverage if c < 0.90]
+    words = {1: "one", 2: "two", 3: "three"}
     caption(
         fig,
         "Calibrated on a held out slice of the training states, never on the test group. "
         "A spatially blocked split breaks the exchangeability split conformal assumes, so the "
-        "guarantee does not hold:\ntwo of three groups undercover by 8 and 10 points. A random "
+        f"guarantee does not hold:\n{words[len(short)]} of {words[len(coverage)]} groups "
+        f"undercover by {' and '.join(str(s) for s in short)} points. A random "
         "split would have shown coverage near nominal and concealed it.",
     )
     fig.tight_layout(rect=(0, 0.15, 1, 1))
