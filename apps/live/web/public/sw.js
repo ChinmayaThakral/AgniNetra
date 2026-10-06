@@ -1,6 +1,6 @@
 // Installable and usable offline with the last feed. The feed is fetched network first,
 // so an evening in progress is never served stale while the network is up.
-const SHELL = "agninetra-shell-v1";
+const SHELL = "agninetra-shell-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(["./", "data/boundaries.json"])));

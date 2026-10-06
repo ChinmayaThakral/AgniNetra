@@ -12,6 +12,11 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
+// A count and its noun, so one evening never reads "1 evenings".
+export function plural(n: number, one: string, many = `${one}s`): string {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
 export function percent(share: number | null): string {
   return share === null ? "not measured" : `${Math.round(share * 100)}%`;
 }

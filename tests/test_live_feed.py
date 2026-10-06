@@ -263,3 +263,59 @@ def test_validate_accepts_every_city_with_values_not_measured(reference) -> None
         for name, _lon, _lat in feed.AIR_CITIES
     ]
     feed.validate(ok)
+
+
+def _with_picture(reference, src: str, credit: bool) -> dict:
+    f = _minimal_feed(reference)
+    f["heatle"]["clues"].insert(0, {"kind": "image", "src": src, "span_km": 2.56})
+    if credit:
+        f["attribution"].append("Contains modified Copernicus Sentinel data 2026.")
+    return f
+
+
+def test_a_heatle_picture_is_one_of_the_apps_own_chips(reference) -> None:
+    feed.validate(_with_picture(reference, "chips/s0123456789_close.webp", credit=True))
+    with pytest.raises(ValueError):
+        feed.validate(_with_picture(reference, "https://example.com/x.webp", credit=True))
+    with pytest.raises(ValueError):
+        feed.validate(_with_picture(reference, "chips/../feed/latest.json", credit=True))
+
+
+def test_a_heatle_picture_travels_with_its_copernicus_credit(reference) -> None:
+    with pytest.raises(ValueError):
+        feed.validate(_with_picture(reference, "chips/s0123456789_close.webp", credit=False))
+
+
+def _evening(day: str, insat: float | None, cells: list[dict], air: list[dict]) -> dict:
+    return {
+        "evening_ist": day,
+        "match": {"insat_share": insat, "polar_share": None if insat is None else 1 - insat},
+        "tomorrow": {"forecast_date": day},
+        "cells": cells,
+        "air": air,
+    }
+
+
+def test_the_season_counts_bad_air_days_and_the_fire_hour_near_each_city() -> None:
+    near_delhi = {"centre": [77.25, 28.65], "evening": True, "first_seen_ist": "16:30"}
+    far_away = {"centre": [88.35, 22.55], "evening": False, "first_seen_ist": "13:00"}
+    poor = [{"city": "Delhi", "pm25_24h_mean": 100.0, "cpcb_category": "Poor"}]
+    fine = [{"city": "Delhi", "pm25_24h_mean": 40.0, "cpcb_category": "Good"}]
+    season = feed.season_stats(
+        [
+            _evening("2026-10-21", 0.6, [near_delhi, far_away], poor),
+            _evening("2026-10-20", 0.4, [near_delhi], fine),
+            _evening("2026-10-22", None, [], poor),
+        ]
+    )
+    delhi = next(c for c in season["cities"] if c["city"] == "Delhi")
+    assert delhi == {"city": "Delhi", "bad_air_days": 2, "cells_near": 2, "fire_hour_ist": "16:30"}
+    assert season["first_evening"] == "2026-10-20" and season["evenings"] == 3
+    assert season["insat_share_mean"] == 0.5
+    assert season["evening_fire_cells"] == 2
+
+
+def test_an_empty_season_has_nothing_to_report() -> None:
+    season = feed.season_stats([])
+    assert season["evenings"] == 0 and season["insat_share_mean"] is None
+    assert all(c["fire_hour_ist"] is None for c in season["cities"])

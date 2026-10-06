@@ -1,6 +1,7 @@
 import { el, howSure } from "./dom";
 import { CLASS_LABELS } from "./fire-map";
 import type { Feed } from "./schema";
+import { shareCanvas, smokeShareCard, type SmokeSummary } from "./share-card";
 import { CORRIDOR_KM, type Point, upwindSources } from "./upwind";
 
 // "What's that smoke?" The location is used on this phone only and never sent anywhere.
@@ -34,6 +35,14 @@ export function smokeCard(feed: Feed, onTrace: (path: Point[]) => void): { card:
       list.append(item);
     }
     output.append(list);
+    const byClass: SmokeSummary["byClass"] = {};
+    for (const source of sources) byClass[source.cell.class] = (byClass[source.cell.class] ?? 0) + 1;
+    const nearest = Math.min(...sources.map((source) => source.distanceKm));
+    const share = el("button", "button share", "Share where my smoke came from");
+    share.addEventListener("click", () => {
+      void shareCanvas(smokeShareCard(feed.evening_ist, { cells: sources.length, byClass, nearestKm: nearest }), `agninetra-smoke-${feed.evening_ist}.png`);
+    });
+    output.append(share);
   };
 
   const locate = el("button", "button", "Use my location");

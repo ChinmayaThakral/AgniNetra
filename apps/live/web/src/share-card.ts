@@ -1,4 +1,6 @@
-import { CLASS_COLOURS } from "./fire-map";
+import { plural } from "./dom";
+import { CLASS_COLOURS, CLASS_LABELS } from "./fire-map";
+import { type Mood, netuSvg } from "./netu";
 import type { Feed } from "./schema";
 
 // 9:16 images for an Instagram story or WhatsApp status. Every card carries the how sure
@@ -64,11 +66,86 @@ export function tomorrowShareCard(feed: Feed, air: { city: string; pm25: number 
   });
 }
 
-export function heatleShareCard(feed: Feed, result: string): HTMLCanvasElement {
+export function heatleShareCard(feed: Feed, result: string, streak = 0): HTMLCanvasElement {
   return frame("Heatle", feed.evening_ist, "medium. Answers checked against satellite imagery.", (ctx) => {
     line(ctx, result, 700, 52);
+    if (streak > 1) line(ctx, `Streak: ${streak} evenings`, 1000, 40, "#ffcf70");
     line(ctx, "One mystery hot spot. Six clues.", 820, 36, "#9aa3b2");
     line(ctx, "What is it?", 900, 44, "#ffb020");
+  });
+}
+
+
+export function swipeShareCard(day: string, looked: number, right: number, judged: number): HTMLCanvasElement {
+  return frame("Swipe", day, "low. Candidates from map rules, not findings.", (ctx) => {
+    line(ctx, `I looked at ${plural(looked, "hot spot")}`, 620, 64);
+    line(ctx, judged ? `My eye on checked sites: ${right} of ${judged}` : "No checked sites seen yet", 740, 44, "#ffcf70");
+    line(ctx, "Helping find the heat sources", 900, 40, "#9aa3b2");
+    line(ctx, "the maps are missing.", 960, 40, "#9aa3b2");
+    line(ctx, "Pictures: contains modified Copernicus Sentinel data.", 1100, 28, "#6f7888");
+  });
+}
+
+
+async function svgImage(svg: SVGSVGElement): Promise<{ image: HTMLImageElement; release: () => void }> {
+  const text = new XMLSerializer().serializeToString(svg);
+  const url = URL.createObjectURL(new Blob([text], { type: "image/svg+xml" }));
+  const image = new Image();
+  image.src = url;
+  await image.decode();
+  return { image, release: () => URL.revokeObjectURL(url) };
+}
+
+export async function petShareCard(mood: Mood, level: number, xp: number, wearing: string[]): Promise<HTMLCanvasElement> {
+  const { image, release } = await svgImage(netuSvg(mood, 400, wearing));
+  const canvas = frame("My Netu", `Level ${level}, ${plural(xp, "point")}`, "low. Weak labels from maps. Not an official count.", (ctx) => {
+    ctx.drawImage(image, (W - 400) / 2, 420, 400, 480);
+    line(ctx, wearing.length ? `Wearing ${wearing.join(", ")}` : "No items yet", 1020, 40);
+    line(ctx, "Netu grows when I look, never when anything burns.", 1120, 34, "#9aa3b2");
+  });
+  release();
+  return canvas;
+}
+
+export interface SmokeSummary {
+  cells: number;
+  byClass: Partial<Record<keyof typeof CLASS_LABELS, number>>;
+  nearestKm: number | null;
+}
+
+// Where the smoke came from, never where the player is: counts and distances only.
+export function smokeShareCard(day: string, smoke: SmokeSummary): HTMLCanvasElement {
+  return frame("What's that smoke?", day, "low. Forecast wind and weak labels. Not an official count.", (ctx) => {
+    line(ctx, `The air passed ${plural(smoke.cells, "fire cell")}`, 560, 60);
+    line(ctx, "in the last six hours", 630, 40, "#9aa3b2");
+    let y = 780;
+    for (const [key, count] of Object.entries(smoke.byClass)) {
+      line(ctx, `${CLASS_LABELS[key as keyof typeof CLASS_LABELS]}: ${count}`, y, 44, "#ffcf70");
+      y += 70;
+    }
+    if (smoke.nearestKm !== null) line(ctx, `Nearest about ${smoke.nearestKm} km upwind`, y + 40, 40);
+  });
+}
+
+
+export function wrappedShareCard(
+  year: string,
+  city: string,
+  here: { bad_air_days: number; fire_hour_ist: string | null } | null,
+  me: { daysIn: number; heatleSolved: number; heatleBest: number; swiped: number; level: number },
+): HTMLCanvasElement {
+  return frame(`Smog Wrapped ${year}`, city, "low. Forecast air and weak labels. Not an official count.", (ctx) => {
+    let y = 480;
+    if (here) {
+      line(ctx, `${plural(here.bad_air_days, "day")} of poor air or worse`, y, 52, "#ffcf70");
+      y += 90;
+      line(ctx, here.fire_hour_ist ? `Fires near me started most at ${here.fire_hour_ist}` : "No fires near me this season", y, 40);
+      y += 130;
+    }
+    line(ctx, `I checked in on ${plural(me.daysIn, "day")}`, y, 44);
+    line(ctx, `Heatle: ${me.heatleSolved} solved, best streak ${me.heatleBest}`, y + 80, 40);
+    line(ctx, `${plural(me.swiped, "hot spot")} labelled`, y + 160, 40);
+    line(ctx, `My Netu: level ${me.level}`, y + 240, 44, "#ffb020");
   });
 }
 

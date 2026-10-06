@@ -4,15 +4,20 @@ import { CLASS_COLOURS, CLASS_LABELS, drawFireMap } from "./fire-map";
 import { heatleCard } from "./heatle";
 import { matchBoard } from "./match-board";
 import { moodOf, netuSvg } from "./netu";
+import { itemsAt, levelOf, petState } from "./pet";
+import { petCard } from "./pet-card";
 import { playerCards } from "./player-cards";
+import { VisitRecord } from "./records";
 import { fit, INDIA, NORTH_INDIA, type Bounds } from "./projection";
 import { z } from "zod";
 import { Boundaries, Feed } from "./schema";
 import { matchShareCard, shareCanvas } from "./share-card";
 import { smokeCard } from "./smoke-card";
+import { SwipePack, swipeCard } from "./swipe";
 import { recall, remember } from "./store";
-import { tomorrowCard } from "./tomorrow-card";
+import { cityAir, tomorrowCard } from "./tomorrow-card";
 import type { Point } from "./upwind";
+import { Season, wrappedCard, wrappedTime } from "./wrapped";
 
 async function load<T>(path: string, parse: (value: unknown) => T): Promise<T> {
   const response = await fetch(path, { cache: "no-cache" });
@@ -38,6 +43,9 @@ async function start(): Promise<void> {
     failure(root, error instanceof Error ? error.message : "unknown error");
     return;
   }
+  // Swipe is extra: without its pack the evening still loads, just without the game.
+  const swipe = await load("game/swipe.json", (v) => SwipePack.parse(v)).catch(() => null);
+  const season = await load("feed/season.json", (v) => Season.parse(v)).catch(() => null);
 
   // The city Netu follows is remembered on this phone only.
   const cities = feed.air?.map((a) => a.city) ?? [feed.tomorrow.city];
@@ -45,9 +53,23 @@ async function start(): Promise<void> {
   let city = recall("city", (v) => z.string().parse(v), fallbackCity);
   if (!cities.includes(city)) city = fallbackCity;
 
+  // Each day the app is opened is kept on this phone with the city's forecast category,
+  // which Smog Wrapped counts in December.
+  const recordVisit = (): void => {
+    const visits = recall("visits", (v) => VisitRecord.parse(v), {});
+    remember("visits", { ...visits, [feed.evening_ist]: cityAir(feed, city).category });
+  };
+  recordVisit();
+  const wearing = (): string[] => itemsAt(levelOf(petState().xp));
+
   const header = el("header", "top");
-  let netu = netuSvg(moodOf(feed, city));
+  let netu = netuSvg(moodOf(feed, city), 88, wearing());
   header.append(netu);
+  window.addEventListener("netu-xp", () => {
+    const next = netuSvg(moodOf(feed, city), 88, wearing());
+    netu.replaceWith(next);
+    netu = next;
+  });
   const lines = el("div", "netu-lines");
   for (const line of feed.netu) lines.append(el("p", "netu-line", line.text));
   const picker = el("label", "city-picker", "Netu follows the air in");
@@ -65,7 +87,8 @@ async function start(): Promise<void> {
   select.addEventListener("change", () => {
     city = select.value;
     remember("city", city);
-    const nextNetu = netuSvg(moodOf(feed, city));
+    recordVisit();
+    const nextNetu = netuSvg(moodOf(feed, city), 88, wearing());
     netu.replaceWith(nextNetu);
     netu = nextNetu;
     const nextTomorrow = tomorrowCard(feed, city);
@@ -164,6 +187,7 @@ async function start(): Promise<void> {
 
   root.replaceChildren(
     header,
+    ...(season && wrappedTime(feed.evening_ist, window.location.search) ? [wrappedCard(season, city)] : []),
     matchBoard(feed),
     playerCards(feed),
     mapCard,
@@ -175,6 +199,8 @@ async function start(): Promise<void> {
       bounds = INDIA;
       redraw();
     }),
+    ...(swipe ? [swipeCard(swipe, feed.evening_ist)] : []),
+    petCard(() => moodOf(feed, city)),
     footer,
   );
   redraw();

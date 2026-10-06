@@ -10,6 +10,7 @@ feed; and no confidence is ever stated as high, because every class is a weak la
 """
 
 import math
+import re
 from collections import Counter, defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -394,6 +395,8 @@ def day_mean(times: list[str], values: list[float | None], day: str) -> float | 
 
 CLASSES = ("agricultural", "industrial", "flare", "unclassified")
 MOSDAC_CREDIT = "Data Source MOSDAC/SAC/ISRO. https://mosdac.gov.in"
+# A Heatle picture is only ever one of the app's own chips, never an address elsewhere.
+CHIP_PATH = re.compile(r"chips/[a-z0-9_]+\.webp")
 
 
 def on_grid(centre) -> bool:
@@ -445,6 +448,12 @@ def validate(feed: dict) -> None:
     for clue in heatle["clues"]:
         if "centre" in clue and not on_grid(clue["centre"]):
             raise ValueError(f"heatle gives a place finer than a cell: {clue['centre']}")
+        if clue.get("kind") == "image" and not CHIP_PATH.fullmatch(str(clue.get("src", ""))):
+            raise ValueError(f"heatle image is not one of the app's own chips: {clue.get('src')}")
+    if any(c.get("kind") == "image" for c in heatle["clues"]) and not any(
+        "Copernicus Sentinel" in line for line in feed.get("attribution", [])
+    ):
+        raise ValueError("a Sentinel-2 picture needs its Copernicus credit")
     known = {name for name, _lon, _lat in AIR_CITIES}
     seen_cities = [a["city"] for a in feed.get("air", [])]
     if len(seen_cities) != len(set(seen_cities)) or not set(seen_cities) <= known:
@@ -459,3 +468,51 @@ def validate(feed: dict) -> None:
         raise ValueError("attribution and caveats must travel with the data")
     if not any(MOSDAC_CREDIT in line for line in feed["attribution"]):
         raise ValueError("the MOSDAC credit line is required")
+
+
+# Smog Wrapped, the city level side. A player's own numbers are computed on the phone,
+# never here, rule 6.
+BAD_AIR = ("Poor", "Very Poor", "Severe")
+NEAR_CITY_KM = 300.0
+
+
+def season_stats(feeds: list[dict]) -> dict:
+    """The season in numbers for everyone, from the feeds of every evening built.
+
+    A bad air day is a forecast date whose CAMS category for the city was Poor or worse.
+    A city's fire hour is the half hour in which fire cells within NEAR_CITY_KM of it were
+    most often first seen, over the whole season.
+    """
+    evenings = sorted(feeds, key=lambda f: f["evening_ist"])
+    insat = [f["match"]["insat_share"] for f in evenings if f["match"]["insat_share"] is not None]
+    polar = [f["match"]["polar_share"] for f in evenings if f["match"]["polar_share"] is not None]
+    cities = []
+    for name, lon, lat in AIR_CITIES:
+        bad: set[str] = set()
+        slots: Counter = Counter()
+        for f in evenings:
+            for a in f.get("air", []):
+                if a["city"] == name and a["cpcb_category"] in BAD_AIR:
+                    bad.add(f["tomorrow"]["forecast_date"])
+            for c in f["cells"]:
+                cx, cy = c["centre"]
+                if _haversine_m(lon1=lon, lat1=lat, lon2=cx, lat2=cy) <= NEAR_CITY_KM * 1000:
+                    slots[c["first_seen_ist"]] += 1
+        cities.append(
+            {
+                "city": name,
+                "bad_air_days": len(bad),
+                "cells_near": sum(slots.values()),
+                "fire_hour_ist": slots.most_common(1)[0][0] if slots else None,
+            }
+        )
+    return {
+        "schema": "agninetra-season/1",
+        "first_evening": evenings[0]["evening_ist"] if evenings else None,
+        "last_evening": evenings[-1]["evening_ist"] if evenings else None,
+        "evenings": len(evenings),
+        "evening_fire_cells": sum(sum(c["evening"] for c in f["cells"]) for f in evenings),
+        "insat_share_mean": round(sum(insat) / len(insat), 3) if insat else None,
+        "polar_share_mean": round(sum(polar) / len(polar), 3) if polar else None,
+        "cities": cities,
+    }

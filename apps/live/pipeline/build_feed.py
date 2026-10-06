@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 
 from ml.paths import DATA_DIR, ENV_PATH, ROOT
 
+from .build_chips import CLOSE_M, WIDE_M
 from .feed import (
     CAVEATS,
     IST,
@@ -32,6 +33,7 @@ from .feed import (
     netu_lines,
     pm25_category,
     restrict_to_india,
+    season_stats,
     validate,
 )
 from .sources import Districts, firms_fires, insat_fires, pm25_tomorrow, wind_grid
@@ -50,19 +52,50 @@ ATTRIBUTION = [
 
 
 def heatle_for(day: date, pack: dict) -> dict:
-    """One verified site a day, clues in the order the game reveals them."""
+    """One verified site a day, clues in the order the game reveals them.
+
+    With Sentinel-2 chips for the site, the fourth and fifth clues are the picture,
+    close and then zoomed out, and the last names the state and rings the cell. Without
+    them, the state and the site's history stand in for the pictures.
+    """
     site = pack["heatle"][day.toordinal() % len(pack["heatle"])]
     # The place clue is the 11 km cell, like every other location the app shows.
     lon, lat = site["centre"]
-    return {
-        "clues": [
-            {"kind": "rhythm", "night_share": site["night_share"]},
-            {"kind": "brightness", "median_frp_mw": site["median_frp_mw"]},
-            {"kind": "land_cover", "value": site["land_cover"]},
+    clues: list[dict] = [
+        {"kind": "rhythm", "night_share": site["night_share"]},
+        {"kind": "brightness", "median_frp_mw": site["median_frp_mw"]},
+        {"kind": "land_cover", "value": site["land_cover"]},
+    ]
+    images = site.get("images")
+    if images:
+        clues += [
+            {
+                "kind": "image",
+                "src": images["close"],
+                "span_km": CLOSE_M / 1000,
+                "acquired": images["acquired"],
+            },
+            {
+                "kind": "image",
+                "src": images["wide"],
+                "span_km": WIDE_M / 1000,
+                "acquired": images["acquired"],
+            },
+        ]
+    else:
+        clues += [
             {"kind": "state", "value": site["state"]},
             {"kind": "persistence", "detections_in_record": site["detections"]},
-            {"kind": "place", "centre": list(cell_centre(cell_of(longitude=lon, latitude=lat)))},
-        ],
+        ]
+    clues.append(
+        {
+            "kind": "place",
+            "state": site["state"],
+            "centre": list(cell_centre(cell_of(longitude=lon, latitude=lat))),
+        }
+    )
+    return {
+        "clues": clues,
         "answer": site["answer"],
         "choices": [
             "steel or iron plant",
@@ -138,7 +171,9 @@ def main() -> int:
         # Wind is the last six hours before now, so it describes only the current
         # evening. A rebuilt past evening carries none rather than the wrong hours.
         "wind": wind_grid() if day == now.astimezone(IST).date() else None,
-        "attribution": ATTRIBUTION + pack["attribution"],
+        "attribution": ATTRIBUTION
+        + pack["attribution"]
+        + ([pack["imagery_credit"]] if "imagery_credit" in pack else []),
         "caveats": list(CAVEATS),
     }
     validate(feed)
@@ -148,6 +183,12 @@ def main() -> int:
     text = json.dumps(feed, separators=(",", ":"), allow_nan=False)
     (out_dir / f"{day}.json").write_text(text)
     (out_dir / "latest.json").write_text(text)
+    # Smog Wrapped's season file is rebuilt from every evening on disk, so it is never
+    # ahead of the feeds it summarises.
+    evenings = [json.loads(p.read_text()) for p in sorted(out_dir.glob("20??-??-??.json"))]
+    (out_dir / "season.json").write_text(
+        json.dumps(season_stats(evenings), separators=(",", ":"), allow_nan=False)
+    )
     print(
         f"{day}: {len(polar)} polar and {len(insat)} INSAT detections, {len(fires)} in India, "
         f"{len(cells)} cells, "

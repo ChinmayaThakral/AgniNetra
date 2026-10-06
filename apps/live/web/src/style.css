@@ -61,3 +61,12 @@ body.watch { overflow: hidden; }
 .watch-clock { font-size: 1.4rem; color: var(--ember); }
 .city-picker { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
 .city-picker select { background: #1a2130; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font: inherit; }
+.swipe-stage { touch-action: none; user-select: none; display: grid; place-items: center; border-radius: 12px; overflow: hidden; background: #0b0e14; outline-offset: 4px; }
+.chip { width: 100%; max-width: 360px; height: auto; aspect-ratio: 1 / 1; display: block; border-radius: 10px; image-rendering: auto; }
+.heatle-chip { max-width: 260px; margin-top: 6px; }
+.chip-credit { display: block; margin-top: 4px; }
+.swipe-choices { justify-content: space-between; }
+.pet-body { display: flex; gap: 16px; align-items: center; }
+.pet-facts { flex: 1; }
+.pet-bar { width: 100%; height: 10px; accent-color: var(--ember); }
+.wrapped { border-color: var(--ember); }
