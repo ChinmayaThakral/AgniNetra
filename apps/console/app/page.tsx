@@ -54,30 +54,20 @@ export default async function Page() {
         manifest={manifest}
         sources={sources}
         heldOutCoverage={metrics.uncertainty[manifest.heldOutGroup]?.coverage ?? null}
+        panels={[
+          { title: "Phase 5: what the geostationary record adds", node: <GeostationaryPanel data={geostationary} /> },
+          {
+            title: "Model card",
+            node: (
+              <div className="modelgrid">
+                <ModelCard manifest={manifest} metrics={metrics} />
+              </div>
+            ),
+            startOpen: false,
+          },
+          { title: "Sources and credits", node: <AttributionFooter manifest={manifest} />, startOpen: false },
+        ]}
       />
-
-      <div style={{ borderTop: "1px solid var(--line)", padding: "1rem" }}>
-        <h2>Phase 5, what the geostationary record adds</h2>
-        <div style={{ marginTop: "0.6rem" }}>
-          <GeostationaryPanel data={geostationary} />
-        </div>
-      </div>
-
-      <div style={{ borderTop: "1px solid var(--line)", padding: "1rem" }}>
-        <h2>Model card</h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(19rem, 1fr))",
-            gap: "0.8rem",
-            marginTop: "0.6rem",
-          }}
-        >
-          <ModelCard manifest={manifest} metrics={metrics} />
-        </div>
-      </div>
-
-      <AttributionFooter manifest={manifest} />
     </div>
   );
 }
