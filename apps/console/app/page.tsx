@@ -1,7 +1,9 @@
 import { ConsoleClient } from "@/components/console-client";
 import { AttributionFooter } from "@/components/attribution-footer";
 import { GeostationaryPanel } from "@/components/geostationary-panel";
+import { Guide } from "@/components/guide";
 import { ModelCard } from "@/components/metric-tables";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   loadDetections,
   loadGeostationary,
@@ -29,14 +31,16 @@ export default async function Page() {
     <div className="shell">
       <header className="masthead">
         <div>
-          <h1>AgniNetra console</h1>
+          <h1>AgniNetra research console</h1>
           <div className="sub">
-            Thermal source attribution over India. Displays precomputed phase 4
-            results, the phase 5 geostationary window, and runs no model.
+            What is burning over India, and how sure we are. New here? Start with the
+            first tab on the right.
           </div>
           <nav className="site-links" aria-label="AgniNetra sites">
-            <a href="https://agninetra.chinmayathakral.com">AgniNetra Live, the evening fire match</a>
+            <a href="https://agninetra.chinmayathakral.com">AgniNetra Live, the evening fire analysis</a>
             <a href="https://github.com/ChinmayaThakral/AgniNetra">Code and data</a>
+            <a href="https://github.com/ChinmayaThakral/AgniNetra/wiki">Wiki</a>
+            <ThemeToggle />
           </nav>
         </div>
         <div className="sub" style={{ textAlign: "right" }}>
@@ -54,18 +58,18 @@ export default async function Page() {
         manifest={manifest}
         sources={sources}
         heldOutCoverage={metrics.uncertainty[manifest.heldOutGroup]?.coverage ?? null}
+        guide={<Guide geostationary={geostationary} manifest={manifest} metrics={metrics} sources={sources} />}
         panels={[
-          { title: "Phase 5: what the geostationary record adds", node: <GeostationaryPanel data={geostationary} /> },
+          { title: "Geostationary", node: <GeostationaryPanel data={geostationary} /> },
           {
-            title: "Model card",
+            title: "Model",
             node: (
               <div className="modelgrid">
                 <ModelCard manifest={manifest} metrics={metrics} />
               </div>
             ),
-            startOpen: false,
           },
-          { title: "Sources and credits", node: <AttributionFooter manifest={manifest} />, startOpen: false },
+          { title: "Credits", node: <AttributionFooter manifest={manifest} /> },
         ]}
       />
     </div>

@@ -70,7 +70,7 @@ export function ModelCard({
             {Object.entries(metrics.uncertainty).map(([group, row]) => (
               <tr key={group}>
                 <td>{group.replace("group_", "")}</td>
-                <td style={{ color: row.coverage < row.nominal ? "#b00020" : undefined }}>
+                <td style={{ color: row.coverage < row.nominal ? "var(--alarm)" : undefined }}>
                   {fraction(row.coverage, 4)}
                 </td>
                 <td>{fraction(row.nominal, 2)}</td>
