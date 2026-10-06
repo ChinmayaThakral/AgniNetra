@@ -113,7 +113,7 @@ export const Boundaries = z.object({
   attribution: z.string(),
   features: z.array(
     z.object({
-      properties: z.object({ kind: z.enum(["state", "district"]), name: z.string() }),
+      properties: z.object({ kind: z.enum(["state", "district", "country"]), name: z.string() }),
       geometry: z.discriminatedUnion("type", [
         z.object({ type: z.literal("Polygon"), coordinates: z.array(Ring) }),
         z.object({ type: z.literal("MultiPolygon"), coordinates: z.array(z.array(Ring)) }),

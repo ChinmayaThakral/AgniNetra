@@ -24,7 +24,7 @@ function drawOutlines(
   ctx: CanvasRenderingContext2D,
   projection: Projection,
   boundaries: Boundaries,
-  kind: "state" | "district",
+  kind: "state" | "district" | "country",
 ): void {
   ctx.beginPath();
   for (const feature of boundaries.features) {
@@ -82,6 +82,10 @@ export function drawFireMap(
   ctx.lineWidth = 0.9;
   ctx.strokeStyle = colour("--map-state", "rgba(150, 170, 200, 0.45)");
   drawOutlines(ctx, projection, boundaries, "state");
+  // India's outline as India draws it, over the state lines, which stop at the line of control.
+  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = colour("--map-country", "rgba(190, 205, 230, 0.75)");
+  drawOutlines(ctx, projection, boundaries, "country");
 
   // Glow adds light on a dark ground and would wash out on a pale one.
   ctx.globalCompositeOperation = light ? "source-over" : "lighter";

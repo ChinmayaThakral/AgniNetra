@@ -11,7 +11,7 @@ export interface Bounds {
 export const INDIA: Bounds = { west: 68, east: 97.5, south: 6.5, north: 37.5 };
 // The widest zoom the app offers. A state, never a village: the map cannot be zoomed to
 // the scale at which a field could be found, which is the first rule of the app.
-export const NORTH_INDIA: Bounds = { west: 72.5, east: 81, south: 26, north: 33 };
+export const NORTH_INDIA: Bounds = { west: 72, east: 81, south: 26, north: 37.1 };
 
 function mercatorY(latitude: number): number {
   const phi = (latitude * Math.PI) / 180;

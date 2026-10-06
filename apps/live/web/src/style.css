@@ -14,6 +14,7 @@
   --map-ground: #07090d;
   --map-district: rgba(120, 140, 170, 0.18);
   --map-state: rgba(150, 170, 200, 0.45);
+  --map-country: rgba(190, 205, 230, 0.75);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 :root[data-theme="light"] {
@@ -32,6 +33,7 @@
   --map-ground: #fbfaf6;
   --map-district: rgba(70, 80, 100, 0.14);
   --map-state: rgba(60, 70, 90, 0.45);
+  --map-country: rgba(40, 48, 64, 0.8);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--ground); color: var(--text); }
