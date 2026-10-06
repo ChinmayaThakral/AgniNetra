@@ -7,7 +7,7 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [console]
   pull_request:
 
 permissions:
