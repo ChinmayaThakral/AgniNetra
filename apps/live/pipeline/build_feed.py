@@ -34,7 +34,7 @@ from .feed import (
     restrict_to_india,
     validate,
 )
-from .sources import Districts, delhi_pm25_tomorrow, firms_fires, insat_fires, wind_grid
+from .sources import Districts, firms_fires, insat_fires, pm25_tomorrow, wind_grid
 
 PIPELINE = ROOT / "apps" / "live" / "pipeline"
 WEB_DATA = ROOT / "apps" / "live" / "web" / "public"
@@ -96,7 +96,8 @@ def main() -> int:
     fires, places = restrict_to_india(polar + insat, districts)
     match = build_match(fires)
     cells = build_cells(fires, reference, lambda **kw: places[cell_of(**kw)])
-    tomorrow = delhi_pm25_tomorrow(day)
+    air = pm25_tomorrow(day)
+    tomorrow = air[0]
     category = pm25_category(tomorrow["pm25_24h_mean"])
     insat_delay = None if insat_newest is None else (now - insat_newest).total_seconds() / 3600
 
@@ -125,6 +126,14 @@ def main() -> int:
             "school_hybrid": "not measured",
             "source": "CAMS global forecast via Open-Meteo, not an official forecast",
         },
+        "air": [
+            {
+                "city": a["city"],
+                "pm25_24h_mean": a["pm25_24h_mean"],
+                "cpcb_category": pm25_category(a["pm25_24h_mean"]),
+            }
+            for a in air
+        ],
         "heatle": heatle_for(day, pack),
         # Wind is the last six hours before now, so it describes only the current
         # evening. A rebuilt past evening carries none rather than the wrong hours.

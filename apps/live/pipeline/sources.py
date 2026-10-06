@@ -25,7 +25,7 @@ from ml.ingest.firms import FirmsClient
 from ml.ingest.parse import INDIA_BBOX, parse_csv
 from ml.ingest.transport import RequestsTransport
 
-from .feed import IST, MATCH_END_IST, MATCH_START_IST, Fire
+from .feed import AIR_CITIES, IST, MATCH_END_IST, MATCH_START_IST, Fire, day_mean
 
 L1C = "3SIMG_L1C_ASIA_MER"
 FIRMS_NRT = ("VIIRS_SNPP_NRT", "VIIRS_NOAA20_NRT", "VIIRS_NOAA21_NRT", "MODIS_NRT")
@@ -37,7 +37,6 @@ FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 # job fetches it once per run.
 WIND_GRID_DEG = 1.5
 WIND_CHUNK = 100
-DELHI = (77.21, 28.61)
 REQUEST_TIMEOUT_S = 60.0
 
 
@@ -117,12 +116,16 @@ def cached_detections(
     return points
 
 
-def delhi_pm25_tomorrow(day: date) -> dict:
-    """The CAMS global PM2.5 forecast for Delhi, as a 24 hour mean for the next IST day."""
+def pm25_tomorrow(day: date) -> list[dict]:
+    """The CAMS PM2.5 forecast for every city in AIR_CITIES, as tomorrow's 24 hour mean.
+
+    One request covers every city, so the whole list costs one call against Open-Meteo's
+    free limit.
+    """
     query = urllib.parse.urlencode(
         {
-            "latitude": DELHI[1],
-            "longitude": DELHI[0],
+            "latitude": ",".join(str(lat) for _name, _lon, lat in AIR_CITIES),
+            "longitude": ",".join(str(lon) for _name, lon, _lat in AIR_CITIES),
             "hourly": "pm2_5",
             "timezone": "Asia/Kolkata",
             "forecast_days": 3,
@@ -130,17 +133,16 @@ def delhi_pm25_tomorrow(day: date) -> dict:
     )
     with urllib.request.urlopen(f"{AIR_QUALITY_URL}?{query}", timeout=REQUEST_TIMEOUT_S) as r:
         body = json.load(r)
+    places = body if isinstance(body, list) else [body]
     tomorrow = str(day + timedelta(days=1))
-    values = [
-        v
-        for t, v in zip(body["hourly"]["time"], body["hourly"]["pm2_5"], strict=True)
-        if t.startswith(tomorrow) and v is not None
+    return [
+        {
+            "city": name,
+            "date": tomorrow,
+            "pm25_24h_mean": day_mean(place["hourly"]["time"], place["hourly"]["pm2_5"], tomorrow),
+        }
+        for (name, _lon, _lat), place in zip(AIR_CITIES, places, strict=True)
     ]
-    return {
-        "date": tomorrow,
-        "hours": len(values),
-        "pm25_24h_mean": round(sum(values) / len(values), 1) if len(values) == 24 else None,
-    }
 
 
 class Districts:

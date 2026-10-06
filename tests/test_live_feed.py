@@ -229,3 +229,37 @@ def test_the_app_schema_knows_every_template_the_pipeline_can_say() -> None:
     schema = (ROOT / "apps" / "live" / "web" / "src" / "schema.ts").read_text()
     for name in [*feed.TEMPLATES, *feed.COMMENTARY]:
         assert f'"{name}"' in schema, name
+
+
+def test_day_mean_needs_every_hour_of_the_day() -> None:
+    times = [f"2026-10-07T{h:02d}:00" for h in range(24)] + ["2026-10-08T00:00"]
+    full: list[float | None] = [float(h) for h in range(24)] + [999.0]
+    assert feed.day_mean(times, full, "2026-10-07") == 11.5
+    gap = list(full)
+    gap[5] = None
+    assert feed.day_mean(times, gap, "2026-10-07") is None
+
+
+@pytest.mark.parametrize(
+    "air",
+    [
+        [{"city": "Gotham", "pm25_24h_mean": 50.0, "cpcb_category": "Satisfactory"}],
+        [{"city": "Delhi", "pm25_24h_mean": 50.0, "cpcb_category": "Satisfactory"}] * 2,
+        [{"city": "Delhi", "pm25_24h_mean": -1.0, "cpcb_category": None}],
+        [{"city": "Delhi", "pm25_24h_mean": 50.0, "cpcb_category": "Hazardous"}],
+    ],
+)
+def test_validate_refuses_city_air_it_cannot_vouch_for(reference, air) -> None:
+    broken = _minimal_feed(reference)
+    broken["air"] = air
+    with pytest.raises(ValueError):
+        feed.validate(broken)
+
+
+def test_validate_accepts_every_city_with_values_not_measured(reference) -> None:
+    ok = _minimal_feed(reference)
+    ok["air"] = [
+        {"city": name, "pm25_24h_mean": None, "cpcb_category": None}
+        for name, _lon, _lat in feed.AIR_CITIES
+    ]
+    feed.validate(ok)

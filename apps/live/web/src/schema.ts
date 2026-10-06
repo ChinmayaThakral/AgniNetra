@@ -39,6 +39,14 @@ export const Over = z.object({
   insat_new: z.boolean(),
 });
 
+// Tomorrow's PM2.5 for each city Netu can follow. Optional, because evenings built before
+// the city list existed still have to load.
+export const Air = z.object({
+  city: z.string(),
+  pm25_24h_mean: z.number().min(0).nullable(),
+  cpcb_category: z.string().nullable(),
+});
+
 export const Feed = z.object({
   schema: z.literal("agninetra-live/1"),
   generated_utc: z.string(),
@@ -78,6 +86,7 @@ export const Feed = z.object({
     school_hybrid: z.literal("not measured"),
     source: z.string(),
   }),
+  air: z.array(Air).optional(),
   heatle: z.object({
     clues: z.array(z.record(z.string(), z.unknown())),
     answer: z.string(),
@@ -115,5 +124,6 @@ export const Boundaries = z.object({
 
 export type Feed = z.infer<typeof Feed>;
 export type Cell = z.infer<typeof Cell>;
+export type Air = z.infer<typeof Air>;
 export type Boundaries = z.infer<typeof Boundaries>;
 export type Wind = NonNullable<Feed["wind"]>;

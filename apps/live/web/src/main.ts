@@ -6,9 +6,11 @@ import { matchBoard } from "./match-board";
 import { moodOf, netuSvg } from "./netu";
 import { playerCards } from "./player-cards";
 import { fit, INDIA, NORTH_INDIA, type Bounds } from "./projection";
+import { z } from "zod";
 import { Boundaries, Feed } from "./schema";
 import { matchShareCard, shareCanvas } from "./share-card";
 import { smokeCard } from "./smoke-card";
+import { recall, remember } from "./store";
 import { tomorrowCard } from "./tomorrow-card";
 import type { Point } from "./upwind";
 
@@ -37,11 +39,39 @@ async function start(): Promise<void> {
     return;
   }
 
+  // The city Netu follows is remembered on this phone only.
+  const cities = feed.air?.map((a) => a.city) ?? [feed.tomorrow.city];
+  const fallbackCity = cities[0] ?? feed.tomorrow.city;
+  let city = recall("city", (v) => z.string().parse(v), fallbackCity);
+  if (!cities.includes(city)) city = fallbackCity;
+
   const header = el("header", "top");
-  header.append(netuSvg(moodOf(feed)));
+  let netu = netuSvg(moodOf(feed, city));
+  header.append(netu);
   const lines = el("div", "netu-lines");
   for (const line of feed.netu) lines.append(el("p", "netu-line", line.text));
+  const picker = el("label", "city-picker", "Netu follows the air in");
+  const select = el("select", "");
+  for (const name of cities) {
+    const option = el("option", "", name);
+    option.value = name;
+    select.append(option);
+  }
+  select.value = city;
+  picker.append(select);
+  lines.append(picker);
   header.append(lines);
+  let tomorrow = tomorrowCard(feed, city);
+  select.addEventListener("change", () => {
+    city = select.value;
+    remember("city", city);
+    const nextNetu = netuSvg(moodOf(feed, city));
+    netu.replaceWith(nextNetu);
+    netu = nextNetu;
+    const nextTomorrow = tomorrowCard(feed, city);
+    tomorrow.replaceWith(nextTomorrow);
+    tomorrow = nextTomorrow;
+  });
 
   const mapCard = el("section", "card map-card");
   const canvas = el("canvas", "fire-map");
@@ -139,7 +169,7 @@ async function start(): Promise<void> {
     mapCard,
     share,
     smoke.card,
-    tomorrowCard(feed),
+    tomorrow,
     heatleCard(feed, (centre) => {
       ring = centre;
       bounds = INDIA;

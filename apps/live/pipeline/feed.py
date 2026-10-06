@@ -279,20 +279,20 @@ TEMPLATES = {
     "both_quiet": "Polar satellites out at {polar_last}, and INSAT's last catch was {insat_last}.",
     "insat_share": "INSAT has caught {insat_pct} percent of today's fire cells so far.",
     "polar_share": "The 1:30 pm pass caught {polar_pct} percent. The evening was not its shift.",
-    "quiet": "Quiet sky today. Netu is resting its eye.",
-    "worried": "Heavy smoke evening. Netu is worried, not excited.",
+    "quiet": "Quiet sky today. No fire cells seen yet.",
+    "worried": "Delhi's air looks heavy tomorrow. Netu is worried, not excited.",
     "data_late": "INSAT data here is from {insat_age}. Live layer: NASA FIRMS.",
 }
 
 
-# Ball by ball commentary, one line per over. Templates only, like Netu, and about the
-# satellites and their shares, never about fires as a score or about who lit them.
+# Ball by ball commentary in Hinglish, one line per over. Templates only, like Netu, and
+# about the satellites and their shares, never about fires as a score or about who lit them.
 COMMENTARY = {
-    "maiden": "{over} over: a maiden for INSAT. Share stays at {insat_pct} percent.",
-    "insat_up": "{over} over: INSAT's share climbs to {insat_pct} percent. Accha shot.",
-    "polar_in_pavilion": "{over} over: polar team still in the pavilion since {polar_last}.",
-    "polar_late": "{over} over: a polar pass joins in, share now {polar_pct} percent.",
-    "not_yet": "{over} over: no data for this over yet. INSAT runs about an hour behind.",
+    "maiden": "{over} over: INSAT ke liye maiden over. Share {insat_pct} percent pe tika hai.",
+    "insat_up": "{over} over: INSAT ka share badhkar {insat_pct} percent. Accha catch, INSAT.",
+    "polar_in_pavilion": "{over} over: polar team {polar_last} se pavilion mein baithi hai.",
+    "polar_late": "{over} over: ek polar pass aaya, polar share ab {polar_pct} percent.",
+    "not_yet": "{over} over: is over ka data abhi baaki hai. INSAT lagbhag ek ghanta peeche hai.",
 }
 
 
@@ -372,6 +372,26 @@ def pm25_category(value: float | None) -> str | None:
     return None
 
 
+# The cities whose air Netu can follow, west to east across the burning belt and its
+# downwind plains. Delhi comes first: it is the Tomorrow card's default city.
+AIR_CITIES = (
+    ("Delhi", 77.21, 28.61),
+    ("Chandigarh", 76.78, 30.73),
+    ("Ludhiana", 75.86, 30.90),
+    ("Amritsar", 74.87, 31.63),
+    ("Jaipur", 75.79, 26.91),
+    ("Dehradun", 78.03, 30.32),
+    ("Lucknow", 80.95, 26.85),
+    ("Patna", 85.14, 25.59),
+)
+
+
+def day_mean(times: list[str], values: list[float | None], day: str) -> float | None:
+    """Mean of one IST day's hourly values, only when all 24 hours are present."""
+    hours = [v for t, v in zip(times, values, strict=True) if t.startswith(day) and v is not None]
+    return round(sum(hours) / len(hours), 1) if len(hours) == 24 else None
+
+
 CLASSES = ("agricultural", "industrial", "flare", "unclassified")
 MOSDAC_CREDIT = "Data Source MOSDAC/SAC/ISRO. https://mosdac.gov.in"
 
@@ -425,6 +445,16 @@ def validate(feed: dict) -> None:
     for clue in heatle["clues"]:
         if "centre" in clue and not on_grid(clue["centre"]):
             raise ValueError(f"heatle gives a place finer than a cell: {clue['centre']}")
+    known = {name for name, _lon, _lat in AIR_CITIES}
+    seen_cities = [a["city"] for a in feed.get("air", [])]
+    if len(seen_cities) != len(set(seen_cities)) or not set(seen_cities) <= known:
+        raise ValueError(f"air lists an unknown or repeated city: {seen_cities}")
+    names = {name for _upper, name in PM25_CATEGORIES}
+    for a in feed.get("air", []):
+        if a["pm25_24h_mean"] is not None and a["pm25_24h_mean"] < 0:
+            raise ValueError(f"negative PM2.5 for {a['city']}")
+        if a["cpcb_category"] is not None and a["cpcb_category"] not in names:
+            raise ValueError(f"unknown air category for {a['city']}: {a['cpcb_category']}")
     if not feed.get("attribution") or not feed.get("caveats"):
         raise ValueError("attribution and caveats must travel with the data")
     if not any(MOSDAC_CREDIT in line for line in feed["attribution"]):

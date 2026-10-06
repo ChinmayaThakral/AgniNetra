@@ -2,11 +2,24 @@ import type { Feed } from "./schema";
 
 // Netu, a small flame with one big eye. Its mood is read from the feed and nothing else,
 // and it is never excited by fire: worried when the air or the smoke is bad, resting when
-// the sky is quiet, watchful otherwise.
+// the sky is quiet or the air clean, watchful otherwise.
 
 export type Mood = "watchful" | "worried" | "resting";
 
-export function moodOf(feed: Feed): Mood {
+// With a city chosen, Netu follows that city's air tomorrow: calm in clean air, watchful
+// in moderate, worried from poor upwards. Without one, it reads the evening's lines.
+const AIR_MOOD: Record<string, Mood> = {
+  Good: "resting",
+  Satisfactory: "resting",
+  Moderate: "watchful",
+  Poor: "worried",
+  "Very Poor": "worried",
+  Severe: "worried",
+};
+
+export function moodOf(feed: Feed, city?: string): Mood {
+  const category = city ? feed.air?.find((a) => a.city === city)?.cpcb_category : undefined;
+  if (category) return AIR_MOOD[category] ?? "watchful";
   const said = new Set(feed.netu.map((line) => line.template));
   if (said.has("worried")) return "worried";
   if (said.has("quiet")) return "resting";

@@ -52,12 +52,12 @@ export function matchShareCard(feed: Feed, map: HTMLCanvasElement): HTMLCanvasEl
   });
 }
 
-export function tomorrowShareCard(feed: Feed): HTMLCanvasElement {
+export function tomorrowShareCard(feed: Feed, air: { city: string; pm25: number | null; category: string | null }): HTMLCanvasElement {
   const t = feed.tomorrow;
-  return frame(`Tomorrow in ${t.city}`, t.forecast_date, "low. A global model forecast, not the official one.", (ctx) => {
-    line(ctx, t.pm25_24h_mean === null ? "PM2.5 not measured" : `PM2.5 about ${Math.round(t.pm25_24h_mean)}`, 560, 96);
-    if (t.pm25_24h_mean !== null) line(ctx, "micrograms per cubic metre, 24 hour mean", 630, 32, "#9aa3b2");
-    line(ctx, t.cpcb_category ? `CPCB: ${t.cpcb_category}` : "Category not measured", 780, 64, "#ffcf70");
+  return frame(`Tomorrow in ${air.city}`, t.forecast_date, "low. A global model forecast, not the official one.", (ctx) => {
+    line(ctx, air.pm25 === null ? "PM2.5 not measured" : `PM2.5 about ${Math.round(air.pm25)}`, 560, 96);
+    if (air.pm25 !== null) line(ctx, "micrograms per cubic metre, 24 hour mean", 630, 32, "#9aa3b2");
+    line(ctx, air.category ? `CPCB: ${air.category}` : "Category not measured", 780, 64, "#ffcf70");
     line(ctx, `Tonight's evening fire cells: ${t.evening_fire_cells}`, 940, 44);
     line(ctx, `School hybrid? ${t.school_hybrid}`, 1040, 40, "#9aa3b2");
     line(ctx, "CAMS forecast via Open-Meteo", 1140, 30, "#6f7888");

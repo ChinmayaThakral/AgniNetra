@@ -27,8 +27,8 @@ h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
 .insat .score { color: var(--ember); }
 .versus { color: var(--muted); }
 .status { font-size: 0.8rem; color: var(--muted); }
-.overs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.over { border: 1px solid var(--line); border-radius: 8px; padding: 6px; display: flex; justify-content: space-between; font-size: 0.85rem; }
+.overs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; }
+.over { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; display: flex; justify-content: space-between; gap: 8px; font-size: 0.85rem; }
 .over.new { border-color: var(--ember); }
 .fire-map { width: 100%; aspect-ratio: 1 / 1; display: block; border-radius: 10px; }
 .map-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
@@ -59,3 +59,5 @@ body.watch { overflow: hidden; }
 .watch-team.polar { color: var(--polar); }
 .watch-team.insat { color: var(--ember); }
 .watch-clock { font-size: 1.4rem; color: var(--ember); }
+.city-picker { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+.city-picker select { background: #1a2130; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font: inherit; }
