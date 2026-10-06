@@ -3,6 +3,7 @@
 Usage, from the repository root:
     uv run python -m apps.live.pipeline.build_feed
     uv run python -m apps.live.pipeline.build_feed --date 2024-11-01
+    uv run python -m apps.live.pipeline.build_feed --out data/live/feed
 
 The feed is validated before it is written, so a feed that breaks one of the app's rules
 is never published. Credentials come from the environment or `.env`.
@@ -13,6 +14,7 @@ import json
 import sys
 import time
 from datetime import UTC, date, datetime
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -113,6 +115,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", help="IST evening to build, YYYY-MM-DD; default today")
     parser.add_argument("--drop-raw", action="store_true", help="delete raw granules once analysed")
+    parser.add_argument(
+        "--out", type=Path, default=WEB_DATA / "feed", help="directory the feed is written to"
+    )
     args = parser.parse_args()
     load_dotenv(ENV_PATH)
     started = time.monotonic()
@@ -178,7 +183,7 @@ def main() -> int:
     }
     validate(feed)
 
-    out_dir = WEB_DATA / "feed"
+    out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
     text = json.dumps(feed, separators=(",", ":"), allow_nan=False)
     (out_dir / f"{day}.json").write_text(text)
