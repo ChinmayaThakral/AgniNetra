@@ -120,7 +120,7 @@ torch==2.14.0
 torchgeo==0.8.1
 torchmetrics==1.9.0
 torchvision==0.29.0
-tqdm==4.70.0
+tqdm==4.70.1
 typeshed-client==2.13.0
 typing-extensions==4.16.0
 typing-inspection==0.4.4
