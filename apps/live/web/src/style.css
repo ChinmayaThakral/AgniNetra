@@ -50,6 +50,8 @@ h3 { margin: 14px 0 6px; font-size: 0.95rem; color: var(--muted); }
 .polar .score { color: var(--polar); }
 .insat .score { color: var(--ember); }
 .versus { color: var(--muted); }
+.score.unmeasured { font-size: 1.15rem; font-weight: 600; padding: 14px 0 6px; }
+.over-score.unmeasured { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
 .status { font-size: 0.8rem; color: var(--muted); }
 .overs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; }
 .over { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; display: flex; justify-content: space-between; gap: 8px; font-size: 0.85rem; }

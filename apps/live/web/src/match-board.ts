@@ -13,7 +13,7 @@ export function matchBoard(feed: Feed): HTMLElement {
 
   const teams = el("div", "teams");
   const polar = el("div", "team polar");
-  polar.append(el("div", "team-name", "Polar satellites"), el("div", "score", percent(match.polar_share)));
+  polar.append(el("div", "team-name", "Polar satellites"), el("div", match.polar_share === null ? "score unmeasured" : "score", percent(match.polar_share)));
   polar.append(
     el(
       "div",
@@ -22,7 +22,7 @@ export function matchBoard(feed: Feed): HTMLElement {
     ),
   );
   const insat = el("div", "team insat");
-  insat.append(el("div", "team-name", "INSAT-3DS"), el("div", "score", percent(match.insat_share)));
+  insat.append(el("div", "team-name", "INSAT-3DS"), el("div", match.insat_share === null ? "score unmeasured" : "score", percent(match.insat_share)));
   insat.append(
     el(
       "div",
@@ -36,7 +36,7 @@ export function matchBoard(feed: Feed): HTMLElement {
   const overs = el("ol", "overs");
   for (const over of match.overs) {
     const item = el("li", over.insat_new ? "over new" : "over");
-    item.append(el("span", "over-time", over.over), el("span", "over-score", percent(over.insat_share)));
+    item.append(el("span", "over-time", over.over), el("span", over.insat_share === null ? "over-score unmeasured" : "over-score", percent(over.insat_share)));
     item.title = `After the ${over.over} over: INSAT ${percent(over.insat_share)}, polar ${percent(over.polar_share)}`;
     overs.append(item);
   }
