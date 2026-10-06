@@ -163,5 +163,5 @@ from.
 ## Licence
 
 Code is MIT, written results are CC BY 4.0, and the BharatThermal-1 dataset is ODbL 1.0.
-See [`LICENSE`](LICENSE). If you use the dataset or the findings, please cite this
-repository; GitHub's "Cite this repository" button gives the reference.
+See [`LICENSE`](LICENSE). If you use the dataset or the findings, please credit
+Chinmaya Thakral and link this repository.
