@@ -97,7 +97,7 @@ regex==2026.9.3
 requests==2.34.2
 rich==15.0.0
 rioxarray==0.19.0
-ruff==0.16.6
+ruff==0.16.10
 safetensors==0.8.0
 scikit-image==0.26.0
 scikit-learn==1.9.0

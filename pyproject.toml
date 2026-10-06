@@ -30,7 +30,7 @@ imagery = [
 ]
 dev = [
     "pytest==9.1.1",
-    "ruff==0.16.6",
+    "ruff==0.16.10",
 ]
 
 [tool.ruff]
