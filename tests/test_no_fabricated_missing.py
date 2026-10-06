@@ -49,6 +49,14 @@ ALLOWED: dict[str, str] = {
         "The module documents the removed coalesce in prose so the defect stays legible. No live substitution."
     ),
     "tests/test_no_fabricated_missing.py:0": "This file names the patterns by definition.",
+    # A place's English name, else its name in the local script: both are the same real
+    # name of the same boundary, so nothing unknown is filled in.
+    "apps/live/pipeline/site_details.py::SELECT coalesce(name_en, name) AS place FROM ref_osm_admin": (
+        "Chooses between two recorded names of one boundary; no missing value is invented."
+    ),
+    "apps/live/pipeline/site_details.py::AND NOT regexp_matches(lower(coalesce(name_en, name)),": (
+        "The same choice of recorded name, used to filter out company townships."
+    ),
     # The one deliberate substitution in the repository, exempted by exact line so it
     # cannot drift. These two reproduce the superseded imputed applicability domain in
     # order to measure how wrong it was, which is the defect this guard exists to

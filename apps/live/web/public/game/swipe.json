@@ -4,1810 +4,8382 @@
  "close_span_km": 2.56,
  "items": [
   {
-   "id": "sc61c1ead5b",
-   "chip": "chips/sc61c1ead5b.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "sfc274c87c9",
-   "chip": "chips/sfc274c87c9.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
-  },
-  {
-   "id": "s0834af1c27",
-   "chip": "chips/s0834af1c27.webp",
-   "scene": "S2C_42QZJ_20260116_0_L2A",
-   "acquired": "2026-01-16",
-   "gold": null
-  },
-  {
    "id": "s1e3c1043d4",
    "chip": "chips/s1e3c1043d4.webp",
    "scene": "S2C_45QUD_20260302_0_L2A",
    "acquired": "2026-03-02",
-   "gold": null
-  },
-  {
-   "id": "sb6a0d9eeb1",
-   "chip": "chips/sb6a0d9eeb1.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s6d39da1d25",
-   "chip": "chips/s6d39da1d25.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s113ce59d1e",
-   "chip": "chips/s113ce59d1e.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s87f5891277",
-   "chip": "chips/s87f5891277.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s44305f7283",
-   "chip": "chips/s44305f7283.webp",
-   "scene": "S2C_45QWG_20260128_0_L2A",
-   "acquired": "2026-01-28",
-   "gold": null
-  },
-  {
-   "id": "s3506bb0716",
-   "chip": "chips/s3506bb0716.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s4ddda46cfd",
-   "chip": "chips/s4ddda46cfd.webp",
-   "scene": "S2A_44QRK_20260413_0_L2A",
-   "acquired": "2026-04-13",
-   "gold": null
-  },
-  {
-   "id": "s9ee5166d87",
-   "chip": "chips/s9ee5166d87.webp",
-   "scene": "S2B_45QVF_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s11c3cea927",
-   "chip": "chips/s11c3cea927.webp",
-   "scene": "S2C_44QPK_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "saa0e37331c",
-   "chip": "chips/saa0e37331c.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1e3c1043d4_wide.webp",
+   "details": {
+    "lon": 85.2581,
+    "lat": 20.7937,
+    "state": "Odisha",
+    "detections": 1762,
+    "night_share": 0.825,
+    "spread_m": 1948,
+    "first_seen": "2023-10-16",
+    "last_seen": "2026-09-03",
+    "days_seen": 117,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     32,
+     31,
+     50,
+     1,
+     508,
+     1127,
+     13
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.4,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Meramandali Power Station",
+      "km": 1.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Meramandali power station",
+      "km": 1.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s8de57d4d2b",
    "chip": "chips/s8de57d4d2b.webp",
    "scene": "S2B_45QTD_20251117_0_L2A",
    "acquired": "2025-11-17",
-   "gold": null
-  },
-  {
-   "id": "s14e85dee1a",
-   "chip": "chips/s14e85dee1a.webp",
-   "scene": "S2C_43PFS_20251211_0_L2A",
-   "acquired": "2025-12-11",
-   "gold": null
-  },
-  {
-   "id": "sc62540e047",
-   "chip": "chips/sc62540e047.webp",
-   "scene": "S2B_43QBA_20260312_0_L2A",
-   "acquired": "2026-03-12",
-   "gold": null
-  },
-  {
-   "id": "s04c7a33ccb",
-   "chip": "chips/s04c7a33ccb.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s84fc1d08b5",
-   "chip": "chips/s84fc1d08b5.webp",
-   "scene": "S2C_45QWE_20251119_0_L2A",
-   "acquired": "2025-11-19",
-   "gold": null
-  },
-  {
-   "id": "s40dc5d0568",
-   "chip": "chips/s40dc5d0568.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
-  },
-  {
-   "id": "sd171bf19ed",
-   "chip": "chips/sd171bf19ed.webp",
-   "scene": "S2B_44QPL_20260208_0_L2A",
-   "acquired": "2026-02-08",
-   "gold": null
-  },
-  {
-   "id": "s1fa7ebaf64",
-   "chip": "chips/s1fa7ebaf64.webp",
-   "scene": "S2C_45QWE_20251119_0_L2A",
-   "acquired": "2025-11-19",
-   "gold": null
-  },
-  {
-   "id": "s3135b02fdb",
-   "chip": "chips/s3135b02fdb.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s9a97be9b91",
-   "chip": "chips/s9a97be9b91.webp",
-   "scene": "S2C_45QWG_20260128_0_L2A",
-   "acquired": "2026-01-28",
-   "gold": null
-  },
-  {
-   "id": "se2f7ffc9f7",
-   "chip": "chips/se2f7ffc9f7.webp",
-   "scene": "S2A_44QRK_20260413_0_L2A",
-   "acquired": "2026-04-13",
-   "gold": null
+   "community": true,
+   "wide": "chips/s8de57d4d2b_wide.webp",
+   "details": {
+    "lon": 85.0392,
+    "lat": 21.0771,
+    "state": "Odisha",
+    "detections": 945,
+    "night_share": 0.831,
+    "spread_m": 1433,
+    "subdistrict": "Kaniha",
+    "first_seen": "2023-10-11",
+    "last_seen": "2026-08-20",
+    "days_seen": 113,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     30,
+     3,
+     8,
+     0,
+     256,
+     638,
+     10
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.1,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "N.T.P.C. solar project",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s6ef060a72c",
    "chip": "chips/s6ef060a72c.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6ef060a72c_wide.webp",
+   "details": {
+    "lon": 83.8424,
+    "lat": 21.7534,
+    "state": "Odisha",
+    "detections": 561,
+    "night_share": 0.77,
+    "spread_m": 1960,
+    "subdistrict": "Lakhanpur",
+    "first_seen": "2023-10-25",
+    "last_seen": "2026-08-28",
+    "days_seen": 113,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     168,
+     19,
+     70,
+     0,
+     73,
+     226,
+     5
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.7,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Integrated Belpahar, Lakhanpur, Lilari Coal Mine",
+      "km": 2.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc3170b2a24",
    "chip": "chips/sc3170b2a24.webp",
    "scene": "S2C_45QWE_20251119_0_L2A",
    "acquired": "2025-11-19",
-   "gold": null
+   "community": true,
+   "details": {
+    "lon": 87.0175,
+    "lat": 22.3643,
+    "state": "West Bengal",
+    "detections": 547,
+    "night_share": 0.965,
+    "spread_m": 636,
+    "subdistrict": "Jhargram",
+    "first_seen": "2023-10-17",
+    "last_seen": "2026-08-30",
+    "days_seen": 116,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     20,
+     37,
+     40,
+     0,
+     137,
+     307,
+     6
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "RASHMI CEMENT LTD. (CEMENT DIVISION)",
+      "km": 3.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "Rashmi Cement Jhargram Cement Plant",
+      "km": 3.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s03a5267be5",
    "chip": "chips/s03a5267be5.webp",
    "scene": "S2B_45QTD_20251117_0_L2A",
    "acquired": "2025-11-17",
-   "gold": null
+   "community": true,
+   "wide": "chips/s03a5267be5_wide.webp",
+   "details": {
+    "lon": 85.1383,
+    "lat": 20.9786,
+    "state": "Odisha",
+    "detections": 531,
+    "night_share": 0.895,
+    "spread_m": 1166,
+    "subdistrict": "Talcher Sadar",
+    "first_seen": "2023-10-16",
+    "last_seen": "2026-08-20",
+    "days_seen": 104,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     55,
+     7,
+     13,
+     0,
+     106,
+     342,
+     8
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Bharatpur Coal Mine",
+      "km": 2.5,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s0a5e85424a",
    "chip": "chips/s0a5e85424a.webp",
    "scene": "S2B_45QXE_20251214_0_L2A",
    "acquired": "2025-12-14",
-   "gold": null
-  },
-  {
-   "id": "s11c0251ebd",
-   "chip": "chips/s11c0251ebd.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "sb4ba41a7b5",
-   "chip": "chips/sb4ba41a7b5.webp",
-   "scene": "S2B_45QTE_20260215_1_L2A",
-   "acquired": "2026-02-15",
-   "gold": null
-  },
-  {
-   "id": "s7c1e45fd31",
-   "chip": "chips/s7c1e45fd31.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/s0a5e85424a_wide.webp",
+   "details": {
+    "lon": 88.1244,
+    "lat": 22.0542,
+    "state": "West Bengal",
+    "detections": 512,
+    "night_share": 0.885,
+    "spread_m": 1211,
+    "subdistrict": "Haldia",
+    "first_seen": "2023-10-18",
+    "last_seen": "2026-08-24",
+    "days_seen": 108,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     13,
+     24,
+     0,
+     92,
+     361,
+     8
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.2,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Hooghly Met Coke and Power Company Limited",
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.9,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Hiranmaye Haldia power station",
+      "km": 3.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s630f579f60",
    "chip": "chips/s630f579f60.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s73b5d8ba4c",
-   "chip": "chips/s73b5d8ba4c.webp",
-   "scene": "S2C_44QPK_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "sdecdd54c10",
-   "chip": "chips/sdecdd54c10.webp",
-   "scene": "S2B_44QNJ_20260303_1_L2A",
-   "acquired": "2026-03-03",
-   "gold": null
+   "community": true,
+   "wide": "chips/s630f579f60_wide.webp",
+   "details": {
+    "lon": 83.5243,
+    "lat": 22.1067,
+    "state": "Chhattisgarh",
+    "detections": 382,
+    "night_share": 0.801,
+    "spread_m": 473,
+    "subdistrict": "Tamnar Tahsil",
+    "first_seen": "2023-10-14",
+    "last_seen": "2024-12-01",
+    "days_seen": 98,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     127,
+     253,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.1,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Gare Palma II Coal Mine",
+      "km": 1.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s6be8c688d1",
    "chip": "chips/s6be8c688d1.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6be8c688d1_wide.webp",
+   "details": {
+    "lon": 85.8539,
+    "lat": 23.7576,
+    "state": "Jharkhand",
+    "detections": 368,
+    "night_share": 0.875,
+    "spread_m": 673,
+    "subdistrict": "Gumia",
+    "first_seen": "2023-10-19",
+    "last_seen": "2026-08-25",
+    "days_seen": 100,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     9,
+     30,
+     0,
+     69,
+     248,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.2,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.8,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 2.5,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Bokaro Thermal Power Station",
+      "km": 4.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s5a3cfd4cbc",
    "chip": "chips/s5a3cfd4cbc.webp",
    "scene": "S2B_45QTD_20251117_0_L2A",
    "acquired": "2025-11-17",
-   "gold": null
-  },
-  {
-   "id": "sb997be6c96",
-   "chip": "chips/sb997be6c96.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5a3cfd4cbc_wide.webp",
+   "details": {
+    "lon": 84.9917,
+    "lat": 20.8661,
+    "state": "Odisha",
+    "detections": 339,
+    "night_share": 0.897,
+    "spread_m": 875,
+    "first_seen": "2023-10-22",
+    "last_seen": "2026-09-03",
+    "days_seen": 94,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     16,
+     37,
+     2,
+     58,
+     217,
+     6
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.8,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Angul Steel Plant",
+      "km": 0.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Jindal Steel Angul steel plant",
+      "km": 2.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s76684bfa66",
    "chip": "chips/s76684bfa66.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s775b40d730",
-   "chip": "chips/s775b40d730.webp",
-   "scene": "S2B_45QTD_20251117_0_L2A",
-   "acquired": "2025-11-17",
-   "gold": null
+   "community": true,
+   "wide": "chips/s76684bfa66_wide.webp",
+   "details": {
+    "lon": 82.6539,
+    "lat": 22.3303,
+    "state": "Chhattisgarh",
+    "detections": 309,
+    "night_share": 0.838,
+    "spread_m": 764,
+    "subdistrict": "Katghora Tahsil",
+    "first_seen": "2023-10-16",
+    "last_seen": "2024-12-01",
+    "days_seen": 75,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     52,
+     243,
+     14
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.8,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Kusmunda Coal Mine",
+      "km": 1.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s688fb25930",
    "chip": "chips/s688fb25930.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s688fb25930_wide.webp",
+   "details": {
+    "lon": 83.8328,
+    "lat": 21.7789,
+    "state": "Odisha",
+    "detections": 290,
+    "night_share": 0.879,
+    "spread_m": 884,
+    "subdistrict": "Lakhanpur",
+    "first_seen": "2023-10-24",
+    "last_seen": "2026-06-29",
+    "days_seen": 92,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     34,
+     0,
+     0,
+     0,
+     72,
+     181,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.9,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Integrated Belpahar, Lakhanpur, Lilari Coal Mine",
+      "km": 2.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s391a5a60f6",
    "chip": "chips/s391a5a60f6.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s391a5a60f6_wide.webp",
+   "details": {
+    "lon": 83.3517,
+    "lat": 22.0382,
+    "state": "Chhattisgarh",
+    "detections": 285,
+    "night_share": 0.961,
+    "spread_m": 688,
+    "subdistrict": "Tamnar Tahsil",
+    "first_seen": "2023-10-17",
+    "last_seen": "2026-08-26",
+    "days_seen": 103,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     19,
+     3,
+     6,
+     0,
+     77,
+     188,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 2.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "N R Ispat and Power Raigarh steel plant",
+      "km": 3.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s61a8356eda",
    "chip": "chips/s61a8356eda.webp",
    "scene": "S2A_45QUF_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "details": {
+    "lon": 86.0898,
+    "lat": 22.801,
+    "state": "Jharkhand",
+    "detections": 281,
+    "night_share": 0.968,
+    "spread_m": 559,
+    "subdistrict": "Adityapur(Gamharia)",
+    "first_seen": "2023-10-26",
+    "last_seen": "2026-08-26",
+    "days_seen": 74,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0,
+     21,
+     252,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Tata Steel Gamharia steel plant",
+      "km": 1.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sf9f7aefe43",
    "chip": "chips/sf9f7aefe43.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
-  },
-  {
-   "id": "s107a5eb767",
-   "chip": "chips/s107a5eb767.webp",
-   "scene": "S2B_45QUE_20260327_0_L2A",
-   "acquired": "2026-03-27",
-   "gold": null
-  },
-  {
-   "id": "sca44335306",
-   "chip": "chips/sca44335306.webp",
-   "scene": "S2A_44QPG_20260307_0_L2A",
-   "acquired": "2026-03-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/sf9f7aefe43_wide.webp",
+   "details": {
+    "lon": 82.7102,
+    "lat": 24.2066,
+    "state": "Madhya Pradesh",
+    "detections": 273,
+    "night_share": 0.78,
+    "spread_m": 768,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2023-10-22",
+    "last_seen": "2026-08-13",
+    "days_seen": 89,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     23,
+     10,
+     8,
+     0,
+     55,
+     174,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.1,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "works or factory",
+      "name": null,
+      "km": 1.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Jhingurda Coal Mine",
+      "km": 1.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s06ac8aa785",
    "chip": "chips/s06ac8aa785.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": null
-  },
-  {
-   "id": "sdf61595956",
-   "chip": "chips/sdf61595956.webp",
-   "scene": "S2C_44QQE_20260220_0_L2A",
-   "acquired": "2026-02-20",
-   "gold": null
-  },
-  {
-   "id": "s305ecc730a",
-   "chip": "chips/s305ecc730a.webp",
-   "scene": "S2A_45QUF_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s06ac8aa785_wide.webp",
+   "details": {
+    "lon": 85.0098,
+    "lat": 23.7379,
+    "state": "Jharkhand",
+    "detections": 250,
+    "night_share": 0.932,
+    "spread_m": 587,
+    "subdistrict": "Tandwa",
+    "first_seen": "2023-10-22",
+    "last_seen": "2026-08-23",
+    "days_seen": 86,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     5,
+     0,
+     53,
+     187,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.0,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Ashoka Coal Mine",
+      "km": 3.2,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 6.7,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sfa5a5c0c03",
    "chip": "chips/sfa5a5c0c03.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s81415ce930",
-   "chip": "chips/s81415ce930.webp",
-   "scene": "S2C_45QWG_20260128_0_L2A",
-   "acquired": "2026-01-28",
-   "gold": null
+   "community": true,
+   "wide": "chips/sfa5a5c0c03_wide.webp",
+   "details": {
+    "lon": 82.5302,
+    "lat": 22.3142,
+    "state": "Chhattisgarh",
+    "detections": 221,
+    "night_share": 0.914,
+    "spread_m": 952,
+    "subdistrict": "Pali Tahsil",
+    "first_seen": "2023-11-05",
+    "last_seen": "2024-12-01",
+    "days_seen": 57,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     25,
+     187,
+     9
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "S V Power Private Limited Renki",
+      "km": 1.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "SVPL power station",
+      "km": 2.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sb893baf5c7",
    "chip": "chips/sb893baf5c7.webp",
    "scene": "S2B_45QTD_20251117_0_L2A",
    "acquired": "2025-11-17",
-   "gold": null
-  },
-  {
-   "id": "s0a15543732",
-   "chip": "chips/s0a15543732.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s469ce692dd",
-   "chip": "chips/s469ce692dd.webp",
-   "scene": "S2B_44RLQ_20260224_0_L2A",
-   "acquired": "2026-02-24",
-   "gold": null
+   "community": true,
+   "wide": "chips/sb893baf5c7_wide.webp",
+   "details": {
+    "lon": 84.9817,
+    "lat": 20.8873,
+    "state": "Odisha",
+    "detections": 211,
+    "night_share": 0.744,
+    "spread_m": 613,
+    "first_seen": "2023-10-19",
+    "last_seen": "2026-09-03",
+    "days_seen": 89,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     17,
+     1,
+     11,
+     1,
+     43,
+     135,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.4,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Jindal Steel Angul steel plant",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sfe78155549",
    "chip": "chips/sfe78155549.webp",
    "scene": "S2C_44QLF_20260117_0_L2A",
    "acquired": "2026-01-17",
-   "gold": null
-  },
-  {
-   "id": "sdf7a8cddbb",
-   "chip": "chips/sdf7a8cddbb.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s1e3364250e",
-   "chip": "chips/s1e3364250e.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s7e37042dde",
-   "chip": "chips/s7e37042dde.webp",
-   "scene": "S2B_45QUE_20260327_0_L2A",
-   "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/sfe78155549_wide.webp",
+   "details": {
+    "lon": 79.5369,
+    "lat": 18.7211,
+    "state": "Telangana",
+    "detections": 193,
+    "night_share": 0.777,
+    "spread_m": 672,
+    "subdistrict": "Ramagiri mandal",
+    "first_seen": "2023-10-26",
+    "last_seen": "2026-08-21",
+    "days_seen": 70,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     3,
+     0,
+     29,
+     155,
+     4
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.9,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Ramagundam III Coal Mine",
+      "km": 2.6,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "TGSRTC Bus Depot , Godavarikhani",
+      "km": 5.6,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sbd5d94104e",
    "chip": "chips/sbd5d94104e.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s493430879e",
-   "chip": "chips/s493430879e.webp",
-   "scene": "S2B_43RDH_20260121_0_L2A",
-   "acquired": "2026-01-21",
-   "gold": null
-  },
-  {
-   "id": "se426492ae5",
-   "chip": "chips/se426492ae5.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "se7de7e64f8",
-   "chip": "chips/se7de7e64f8.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/sbd5d94104e_wide.webp",
+   "details": {
+    "lon": 85.4383,
+    "lat": 23.6477,
+    "state": "Jharkhand",
+    "detections": 188,
+    "night_share": 0.862,
+    "spread_m": 506,
+    "subdistrict": "Ramgarh",
+    "first_seen": "2024-10-30",
+    "last_seen": "2026-08-30",
+    "days_seen": 67,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     47,
+     32,
+     50,
+     0,
+     4,
+     55,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Bhurkunda Coal Mine",
+      "km": 7.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sf9550b4c2b",
    "chip": "chips/sf9550b4c2b.webp",
    "scene": "S2C_44QNJ_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s59f0b6b005",
-   "chip": "chips/s59f0b6b005.webp",
-   "scene": "S2B_43RCK_20260210_0_L2A",
-   "acquired": "2026-02-10",
-   "gold": null
+   "community": true,
+   "wide": "chips/sf9550b4c2b_wide.webp",
+   "details": {
+    "lon": 81.6411,
+    "lat": 21.3771,
+    "state": "Chhattisgarh",
+    "detections": 174,
+    "night_share": 1.0,
+    "spread_m": 578,
+    "subdistrict": "Raipur Tahsil",
+    "first_seen": "2023-10-23",
+    "last_seen": "2024-11-30",
+    "days_seen": 71,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     42,
+     128,
+     4
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Raipur Tahsil solar project I",
+      "km": 1.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s2878c272d3",
    "chip": "chips/s2878c272d3.webp",
    "scene": "S2B_46RGR_20260127_0_L2A",
    "acquired": "2026-01-27",
-   "gold": null
-  },
-  {
-   "id": "s8127e66188",
-   "chip": "chips/s8127e66188.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s2878c272d3_wide.webp",
+   "details": {
+    "lon": 95.2659,
+    "lat": 27.3179,
+    "state": "Assam",
+    "detections": 162,
+    "night_share": 0.901,
+    "spread_m": 576,
+    "subdistrict": "Naharkatiya",
+    "first_seen": "2023-10-30",
+    "last_seen": "2024-12-01",
+    "days_seen": 56,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     152,
+     6
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Assam Gas Based power station",
+      "km": 14.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s69a4d32112",
    "chip": "chips/s69a4d32112.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s81f462e450",
-   "chip": "chips/s81f462e450.webp",
-   "scene": "S2B_44QLJ_20260512_0_L2A",
-   "acquired": "2026-05-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/s69a4d32112_wide.webp",
+   "details": {
+    "lon": 85.4979,
+    "lat": 23.8238,
+    "state": "Jharkhand",
+    "detections": 157,
+    "night_share": 0.987,
+    "spread_m": 534,
+    "subdistrict": "Mandu",
+    "first_seen": "2023-11-03",
+    "last_seen": "2026-08-21",
+    "days_seen": 62,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     0,
+     13,
+     137,
+     5
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.8,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Pundi Coal Mine",
+      "km": 2.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s941121f793",
    "chip": "chips/s941121f793.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s21e9370c08",
-   "chip": "chips/s21e9370c08.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s941121f793_wide.webp",
+   "details": {
+    "lon": 83.1204,
+    "lat": 22.105,
+    "state": "Chhattisgarh",
+    "detections": 150,
+    "night_share": 0.987,
+    "spread_m": 1113,
+    "subdistrict": "Udaipur (Dharamjaigarh) Tahsil",
+    "first_seen": "2023-11-09",
+    "last_seen": "2024-11-30",
+    "days_seen": 50,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     140,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Chhal Coal Mine",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Binjkote Power Station",
+      "km": 13.4,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s7a8786c32b",
    "chip": "chips/s7a8786c32b.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7a8786c32b_wide.webp",
+   "details": {
+    "lon": 82.6005,
+    "lat": 22.3277,
+    "state": "Chhattisgarh",
+    "detections": 144,
+    "night_share": 0.924,
+    "spread_m": 1357,
+    "subdistrict": "Katghora Tahsil",
+    "first_seen": "2023-10-29",
+    "last_seen": "2026-08-02",
+    "days_seen": 52,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     2,
+     0,
+     15,
+     126,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Balgi Coal Mine",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "South Eastern Coalfields Ltd. (SECL) - Junadih Rapid Coal Loading System (JRGR)",
+      "km": 4.0,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sa77368db69",
    "chip": "chips/sa77368db69.webp",
    "scene": "S2B_46RGR_20251218_0_L2A",
    "acquired": "2025-12-18",
-   "gold": null
+   "community": true,
+   "wide": "chips/sa77368db69_wide.webp",
+   "details": {
+    "lon": 95.4227,
+    "lat": 27.469,
+    "state": "Assam",
+    "detections": 141,
+    "night_share": 0.823,
+    "spread_m": 395,
+    "subdistrict": "Tinsukia",
+    "first_seen": "2023-10-29",
+    "last_seen": "2024-12-01",
+    "days_seen": 50,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     130,
+     7
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Tinsukia solar project",
+      "km": 13.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s49a199c840",
    "chip": "chips/s49a199c840.webp",
    "scene": "S2B_43QBB_20251212_0_L2A",
    "acquired": "2025-12-12",
-   "gold": null
-  },
-  {
-   "id": "sd55d7c46cd",
-   "chip": "chips/sd55d7c46cd.webp",
-   "scene": "S2C_44RQQ_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s412fb59ced",
-   "chip": "chips/s412fb59ced.webp",
-   "scene": "S2C_44QPJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "sc28dbf9bb1",
-   "chip": "chips/sc28dbf9bb1.webp",
-   "scene": "S2C_43PFS_20251211_0_L2A",
-   "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/s49a199c840_wide.webp",
+   "details": {
+    "lon": 73.0524,
+    "lat": 19.1023,
+    "state": "Maharashtra",
+    "detections": 138,
+    "night_share": 1.0,
+    "spread_m": 408,
+    "subdistrict": "Thane Subdistrict",
+    "first_seen": "2023-10-30",
+    "last_seen": "2026-06-23",
+    "days_seen": 59,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0,
+     0,
+     0,
+     24,
+     109,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Navi Mumbai Thane Taluka solar project I",
+      "km": 4.2,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 9.6,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "sc26d101a33",
    "chip": "chips/sc26d101a33.webp",
    "scene": "S2B_42QXL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
-  },
-  {
-   "id": "sf7dc24bece",
-   "chip": "chips/sf7dc24bece.webp",
-   "scene": "S2C_42QYJ_20260307_0_L2A",
-   "acquired": "2026-03-07",
-   "gold": null
-  },
-  {
-   "id": "se08646bec6",
-   "chip": "chips/se08646bec6.webp",
-   "scene": "S2C_45QTG_20260421_0_L2A",
-   "acquired": "2026-04-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/sc26d101a33_wide.webp",
+   "details": {
+    "lon": 70.2573,
+    "lat": 23.2648,
+    "state": "Gujarat",
+    "detections": 122,
+    "night_share": 0.992,
+    "spread_m": 887,
+    "subdistrict": "Bhachau Taluka",
+    "first_seen": "2023-10-31",
+    "last_seen": "2024-12-01",
+    "days_seen": 60,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     9,
+     109,
+     4
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Mono Steel Gandhidham plant",
+      "km": 7.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc9815ab1b2",
    "chip": "chips/sc9815ab1b2.webp",
    "scene": "S2C_46RFR_20260221_0_L2A",
    "acquired": "2026-02-21",
-   "gold": null
-  },
-  {
-   "id": "sd1957f6855",
-   "chip": "chips/sd1957f6855.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "details": {
+    "lon": 95.0875,
+    "lat": 27.3774,
+    "state": "Assam",
+    "detections": 110,
+    "night_share": 0.991,
+    "spread_m": 346,
+    "subdistrict": "Tengakhat",
+    "first_seen": "2023-11-07",
+    "last_seen": "2024-12-01",
+    "days_seen": 49,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     95,
+     5
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.5,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "BCPL Captive power plant",
+      "km": 23.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s7b0b3ec282",
    "chip": "chips/s7b0b3ec282.webp",
    "scene": "S2A_43PGS_20251213_1_L2A",
    "acquired": "2025-12-13",
-   "gold": null
-  },
-  {
-   "id": "s104cdef75e",
-   "chip": "chips/s104cdef75e.webp",
-   "scene": "S2A_43QEE_20260425_0_L2A",
-   "acquired": "2026-04-25",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7b0b3ec282_wide.webp",
+   "details": {
+    "lon": 77.1028,
+    "lat": 15.1782,
+    "state": "Karnataka",
+    "detections": 107,
+    "night_share": 1.0,
+    "spread_m": 398,
+    "subdistrict": "Bellary taluk",
+    "first_seen": "2023-10-26",
+    "last_seen": "2026-08-31",
+    "days_seen": 62,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     27,
+     0,
+     6,
+     69,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.5,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Karekal II solar farm",
+      "km": 3.9,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s4f8b021f38",
    "chip": "chips/s4f8b021f38.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s4f8b021f38_wide.webp",
+   "details": {
+    "lon": 83.3628,
+    "lat": 22.0328,
+    "state": "Chhattisgarh",
+    "detections": 104,
+    "night_share": 1.0,
+    "spread_m": 572,
+    "subdistrict": "Tamnar Tahsil",
+    "first_seen": "2023-10-26",
+    "last_seen": "2024-11-30",
+    "days_seen": 52,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     93,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 2.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "N R Ispat and Power Raigarh steel plant",
+      "km": 4.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s94909253be",
    "chip": "chips/s94909253be.webp",
    "scene": "S2B_44QNJ_20260303_1_L2A",
    "acquired": "2026-03-03",
-   "gold": null
+   "community": true,
+   "wide": "chips/s94909253be_wide.webp",
+   "details": {
+    "lon": 81.4172,
+    "lat": 21.195,
+    "state": "Chhattisgarh",
+    "detections": 103,
+    "night_share": 0.728,
+    "spread_m": 549,
+    "subdistrict": "Patan Tahsil",
+    "first_seen": "2023-10-25",
+    "last_seen": "2026-08-26",
+    "days_seen": 45,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     0,
+     15,
+     84,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 3.8,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Bhilai 500 MW Expansion Power Project",
+      "km": 1.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Bhilai Steel power station",
+      "km": 1.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sf7d587cfd7",
    "chip": "chips/sf7d587cfd7.webp",
    "scene": "S2B_46RGR_20251218_0_L2A",
    "acquired": "2025-12-18",
-   "gold": null
-  },
-  {
-   "id": "s5f92c7e9d4",
-   "chip": "chips/s5f92c7e9d4.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/sf7d587cfd7_wide.webp",
+   "details": {
+    "lon": 95.4763,
+    "lat": 27.4615,
+    "state": "Assam",
+    "detections": 99,
+    "night_share": 0.818,
+    "spread_m": 604,
+    "subdistrict": "Tinsukia",
+    "first_seen": "2024-10-28",
+    "last_seen": "2024-12-01",
+    "days_seen": 28,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     95,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Tinsukia solar project",
+      "km": 10.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s927e9c8098",
    "chip": "chips/s927e9c8098.webp",
    "scene": "S2B_42QXL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
-  },
-  {
-   "id": "s9814816df4",
-   "chip": "chips/s9814816df4.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s927e9c8098_wide.webp",
+   "details": {
+    "lon": 70.1027,
+    "lat": 23.0142,
+    "state": "Gujarat",
+    "detections": 97,
+    "night_share": 1.0,
+    "spread_m": 507,
+    "subdistrict": "Gandhidham Taluka",
+    "first_seen": "2023-11-09",
+    "last_seen": "2024-12-01",
+    "days_seen": 48,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     8,
+     85,
+     4
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Gandhidham wind farm",
+      "km": 7.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 9.6,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s8c3b16c6b7",
    "chip": "chips/s8c3b16c6b7.webp",
    "scene": "S2C_44QME_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s8c3b16c6b7_wide.webp",
+   "details": {
+    "lon": 80.7848,
+    "lat": 17.9576,
+    "state": "Telangana",
+    "detections": 95,
+    "night_share": 0.958,
+    "spread_m": 517,
+    "subdistrict": "Manuguru mandal",
+    "first_seen": "2024-10-22",
+    "last_seen": "2024-12-01",
+    "days_seen": 37,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     28,
+     65,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Prakasham Khani OC Coal Mine",
+      "km": 1.7,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "TGSRTC  Bus Depot , Manuguru",
+      "km": 4.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s354c1ea0f2",
    "chip": "chips/s354c1ea0f2.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": "factory"
+   "community": true,
+   "wide": "chips/s354c1ea0f2_wide.webp",
+   "details": {
+    "lon": 84.844,
+    "lat": 23.8075,
+    "state": "Jharkhand",
+    "detections": 93,
+    "night_share": 0.968,
+    "spread_m": 591,
+    "subdistrict": "Balumath",
+    "first_seen": "2023-11-11",
+    "last_seen": "2024-12-01",
+    "days_seen": 39,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     90,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Tori Power Project",
+      "km": 13.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "North Karanpura power station",
+      "km": 17.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s1a8b577ead",
    "chip": "chips/s1a8b577ead.webp",
    "scene": "S2B_42QWL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1a8b577ead_wide.webp",
+   "details": {
+    "lon": 69.6976,
+    "lat": 22.9352,
+    "state": "Gujarat",
+    "detections": 92,
+    "night_share": 0.957,
+    "spread_m": 577,
+    "subdistrict": "Mundra Taluka",
+    "first_seen": "2023-10-18",
+    "last_seen": "2026-09-03",
+    "days_seen": 54,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     17,
+     5,
+     26,
+     34,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Mundra Taluka solar project III",
+      "km": 6.6,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 22.7,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s7829bef281",
    "chip": "chips/s7829bef281.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s3c7adb4e74",
-   "chip": "chips/s3c7adb4e74.webp",
-   "scene": "S2B_44QLH_20260323_0_L2A",
-   "acquired": "2026-03-23",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7829bef281_wide.webp",
+   "details": {
+    "lon": 83.379,
+    "lat": 22.0226,
+    "state": "Chhattisgarh",
+    "detections": 92,
+    "night_share": 1.0,
+    "spread_m": 377,
+    "subdistrict": "Tamnar Tahsil",
+    "first_seen": "2023-10-25",
+    "last_seen": "2024-11-30",
+    "days_seen": 55,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     81,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "N R Ispat and Power Raigarh steel plant",
+      "km": 5.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s6ddb13a8f5",
    "chip": "chips/s6ddb13a8f5.webp",
    "scene": "S2B_46RGR_20251218_0_L2A",
    "acquired": "2025-12-18",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6ddb13a8f5_wide.webp",
+   "details": {
+    "lon": 95.4019,
+    "lat": 27.6058,
+    "state": "Assam",
+    "detections": 89,
+    "night_share": 0.933,
+    "spread_m": 426,
+    "subdistrict": "Doom Dooma",
+    "first_seen": "2023-11-06",
+    "last_seen": "2024-12-01",
+    "days_seen": 42,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     84,
+     5
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 10.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Tinsukia solar project",
+      "km": 13.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s138f02284f",
    "chip": "chips/s138f02284f.webp",
    "scene": "S2A_45QUF_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s138f02284f_wide.webp",
+   "details": {
+    "lon": 86.0564,
+    "lat": 22.8577,
+    "state": "Jharkhand",
+    "detections": 89,
+    "night_share": 1.0,
+    "spread_m": 708,
+    "subdistrict": "Adityapur(Gamharia)",
+    "first_seen": "2023-10-21",
+    "last_seen": "2026-08-01",
+    "days_seen": 49,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     0,
+     16,
+     70,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Nilachal Iron & Power Gamharia steel plant",
+      "km": 2.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s1b43a336cb",
    "chip": "chips/s1b43a336cb.webp",
    "scene": "S2B_45QTD_20251117_0_L2A",
    "acquired": "2025-11-17",
-   "gold": null
-  },
-  {
-   "id": "se202dc0872",
-   "chip": "chips/se202dc0872.webp",
-   "scene": "S2C_44QMM_20260206_1_L2A",
-   "acquired": "2026-02-06",
-   "gold": null
-  },
-  {
-   "id": "sd5dc964101",
-   "chip": "chips/sd5dc964101.webp",
-   "scene": "S2B_44QRM_20260228_0_L2A",
-   "acquired": "2026-02-28",
-   "gold": null
-  },
-  {
-   "id": "s1b1eaaa44b",
-   "chip": "chips/s1b1eaaa44b.webp",
-   "scene": "S2C_43RFL_20260423_1_L2A",
-   "acquired": "2026-04-23",
-   "gold": null
-  },
-  {
-   "id": "sf54088a840",
-   "chip": "chips/sf54088a840.webp",
-   "scene": "S2B_43PHS_20260303_0_L2A",
-   "acquired": "2026-03-03",
-   "gold": null
-  },
-  {
-   "id": "s27e971d551",
-   "chip": "chips/s27e971d551.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s2df05662ab",
-   "chip": "chips/s2df05662ab.webp",
-   "scene": "S2C_43RDK_20260225_0_L2A",
-   "acquired": "2026-02-25",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1b43a336cb_wide.webp",
+   "details": {
+    "lon": 85.0088,
+    "lat": 20.9553,
+    "state": "Odisha",
+    "detections": 86,
+    "night_share": 0.884,
+    "spread_m": 661,
+    "subdistrict": "Colliery",
+    "first_seen": "2023-10-29",
+    "last_seen": "2026-07-02",
+    "days_seen": 31,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     19,
+     2,
+     0,
+     0,
+     10,
+     51,
+     4
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Hingula-II Coal Mine",
+      "km": 1.4,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Angul Monnet Power Company Limited",
+      "km": 3.9,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sbde6011b8b",
    "chip": "chips/sbde6011b8b.webp",
    "scene": "S2C_44QML_20251218_0_L2A",
    "acquired": "2025-12-18",
-   "gold": null
+   "community": true,
+   "wide": "chips/sbde6011b8b_wide.webp",
+   "details": {
+    "lon": 80.8823,
+    "lat": 23.3454,
+    "state": "Madhya Pradesh",
+    "detections": 76,
+    "night_share": 0.947,
+    "spread_m": 417,
+    "subdistrict": "Nowrozabad Tahsil",
+    "first_seen": "2024-11-05",
+    "last_seen": "2024-12-01",
+    "days_seen": 26,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     73,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Kanchan Coal Mine",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Vindhya",
+      "km": 2.6,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s87e25e41a9",
    "chip": "chips/s87e25e41a9.webp",
    "scene": "S2B_45QUE_20260327_0_L2A",
    "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s87e25e41a9_wide.webp",
+   "details": {
+    "lon": 85.8959,
+    "lat": 22.5731,
+    "state": "Jharkhand",
+    "detections": 75,
+    "night_share": 0.787,
+    "spread_m": 606,
+    "subdistrict": "Gobindpur(Rajnagar)",
+    "first_seen": "2024-11-07",
+    "last_seen": "2026-08-23",
+    "days_seen": 37,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     17,
+     6,
+     16,
+     0,
+     0,
+     36,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.2,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Rungta Mines Chaliyama steel plant",
+      "km": 2.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "se020c2617f",
    "chip": "chips/se020c2617f.webp",
    "scene": "S2B_45QTE_20260215_1_L2A",
    "acquired": "2026-02-15",
-   "gold": null
-  },
-  {
-   "id": "sbda2d30499",
-   "chip": "chips/sbda2d30499.webp",
-   "scene": "S2B_43RDH_20260121_0_L2A",
-   "acquired": "2026-01-21",
-   "gold": null
-  },
-  {
-   "id": "sf12efd651f",
-   "chip": "chips/sf12efd651f.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "seefe8c77b8",
-   "chip": "chips/seefe8c77b8.webp",
-   "scene": "S2C_45QWF_20260217_0_L2A",
-   "acquired": "2026-02-17",
-   "gold": null
-  },
-  {
-   "id": "s665646cd35",
-   "chip": "chips/s665646cd35.webp",
-   "scene": "S2B_44QLJ_20260512_0_L2A",
-   "acquired": "2026-05-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/se020c2617f_wide.webp",
+   "details": {
+    "lon": 84.7554,
+    "lat": 22.2225,
+    "state": "Odisha",
+    "detections": 71,
+    "night_share": 1.0,
+    "spread_m": 626,
+    "subdistrict": "Brahmani Tarang",
+    "first_seen": "2023-11-06",
+    "last_seen": "2024-11-29",
+    "days_seen": 40,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     67,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Adhunik Metaliks Kuanrmunda steel plant",
+      "km": 9.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc740941400",
    "chip": "chips/sc740941400.webp",
    "scene": "S2B_45QVG_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "sf99da98a91",
-   "chip": "chips/sf99da98a91.webp",
-   "scene": "S2B_43RBH_20260421_0_L2A",
-   "acquired": "2026-04-21",
-   "gold": null
-  },
-  {
-   "id": "sf8529df856",
-   "chip": "chips/sf8529df856.webp",
-   "scene": "S2B_44QLG_20260303_0_L2A",
-   "acquired": "2026-03-03",
-   "gold": null
+   "community": true,
+   "wide": "chips/sc740941400_wide.webp",
+   "details": {
+    "lon": 86.4193,
+    "lat": 23.6698,
+    "state": "Jharkhand",
+    "detections": 65,
+    "night_share": 0.954,
+    "spread_m": 514,
+    "subdistrict": "Jharia-Cum-Jorapokhar-Cum-Sindri",
+    "first_seen": "2023-10-29",
+    "last_seen": "2023-12-01",
+    "days_seen": 33,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     60,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Bhowrah (South) Coal Mine",
+      "km": 2.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sb68d23a7ad",
    "chip": "chips/sb68d23a7ad.webp",
    "scene": "S2A_43PCT_20251216_0_L2A",
    "acquired": "2025-12-16",
-   "gold": null
+   "community": true,
+   "wide": "chips/sb68d23a7ad_wide.webp",
+   "details": {
+    "lon": 73.9883,
+    "lat": 15.6583,
+    "state": "Maharashtra",
+    "detections": 63,
+    "night_share": 1.0,
+    "spread_m": 319,
+    "subdistrict": "Dodamarg Taluka",
+    "first_seen": "2023-11-24",
+    "last_seen": "2026-09-02",
+    "days_seen": 36,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     10,
+     2,
+     0,
+     45,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Vedanta Limited",
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Bicholim solar project",
+      "km": 12.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s1fe6aad91a",
    "chip": "chips/s1fe6aad91a.webp",
    "scene": "S2B_44QLH_20260323_0_L2A",
    "acquired": "2026-03-23",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1fe6aad91a_wide.webp",
+   "details": {
+    "lon": 79.3336,
+    "lat": 19.9628,
+    "state": "Maharashtra",
+    "detections": 62,
+    "night_share": 0.903,
+    "spread_m": 437,
+    "subdistrict": "Chandrapur Taluka",
+    "first_seen": "2023-10-29",
+    "last_seen": "2024-11-30",
+    "days_seen": 39,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     56,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "D. Rayatwari Coal Mine",
+      "km": 2.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s89eb8dbdee",
    "chip": "chips/s89eb8dbdee.webp",
    "scene": "S2A_42RYP_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": null
-  },
-  {
-   "id": "s23cb765ec1",
-   "chip": "chips/s23cb765ec1.webp",
-   "scene": "S2B_43RBH_20260421_0_L2A",
-   "acquired": "2026-04-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/s89eb8dbdee_wide.webp",
+   "details": {
+    "lon": 71.7679,
+    "lat": 25.2987,
+    "state": "Rajasthan",
+    "detections": 60,
+    "night_share": 1.0,
+    "spread_m": 341,
+    "subdistrict": "Gudha Malani Tehsil",
+    "first_seen": "2023-11-17",
+    "last_seen": "2024-11-19",
+    "days_seen": 30,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     23,
+     37,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.7,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s28d84b3134",
    "chip": "chips/s28d84b3134.webp",
    "scene": "S2A_42QZK_20251109_0_L2A",
    "acquired": "2025-11-09",
-   "gold": null
-  },
-  {
-   "id": "sf261a1aa42",
-   "chip": "chips/sf261a1aa42.webp",
-   "scene": "S2C_45QWG_20260128_0_L2A",
-   "acquired": "2026-01-28",
-   "gold": null
+   "community": true,
+   "wide": "chips/s28d84b3134_wide.webp",
+   "details": {
+    "lon": 72.765,
+    "lat": 22.1288,
+    "state": "Gujarat",
+    "detections": 59,
+    "night_share": 1.0,
+    "spread_m": 497,
+    "subdistrict": "Jambusar Taluka",
+    "first_seen": "2024-11-03",
+    "last_seen": "2024-12-01",
+    "days_seen": 28,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     57,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 2.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Jambusar Taluka solar project I",
+      "km": 4.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s9b45423807",
    "chip": "chips/s9b45423807.webp",
    "scene": "S2B_42RZP_20260504_0_L2A",
    "acquired": "2026-05-04",
-   "gold": null
+   "community": true,
+   "wide": "chips/s9b45423807_wide.webp",
+   "details": {
+    "lon": 72.1916,
+    "lat": 25.9426,
+    "state": "Rajasthan",
+    "detections": 57,
+    "night_share": 0.912,
+    "spread_m": 485,
+    "subdistrict": "Pachpadra Tehsil",
+    "first_seen": "2026-07-30",
+    "last_seen": "2026-09-02",
+    "days_seen": 24,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     53,
+     2,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.9,
+    "satellites": [
+     "modis",
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": null,
+      "km": 3.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Pachpadra Tehsil solar project II",
+      "km": 3.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s709d34f925",
    "chip": "chips/s709d34f925.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s709d34f925_wide.webp",
+   "details": {
+    "lon": 83.7774,
+    "lat": 21.9607,
+    "state": "Odisha",
+    "detections": 55,
+    "night_share": 0.945,
+    "spread_m": 385,
+    "subdistrict": "Hemgir",
+    "first_seen": "2024-10-29",
+    "last_seen": "2024-11-29",
+    "days_seen": 25,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     53,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Dulanga Coal Mine",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Hemgir Coal Washery",
+      "km": 9.4,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sb316003962",
    "chip": "chips/sb316003962.webp",
    "scene": "S2B_45QVG_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": "factory"
-  },
-  {
-   "id": "s84da0857e3",
-   "chip": "chips/s84da0857e3.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/sb316003962_wide.webp",
+   "details": {
+    "lon": 86.5445,
+    "lat": 23.5482,
+    "state": "West Bengal",
+    "detections": 55,
+    "night_share": 1.0,
+    "spread_m": 382,
+    "subdistrict": "Para",
+    "first_seen": "2023-11-24",
+    "last_seen": "2024-11-30",
+    "days_seen": 31,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     54,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 8.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Para solar project",
+      "km": 8.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s8618f8313e",
    "chip": "chips/s8618f8313e.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/s8618f8313e_wide.webp",
+   "details": {
+    "lon": 85.0079,
+    "lat": 23.7211,
+    "state": "Jharkhand",
+    "detections": 54,
+    "night_share": 1.0,
+    "spread_m": 451,
+    "subdistrict": "Tandwa",
+    "first_seen": "2023-11-11",
+    "last_seen": "2024-11-30",
+    "days_seen": 33,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     54,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Tetariakhar Coal Mine",
+      "km": 2.6,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.8,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sbef883f1a2",
    "chip": "chips/sbef883f1a2.webp",
    "scene": "S2B_45QUE_20260327_0_L2A",
    "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/sbef883f1a2_wide.webp",
+   "details": {
+    "lon": 85.3131,
+    "lat": 21.9684,
+    "state": "Odisha",
+    "detections": 52,
+    "night_share": 1.0,
+    "spread_m": 510,
+    "subdistrict": "Rugudi",
+    "first_seen": "2023-11-11",
+    "last_seen": "2024-11-11",
+    "days_seen": 35,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     37,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Rungta Mines Kamanda steel plant",
+      "km": 10.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s18539874a6",
    "chip": "chips/s18539874a6.webp",
    "scene": "S2B_43RGL_20260428_0_L2A",
    "acquired": "2026-04-28",
-   "gold": null
-  },
-  {
-   "id": "s712618a6d2",
-   "chip": "chips/s712618a6d2.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s41c3aa2bc1",
-   "chip": "chips/s41c3aa2bc1.webp",
-   "scene": "S2B_43RDH_20260121_0_L2A",
-   "acquired": "2026-01-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/s18539874a6_wide.webp",
+   "details": {
+    "lon": 77.6927,
+    "lat": 27.3727,
+    "state": "Uttar Pradesh",
+    "detections": 51,
+    "night_share": 0.824,
+    "spread_m": 388,
+    "subdistrict": "Mathura",
+    "first_seen": "2024-11-09",
+    "last_seen": "2026-07-12",
+    "days_seen": 25,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     10,
+     0,
+     0,
+     0,
+     36,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Mathura solar project II",
+      "km": 10.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s2ef22a0a1a",
    "chip": "chips/s2ef22a0a1a.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s2ef22a0a1a_wide.webp",
+   "details": {
+    "lon": 82.6848,
+    "lat": 22.3266,
+    "state": "Chhattisgarh",
+    "detections": 50,
+    "night_share": 0.98,
+    "spread_m": 402,
+    "subdistrict": "Katghora Tahsil",
+    "first_seen": "2023-10-27",
+    "last_seen": "2023-12-01",
+    "days_seen": 32,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     41,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Kusmunda Coal Mine",
+      "km": 2.0,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.0,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s2f1963f940",
    "chip": "chips/s2f1963f940.webp",
    "scene": "S2C_45QWG_20260128_0_L2A",
    "acquired": "2026-01-28",
-   "gold": null
-  },
-  {
-   "id": "s689a90ca19",
-   "chip": "chips/s689a90ca19.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/s2f1963f940_wide.webp",
+   "details": {
+    "lon": 87.1493,
+    "lat": 23.6087,
+    "state": "West Bengal",
+    "detections": 49,
+    "night_share": 1.0,
+    "spread_m": 684,
+    "subdistrict": "Raniganj",
+    "first_seen": "2023-11-19",
+    "last_seen": "2024-12-01",
+    "days_seen": 26,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     48,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "works or factory",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Madhabpur Coal Mine",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 20.6,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s4e3dbfe78e",
    "chip": "chips/s4e3dbfe78e.webp",
    "scene": "S2B_42QXL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
-  },
-  {
-   "id": "s72db99ac99",
-   "chip": "chips/s72db99ac99.webp",
-   "scene": "S2B_45QUE_20260327_0_L2A",
-   "acquired": "2026-03-27",
-   "gold": null
-  },
-  {
-   "id": "sd08058b775",
-   "chip": "chips/sd08058b775.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/s4e3dbfe78e_wide.webp",
+   "details": {
+    "lon": 70.4868,
+    "lat": 23.3157,
+    "state": "Gujarat",
+    "detections": 47,
+    "night_share": 1.0,
+    "spread_m": 306,
+    "subdistrict": "Bhachau Taluka",
+    "first_seen": "2023-11-02",
+    "last_seen": "2024-11-30",
+    "days_seen": 36,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     46,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Bhachau Taluka solar project",
+      "km": 7.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s37968eaad7",
    "chip": "chips/s37968eaad7.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
-  },
-  {
-   "id": "s26142f6cb3",
-   "chip": "chips/s26142f6cb3.webp",
-   "scene": "S2C_44QPJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s37968eaad7_wide.webp",
+   "details": {
+    "lon": 82.6481,
+    "lat": 24.1802,
+    "state": "Madhya Pradesh",
+    "detections": 43,
+    "night_share": 0.953,
+    "spread_m": 556,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2023-11-13",
+    "last_seen": "2026-08-13",
+    "days_seen": 18,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     0,
+     0,
+     39,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "works or factory",
+      "name": null,
+      "km": 1.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Singrauli solar farm",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s67054539e6",
    "chip": "chips/s67054539e6.webp",
    "scene": "S2B_45QXE_20251214_0_L2A",
    "acquired": "2025-12-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s67054539e6_wide.webp",
+   "details": {
+    "lon": 88.0822,
+    "lat": 22.0364,
+    "state": "West Bengal",
+    "detections": 41,
+    "night_share": 0.634,
+    "spread_m": 489,
+    "subdistrict": "Haldia",
+    "first_seen": "2024-11-15",
+    "last_seen": "2024-11-27",
+    "days_seen": 13,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     41,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Haldia Dock Complex",
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Haldia solar project II",
+      "km": 2.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 2.7,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s0bcc233810",
    "chip": "chips/s0bcc233810.webp",
    "scene": "S2A_44QKD_20251110_0_L2A",
    "acquired": "2025-11-10",
-   "gold": "factory"
-  },
-  {
-   "id": "sa6e7302c60",
-   "chip": "chips/sa6e7302c60.webp",
-   "scene": "S2B_43PHP_20260303_0_L2A",
-   "acquired": "2026-03-03",
-   "gold": null
+   "community": true,
+   "details": {
+    "lon": 78.223,
+    "lat": 17.1467,
+    "state": "Telangana",
+    "detections": 40,
+    "night_share": 1.0,
+    "spread_m": 354,
+    "subdistrict": "Nandigama mandal",
+    "first_seen": "2023-11-21",
+    "last_seen": "2024-11-27",
+    "days_seen": 21,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     38,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": "Nandigama Mandal solar project I",
+      "km": 5.7,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 6.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s32a6c2f016",
    "chip": "chips/s32a6c2f016.webp",
    "scene": "S2C_42QWK_20260109_0_L2A",
    "acquired": "2026-01-09",
-   "gold": null
+   "community": true,
+   "wide": "chips/s32a6c2f016_wide.webp",
+   "details": {
+    "lon": 69.8673,
+    "lat": 22.3366,
+    "state": "Gujarat",
+    "detections": 39,
+    "night_share": 1.0,
+    "spread_m": 332,
+    "subdistrict": "Lalpur Taluka",
+    "first_seen": "2023-11-18",
+    "last_seen": "2024-11-30",
+    "days_seen": 29,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     38,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Reliance Refinery",
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.4,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Lalpur Taluka solar project I",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sfa11c60b34",
    "chip": "chips/sfa11c60b34.webp",
    "scene": "S2C_45QWE_20251119_0_L2A",
    "acquired": "2025-11-19",
-   "gold": null
+   "community": true,
+   "wide": "chips/sfa11c60b34_wide.webp",
+   "details": {
+    "lon": 87.3881,
+    "lat": 22.2462,
+    "state": "West Bengal",
+    "detections": 39,
+    "night_share": 0.974,
+    "spread_m": 384,
+    "subdistrict": "Narayangarh",
+    "first_seen": "2023-11-06",
+    "last_seen": "2024-12-01",
+    "days_seen": 28,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     37,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": "BEL",
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Kharagpur-Ii solar project",
+      "km": 7.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc952fb3128",
    "chip": "chips/sc952fb3128.webp",
    "scene": "S2C_43PFT_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sc952fb3128_wide.webp",
+   "details": {
+    "lon": 76.2863,
+    "lat": 15.3334,
+    "state": "Karnataka",
+    "detections": 37,
+    "night_share": 1.0,
+    "spread_m": 307,
+    "subdistrict": "Koppala taluku",
+    "first_seen": "2023-11-15",
+    "last_seen": "2026-08-27",
+    "days_seen": 28,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     15,
+     0,
+     0,
+     21,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Mukand Sumi Special Steel Hospet steel plant",
+      "km": 3.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc80191ec92",
    "chip": "chips/sc80191ec92.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/sc80191ec92_wide.webp",
+   "details": {
+    "lon": 82.5237,
+    "lat": 24.2068,
+    "state": "Madhya Pradesh",
+    "detections": 37,
+    "night_share": 1.0,
+    "spread_m": 422,
+    "subdistrict": "Deosar Tahsil",
+    "first_seen": "2023-11-09",
+    "last_seen": "2024-11-22",
+    "days_seen": 25,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     36,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.5,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Block-B Coal Mine",
+      "km": 5.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sbd81d1df10",
    "chip": "chips/sbd81d1df10.webp",
    "scene": "S2C_45RWH_20260302_0_L2A",
    "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/sbd81d1df10_wide.webp",
+   "details": {
+    "lon": 87.3881,
+    "lat": 25.0365,
+    "state": "Jharkhand",
+    "detections": 35,
+    "night_share": 0.857,
+    "spread_m": 291,
+    "subdistrict": "Boarijor",
+    "first_seen": "2026-06-19",
+    "last_seen": "2026-08-29",
+    "days_seen": 23,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     15,
+     8,
+     12,
+     0,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Rajmahal Coal Mine",
+      "km": 2.5,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Rajmahal Coal Mine",
+      "km": 3.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sb74724f69f",
    "chip": "chips/sb74724f69f.webp",
    "scene": "S2B_43QBF_20260511_0_L2A",
    "acquired": "2026-05-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sb74724f69f_wide.webp",
+   "details": {
+    "lon": 72.4172,
+    "lat": 23.4082,
+    "state": "Gujarat",
+    "detections": 35,
+    "night_share": 1.0,
+    "spread_m": 329,
+    "subdistrict": "Kadi Taluka",
+    "first_seen": "2023-11-03",
+    "last_seen": "2024-12-01",
+    "days_seen": 28,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     34,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Kalol Taluka solar project II",
+      "km": 13.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s031155736f",
    "chip": "chips/s031155736f.webp",
    "scene": "S2B_42QWL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
-  },
-  {
-   "id": "sa83921ba41",
-   "chip": "chips/sa83921ba41.webp",
-   "scene": "S2C_44QPM_20260414_0_L2A",
-   "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s031155736f_wide.webp",
+   "details": {
+    "lon": 69.8231,
+    "lat": 22.927,
+    "state": "Gujarat",
+    "detections": 34,
+    "night_share": 1.0,
+    "spread_m": 451,
+    "subdistrict": "Mundra Taluka",
+    "first_seen": "2023-10-24",
+    "last_seen": "2024-12-01",
+    "days_seen": 26,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     27,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Bhadreshwar power station (OPG)",
+      "km": 8.2,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 24.8,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s7cbd120bb4",
    "chip": "chips/s7cbd120bb4.webp",
    "scene": "S2C_43PFS_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7cbd120bb4_wide.webp",
+   "details": {
+    "lon": 76.6921,
+    "lat": 15.1732,
+    "state": "Karnataka",
+    "detections": 33,
+    "night_share": 0.879,
+    "spread_m": 278,
+    "subdistrict": "Sanduru taluk",
+    "first_seen": "2026-07-12",
+    "last_seen": "2026-09-03",
+    "days_seen": 20,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     9,
+     22,
+     2,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Jindal Steel Works",
+      "km": 1.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "JSW Cement Bellary Cement Plant",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s80283151d1",
    "chip": "chips/s80283151d1.webp",
    "scene": "S2C_44QNJ_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s3180579a24",
-   "chip": "chips/s3180579a24.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s65ee1b8343",
-   "chip": "chips/s65ee1b8343.webp",
-   "scene": "S2C_44QNM_20251208_0_L2A",
-   "acquired": "2025-12-08",
-   "gold": null
-  },
-  {
-   "id": "sc5ed96802b",
-   "chip": "chips/sc5ed96802b.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/s80283151d1_wide.webp",
+   "details": {
+    "lon": 81.6067,
+    "lat": 21.2987,
+    "state": "Chhattisgarh",
+    "detections": 33,
+    "night_share": 0.939,
+    "spread_m": 554,
+    "subdistrict": "Raipur Tahsil",
+    "first_seen": "2023-11-06",
+    "last_seen": "2024-11-30",
+    "days_seen": 25,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     31,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.7,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Raipur Jain power station",
+      "km": 1.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s761c6feb8d",
    "chip": "chips/s761c6feb8d.webp",
    "scene": "S2A_43RFM_20251126_0_L2A",
    "acquired": "2025-11-26",
-   "gold": null
-  },
-  {
-   "id": "s31e84da544",
-   "chip": "chips/s31e84da544.webp",
-   "scene": "S2C_42QXJ_20260208_0_L2A",
-   "acquired": "2026-02-08",
-   "gold": null
-  },
-  {
-   "id": "s2ea30b154b",
-   "chip": "chips/s2ea30b154b.webp",
-   "scene": "S2C_44QKH_20251108_0_L2A",
-   "acquired": "2025-11-08",
-   "gold": null
-  },
-  {
-   "id": "sf37d7c5c29",
-   "chip": "chips/sf37d7c5c29.webp",
-   "scene": "S2C_44QPM_20260414_0_L2A",
-   "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s761c6feb8d_wide.webp",
+   "details": {
+    "lon": 76.9276,
+    "lat": 28.7435,
+    "state": "Haryana",
+    "detections": 31,
+    "night_share": 1.0,
+    "spread_m": 410,
+    "subdistrict": "Bahadurgarh",
+    "first_seen": "2024-11-08",
+    "last_seen": "2026-08-31",
+    "days_seen": 19,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     5,
+     0,
+     0,
+     25,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": "Mini Power Stataion",
+      "km": 3.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Delhi solar project I",
+      "km": 4.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s85530e37de",
    "chip": "chips/s85530e37de.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": "factory"
+   "community": true,
+   "wide": "chips/s85530e37de_wide.webp",
+   "details": {
+    "lon": 84.9481,
+    "lat": 23.8386,
+    "state": "Jharkhand",
+    "detections": 29,
+    "night_share": 1.0,
+    "spread_m": 287,
+    "subdistrict": "Balumath",
+    "first_seen": "2024-11-12",
+    "last_seen": "2024-12-01",
+    "days_seen": 18,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     27,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "North Karanpura Thermal Power Station",
+      "km": 6.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "North Karanpura power station",
+      "km": 6.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s15690f782d",
    "chip": "chips/s15690f782d.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "sbff74b7ae7",
-   "chip": "chips/sbff74b7ae7.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s15690f782d_wide.webp",
+   "details": {
+    "lon": 83.7527,
+    "lat": 22.0184,
+    "state": "Odisha",
+    "detections": 28,
+    "night_share": 0.964,
+    "spread_m": 320,
+    "subdistrict": "Hemgir",
+    "first_seen": "2023-10-21",
+    "last_seen": "2023-11-27",
+    "days_seen": 19,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     15,
+     13,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Garjanbahal Coal Mine",
+      "km": 2.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Hemgir Coal Washery",
+      "km": 14.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s9d3f8a97be",
    "chip": "chips/s9d3f8a97be.webp",
    "scene": "S2A_44PMC_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/s9d3f8a97be_wide.webp",
+   "details": {
+    "lon": 80.9378,
+    "lat": 15.9631,
+    "state": "Andhra Pradesh",
+    "detections": 27,
+    "night_share": 1.0,
+    "spread_m": 338,
+    "subdistrict": "Nagayalanka",
+    "first_seen": "2023-11-18",
+    "last_seen": "2024-11-23",
+    "days_seen": 17,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     26,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": "naveen electricals",
+      "km": 5.5,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s2acf8f7246",
    "chip": "chips/s2acf8f7246.webp",
    "scene": "S2B_43RCK_20260210_0_L2A",
    "acquired": "2026-02-10",
-   "gold": "factory"
-  },
-  {
-   "id": "s5adb626766",
-   "chip": "chips/s5adb626766.webp",
-   "scene": "S2C_43REN_20260215_0_L2A",
-   "acquired": "2026-02-15",
-   "gold": null
-  },
-  {
-   "id": "s79823b84e8",
-   "chip": "chips/s79823b84e8.webp",
-   "scene": "S2B_43RFQ_20251109_1_L2A",
-   "acquired": "2025-11-09",
-   "gold": null
-  },
-  {
-   "id": "s9ca14ca6c7",
-   "chip": "chips/s9ca14ca6c7.webp",
-   "scene": "S2C_45QWG_20260128_0_L2A",
-   "acquired": "2026-01-28",
-   "gold": null
+   "community": true,
+   "wide": "chips/s2acf8f7246_wide.webp",
+   "details": {
+    "lon": 73.4678,
+    "lat": 26.9272,
+    "state": "Rajasthan",
+    "detections": 27,
+    "night_share": 1.0,
+    "spread_m": 299,
+    "subdistrict": "Kheenvsar Tehsil",
+    "first_seen": "2023-11-24",
+    "last_seen": "2024-12-01",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     22,
+     5
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": "Mundwa Tehsil solar project",
+      "km": 8.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Solar Park, Kheenvsar/Nagaur",
+      "km": 9.0,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s6db12c5bd9",
    "chip": "chips/s6db12c5bd9.webp",
    "scene": "S2B_44QLJ_20260512_0_L2A",
    "acquired": "2026-05-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6db12c5bd9_wide.webp",
+   "details": {
+    "lon": 79.2072,
+    "lat": 21.2497,
+    "state": "Maharashtra",
+    "detections": 27,
+    "night_share": 1.0,
+    "spread_m": 362,
+    "subdistrict": "Parseoni",
+    "first_seen": "2024-11-16",
+    "last_seen": "2026-08-13",
+    "days_seen": 16,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     8,
+     8,
+     0,
+     0,
+     9,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Gondegaon-Ghatrohana Coal Mine",
+      "km": 2.4,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.1,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sf4d4b61833",
    "chip": "chips/sf4d4b61833.webp",
    "scene": "S2B_43RDP_20260220_0_L2A",
    "acquired": "2026-02-20",
-   "gold": null
+   "community": true,
+   "wide": "chips/sf4d4b61833_wide.webp",
+   "details": {
+    "lon": 74.9483,
+    "lat": 29.9108,
+    "state": "Punjab",
+    "detections": 26,
+    "night_share": 0.923,
+    "spread_m": 521,
+    "subdistrict": "Talwandi Sabo Tahsil",
+    "first_seen": "2023-11-05",
+    "last_seen": "2023-12-01",
+    "days_seen": 16,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     24,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.2,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": "Guru Gobind Singh Refinery",
+      "km": 0.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Guru Gobind Singh Refinery power station",
+      "km": 1.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s6009fa333e",
    "chip": "chips/s6009fa333e.webp",
    "scene": "S2C_44PMV_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "details": {
+    "lon": 80.1018,
+    "lat": 13.3925,
+    "state": "Tamil Nadu",
+    "detections": 26,
+    "night_share": 0.923,
+    "spread_m": 261,
+    "subdistrict": "Gummidipoondi",
+    "first_seen": "2024-11-08",
+    "last_seen": "2026-09-01",
+    "days_seen": 20,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     10,
+     1,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Gummidipoondi Suryadev power station",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s6449aa0137",
    "chip": "chips/s6449aa0137.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6449aa0137_wide.webp",
+   "details": {
+    "lon": 82.6368,
+    "lat": 24.1426,
+    "state": "Madhya Pradesh",
+    "detections": 26,
+    "night_share": 0.962,
+    "spread_m": 315,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2024-10-17",
+    "last_seen": "2024-11-29",
+    "days_seen": 13,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     12,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 2.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Jayant Coal Mine",
+      "km": 2.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s7e3d7eedbb",
    "chip": "chips/s7e3d7eedbb.webp",
    "scene": "S2B_45QTE_20260215_1_L2A",
    "acquired": "2026-02-15",
-   "gold": null
-  },
-  {
-   "id": "sdcb228b2dd",
-   "chip": "chips/sdcb228b2dd.webp",
-   "scene": "S2C_43QHD_20260219_0_L2A",
-   "acquired": "2026-02-19",
-   "gold": null
-  },
-  {
-   "id": "s11e7a298fe",
-   "chip": "chips/s11e7a298fe.webp",
-   "scene": "S2B_44QLD_20260221_0_L2A",
-   "acquired": "2026-02-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7e3d7eedbb_wide.webp",
+   "details": {
+    "lon": 84.8415,
+    "lat": 22.213,
+    "state": "Odisha",
+    "detections": 26,
+    "night_share": 0.731,
+    "spread_m": 300,
+    "subdistrict": "Raurkela (M)",
+    "first_seen": "2023-10-16",
+    "last_seen": "2023-12-01",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     17,
+     8,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "SAIL Rourkela steel plant",
+      "km": 2.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s29c5291a04",
    "chip": "chips/s29c5291a04.webp",
    "scene": "S2C_43QCC_20251204_0_L2A",
    "acquired": "2025-12-04",
-   "gold": null
-  },
-  {
-   "id": "s0dcf7b8bf6",
-   "chip": "chips/s0dcf7b8bf6.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s3c10ff974d",
-   "chip": "chips/s3c10ff974d.webp",
-   "scene": "S2A_43PCT_20251216_0_L2A",
-   "acquired": "2025-12-16",
-   "gold": null
+   "community": true,
+   "wide": "chips/s29c5291a04_wide.webp",
+   "details": {
+    "lon": 73.7118,
+    "lat": 19.9368,
+    "state": "Maharashtra",
+    "detections": 24,
+    "night_share": 1.0,
+    "spread_m": 294,
+    "subdistrict": "Nashik Subdistrict",
+    "first_seen": "2024-11-21",
+    "last_seen": "2026-09-02",
+    "days_seen": 18,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     9,
+     5,
+     2,
+     0,
+     6,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Nashik Taluka solar project",
+      "km": 6.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s3ef8c5e2ad",
    "chip": "chips/s3ef8c5e2ad.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "safc2090b52",
-   "chip": "chips/safc2090b52.webp",
-   "scene": "S2C_43PFS_20251211_0_L2A",
-   "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/s3ef8c5e2ad_wide.webp",
+   "details": {
+    "lon": 85.3422,
+    "lat": 23.9268,
+    "state": "Jharkhand",
+    "detections": 23,
+    "night_share": 1.0,
+    "spread_m": 321,
+    "subdistrict": "Katamdag",
+    "first_seen": "2023-11-18",
+    "last_seen": "2024-11-25",
+    "days_seen": 17,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     23,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Chatti-Bariatu Coal Mine",
+      "km": 8.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s4ccfb6f1ec",
    "chip": "chips/s4ccfb6f1ec.webp",
    "scene": "S2C_43PFS_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
-  },
-  {
-   "id": "s1053444e55",
-   "chip": "chips/s1053444e55.webp",
-   "scene": "S2B_44QLM_20260316_0_L2A",
-   "acquired": "2026-03-16",
-   "gold": null
+   "community": true,
+   "wide": "chips/s4ccfb6f1ec_wide.webp",
+   "details": {
+    "lon": 76.7082,
+    "lat": 15.1377,
+    "state": "Karnataka",
+    "detections": 22,
+    "night_share": 1.0,
+    "spread_m": 390,
+    "subdistrict": "Sanduru taluk",
+    "first_seen": "2023-10-27",
+    "last_seen": "2026-08-22",
+    "days_seen": 17,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     3,
+     18,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Metallurgical Products India Pvt Ltd",
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "JSW Cement Bellary Cement Plant",
+      "km": 4.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s58a27126f5",
    "chip": "chips/s58a27126f5.webp",
    "scene": "S2B_44QKJ_20260115_0_L2A",
    "acquired": "2026-01-15",
-   "gold": null
-  },
-  {
-   "id": "s55770f6911",
-   "chip": "chips/s55770f6911.webp",
-   "scene": "S2C_44QPK_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s58a27126f5_wide.webp",
+   "details": {
+    "lon": 78.9682,
+    "lat": 21.3364,
+    "state": "Maharashtra",
+    "detections": 22,
+    "night_share": 1.0,
+    "spread_m": 324,
+    "subdistrict": "Savner",
+    "first_seen": "2026-06-19",
+    "last_seen": "2026-08-26",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     10,
+     6,
+     0,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Adasa Coal Mine",
+      "km": 1.9,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.5,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s556cbcceb2",
    "chip": "chips/s556cbcceb2.webp",
    "scene": "S2B_45QUE_20260327_0_L2A",
    "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s556cbcceb2_wide.webp",
+   "details": {
+    "lon": 85.4639,
+    "lat": 22.0541,
+    "state": "Odisha",
+    "detections": 21,
+    "night_share": 1.0,
+    "spread_m": 377,
+    "subdistrict": "Joda",
+    "first_seen": "2023-11-20",
+    "last_seen": "2024-11-29",
+    "days_seen": 14,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     21,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Rungta Mines Karakolha sponge iron plant",
+      "km": 9.9,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sccdc16aa80",
    "chip": "chips/sccdc16aa80.webp",
    "scene": "S2C_43PGT_20260219_0_L2A",
    "acquired": "2026-02-19",
-   "gold": "factory"
+   "community": true,
+   "wide": "chips/sccdc16aa80_wide.webp",
+   "details": {
+    "lon": 77.3627,
+    "lat": 15.916,
+    "state": "Andhra Pradesh",
+    "detections": 21,
+    "night_share": 1.0,
+    "spread_m": 395,
+    "subdistrict": "Mantralayam",
+    "first_seen": "2024-11-15",
+    "last_seen": "2024-11-29",
+    "days_seen": 11,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     21,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 7.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Mullur wind farm",
+      "km": 28.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s7ba526ea6f",
    "chip": "chips/s7ba526ea6f.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7ba526ea6f_wide.webp",
+   "details": {
+    "lon": 86.0118,
+    "lat": 23.7688,
+    "state": "Jharkhand",
+    "detections": 21,
+    "night_share": 1.0,
+    "spread_m": 209,
+    "subdistrict": "Bermo",
+    "first_seen": "2024-11-07",
+    "last_seen": "2024-11-30",
+    "days_seen": 16,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     21,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Dhori- Khas Coal Mine",
+      "km": 1.4,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 17.5,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s5d061418ba",
    "chip": "chips/s5d061418ba.webp",
    "scene": "S2B_45QUE_20260327_0_L2A",
    "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5d061418ba_wide.webp",
+   "details": {
+    "lon": 85.3264,
+    "lat": 21.9914,
+    "state": "Odisha",
+    "detections": 21,
+    "night_share": 1.0,
+    "spread_m": 247,
+    "subdistrict": "Rugudi",
+    "first_seen": "2024-11-01",
+    "last_seen": "2024-11-29",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     21,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Rungta Mines Kamanda steel plant",
+      "km": 12.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s03b32cf940",
    "chip": "chips/s03b32cf940.webp",
    "scene": "S2B_43RGM_20260217_1_L2A",
    "acquired": "2026-02-17",
-   "gold": null
+   "community": true,
+   "wide": "chips/s03b32cf940_wide.webp",
+   "details": {
+    "lon": 77.2732,
+    "lat": 28.2719,
+    "state": "Haryana",
+    "detections": 20,
+    "night_share": 1.0,
+    "spread_m": 244,
+    "subdistrict": "Ballabgarh",
+    "first_seen": "2024-10-24",
+    "last_seen": "2024-11-10",
+    "days_seen": 12,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     9,
+     11,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Ballabgarh solar project",
+      "km": 4.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "saca71a1c7c",
    "chip": "chips/saca71a1c7c.webp",
    "scene": "S2C_44QQE_20260220_0_L2A",
    "acquired": "2026-02-20",
-   "gold": null
-  },
-  {
-   "id": "sb1105b9d06",
-   "chip": "chips/sb1105b9d06.webp",
-   "scene": "S2B_43QGU_20260214_0_L2A",
-   "acquired": "2026-02-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/saca71a1c7c_wide.webp",
+   "details": {
+    "lon": 83.2429,
+    "lat": 17.6938,
+    "state": "Andhra Pradesh",
+    "detections": 19,
+    "night_share": 0.842,
+    "spread_m": 283,
+    "subdistrict": "Visakhapatnam Urban",
+    "first_seen": "2023-11-09",
+    "last_seen": "2023-12-01",
+    "days_seen": 14,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     18,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": "Hindustan Petroleum Corporation Limited",
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "HPCL Vizag Refinery power station",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s13d791a4d9",
    "chip": "chips/s13d791a4d9.webp",
    "scene": "S2B_45QVG_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "s3c1a4585f8",
-   "chip": "chips/s3c1a4585f8.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s160c790d68",
-   "chip": "chips/s160c790d68.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s13d791a4d9_wide.webp",
+   "details": {
+    "lon": 86.3511,
+    "lat": 24.1186,
+    "state": "Jharkhand",
+    "detections": 18,
+    "night_share": 1.0,
+    "spread_m": 384,
+    "subdistrict": "Giridih",
+    "first_seen": "2024-11-19",
+    "last_seen": "2024-12-01",
+    "days_seen": 12,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     15,
+     3
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Atibir Industries Bhorandiha steel plant",
+      "km": 3.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s707cb1a500",
    "chip": "chips/s707cb1a500.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "s95375ce582",
-   "chip": "chips/s95375ce582.webp",
-   "scene": "S2B_43RFN_20251129_0_L2A",
-   "acquired": "2025-11-29",
-   "gold": null
+   "community": true,
+   "wide": "chips/s707cb1a500_wide.webp",
+   "details": {
+    "lon": 82.5629,
+    "lat": 22.3225,
+    "state": "Chhattisgarh",
+    "detections": 18,
+    "night_share": 1.0,
+    "spread_m": 343,
+    "subdistrict": "Pali Tahsil",
+    "first_seen": "2023-11-21",
+    "last_seen": "2024-11-06",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     11,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Gevra Coal Mine",
+      "km": 2.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "South Eastern Coalfields Ltd. (SECL) - Junadih Rapid Coal Loading System (JRGR)",
+      "km": 3.2,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s7c536e557e",
    "chip": "chips/s7c536e557e.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7c536e557e_wide.webp",
+   "details": {
+    "lon": 85.5072,
+    "lat": 23.657,
+    "state": "Jharkhand",
+    "detections": 17,
+    "night_share": 1.0,
+    "spread_m": 288,
+    "subdistrict": "Mandu",
+    "first_seen": "2023-11-15",
+    "last_seen": "2026-08-25",
+    "days_seen": 11,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     0,
+     0,
+     15,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Karma Coal Mine",
+      "km": 6.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s7031b2a91f",
    "chip": "chips/s7031b2a91f.webp",
    "scene": "S2B_44QND_20260208_0_L2A",
    "acquired": "2026-02-08",
-   "gold": null
-  },
-  {
-   "id": "s457ac63f50",
-   "chip": "chips/s457ac63f50.webp",
-   "scene": "S2C_43PFS_20251211_0_L2A",
-   "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7031b2a91f_wide.webp",
+   "details": {
+    "lon": 81.2832,
+    "lat": 16.3611,
+    "state": "Andhra Pradesh",
+    "detections": 16,
+    "night_share": 1.0,
+    "spread_m": 255,
+    "subdistrict": "Kruthivennu",
+    "first_seen": "2024-11-09",
+    "last_seen": "2024-11-28",
+    "days_seen": 10,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     16,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": "Machilipatnam Port",
+      "km": 18.5,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s16f02ace3a",
    "chip": "chips/s16f02ace3a.webp",
    "scene": "S2C_43PFT_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
-  },
-  {
-   "id": "s9b547e1cca",
-   "chip": "chips/s9b547e1cca.webp",
-   "scene": "S2C_45QUD_20260302_0_L2A",
-   "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/s16f02ace3a_wide.webp",
+   "details": {
+    "lon": 76.2779,
+    "lat": 15.338,
+    "state": "Karnataka",
+    "detections": 16,
+    "night_share": 0.938,
+    "spread_m": 347,
+    "subdistrict": "Koppala taluku",
+    "first_seen": "2023-11-16",
+    "last_seen": "2026-09-03",
+    "days_seen": 12,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     2,
+     0,
+     11,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "UltraTech Cement Koppal Cement Plant",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s734d852e49",
    "chip": "chips/s734d852e49.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/s734d852e49_wide.webp",
+   "details": {
+    "lon": 85.0227,
+    "lat": 23.7345,
+    "state": "Jharkhand",
+    "detections": 16,
+    "night_share": 1.0,
+    "spread_m": 481,
+    "subdistrict": "Tandwa",
+    "first_seen": "2023-11-06",
+    "last_seen": "2024-10-15",
+    "days_seen": 15,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     16,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Ashoka Coal Mine",
+      "km": 1.9,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 6.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s0cb4613c9f",
    "chip": "chips/s0cb4613c9f.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": "factory"
+   "community": true,
+   "wide": "chips/s0cb4613c9f_wide.webp",
+   "details": {
+    "lon": 84.9221,
+    "lat": 23.8334,
+    "state": "Jharkhand",
+    "detections": 16,
+    "night_share": 0.812,
+    "spread_m": 236,
+    "subdistrict": "Balumath",
+    "first_seen": "2024-10-19",
+    "last_seen": "2024-11-09",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     13,
+     3,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "North Karanpura Thermal Power Station",
+      "km": 9.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "North Karanpura power station",
+      "km": 9.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s79a6f7614f",
    "chip": "chips/s79a6f7614f.webp",
    "scene": "S2C_44QQE_20260220_0_L2A",
    "acquired": "2026-02-20",
-   "gold": null
+   "community": true,
+   "wide": "chips/s79a6f7614f_wide.webp",
+   "details": {
+    "lon": 83.1826,
+    "lat": 17.6014,
+    "state": "Andhra Pradesh",
+    "detections": 16,
+    "night_share": 0.75,
+    "spread_m": 396,
+    "subdistrict": "Pedagantyada",
+    "first_seen": "2024-11-07",
+    "last_seen": "2024-11-16",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     16,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": null,
+      "km": 1.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Vizag Steel Plant power station",
+      "km": 1.6,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 12.1,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s398bee2123",
    "chip": "chips/s398bee2123.webp",
    "scene": "S2B_42QXL_20251115_0_L2A",
    "acquired": "2025-11-15",
-   "gold": null
-  },
-  {
-   "id": "se9b648976d",
-   "chip": "chips/se9b648976d.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s398bee2123_wide.webp",
+   "details": {
+    "lon": 70.188,
+    "lat": 23.1061,
+    "state": "Gujarat",
+    "detections": 16,
+    "night_share": 1.0,
+    "spread_m": 253,
+    "subdistrict": "Gandhidham Taluka",
+    "first_seen": "2023-11-07",
+    "last_seen": "2023-12-01",
+    "days_seen": 14,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Gandhidham wind farm",
+      "km": 6.9,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 8.7,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "sd47398a980",
    "chip": "chips/sd47398a980.webp",
    "scene": "S2C_42QVK_20260221_0_L2A",
    "acquired": "2026-02-21",
-   "gold": null
+   "community": true,
+   "wide": "chips/sd47398a980_wide.webp",
+   "details": {
+    "lon": 69.0389,
+    "lat": 22.4167,
+    "state": "Gujarat",
+    "detections": 15,
+    "night_share": 0.8,
+    "spread_m": 329,
+    "subdistrict": "Okhamandal Taluka",
+    "first_seen": "2026-06-30",
+    "last_seen": "2026-09-03",
+    "days_seen": 11,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     10,
+     3,
+     1,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "Tata Chemicals Mithapur Cement Plant",
+      "km": 2.6,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s7610d29224",
    "chip": "chips/s7610d29224.webp",
    "scene": "S2B_45QVG_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/s7610d29224_wide.webp",
+   "details": {
+    "lon": 86.8333,
+    "lat": 23.6327,
+    "state": "West Bengal",
+    "detections": 15,
+    "night_share": 1.0,
+    "spread_m": 286,
+    "subdistrict": "Neturia",
+    "first_seen": "2024-11-16",
+    "last_seen": "2024-11-29",
+    "days_seen": 9,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     15,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Dubeshwari OC Coal Mine",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s0cb8deb997",
    "chip": "chips/s0cb8deb997.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s0cb8deb997_wide.webp",
+   "details": {
+    "lon": 82.5772,
+    "lat": 22.3457,
+    "state": "Chhattisgarh",
+    "detections": 15,
+    "night_share": 1.0,
+    "spread_m": 291,
+    "subdistrict": "Katghora Tahsil",
+    "first_seen": "2023-11-15",
+    "last_seen": "2023-12-01",
+    "days_seen": 13,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "South Eastern Coalfields Ltd. (SECL) - Junadih Rapid Coal Loading System (JRGR)",
+      "km": 0.9,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Dipka Coal Mine",
+      "km": 3.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s5bb42812e6",
    "chip": "chips/s5bb42812e6.webp",
    "scene": "S2C_44QME_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5bb42812e6_wide.webp",
+   "details": {
+    "lon": 80.6533,
+    "lat": 17.4635,
+    "state": "Telangana",
+    "detections": 15,
+    "night_share": 1.0,
+    "spread_m": 277,
+    "subdistrict": "Chunchupally mandal",
+    "first_seen": "2023-11-04",
+    "last_seen": "2023-12-01",
+    "days_seen": 12,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.5,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Vakilpalli Coal Mine",
+      "km": 2.6,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "power plant",
+      "name": null,
+      "km": 7.5,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s5b6da52cf2",
    "chip": "chips/s5b6da52cf2.webp",
    "scene": "S2C_46REP_20251213_0_L2A",
    "acquired": "2025-12-13",
-   "gold": null
-  },
-  {
-   "id": "sff97892bb7",
-   "chip": "chips/sff97892bb7.webp",
-   "scene": "S2B_42QVL_20260308_0_L2A",
-   "acquired": "2026-03-08",
-   "gold": null
-  },
-  {
-   "id": "se8e9810df8",
-   "chip": "chips/se8e9810df8.webp",
-   "scene": "S2C_44QQK_20260305_0_L2A",
-   "acquired": "2026-03-05",
-   "gold": null
-  },
-  {
-   "id": "s39a4094fb3",
-   "chip": "chips/s39a4094fb3.webp",
-   "scene": "S2B_43RFQ_20251109_1_L2A",
-   "acquired": "2025-11-09",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5b6da52cf2_wide.webp",
+   "details": {
+    "lon": 93.8933,
+    "lat": 26.0587,
+    "state": "Assam",
+    "detections": 14,
+    "night_share": 1.0,
+    "spread_m": 244,
+    "subdistrict": "Sarupathar",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-12-01",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     13,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Sarupathar solar project",
+      "km": 10.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 13.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sfc53da5de1",
    "chip": "chips/sfc53da5de1.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/sfc53da5de1_wide.webp",
+   "details": {
+    "lon": 82.6372,
+    "lat": 24.1523,
+    "state": "Madhya Pradesh",
+    "detections": 13,
+    "night_share": 0.923,
+    "spread_m": 319,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2024-11-25",
+    "last_seen": "2024-12-01",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     12,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Jayant Coal Mine",
+      "km": 1.9,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "works or factory",
+      "name": "Field WorkShop",
+      "km": 2.5,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sf14afd1ba0",
    "chip": "chips/sf14afd1ba0.webp",
    "scene": "S2C_43PFS_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sf14afd1ba0_wide.webp",
+   "details": {
+    "lon": 76.7102,
+    "lat": 15.1519,
+    "state": "Karnataka",
+    "detections": 13,
+    "night_share": 1.0,
+    "spread_m": 348,
+    "subdistrict": "Sanduru taluk",
+    "first_seen": "2023-11-21",
+    "last_seen": "2024-11-24",
+    "days_seen": 9,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     13,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Minera Steel and Power Pvt Limited",
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "JSW Cement Bellary Cement Plant",
+      "km": 3.3,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s47af7914f1",
    "chip": "chips/s47af7914f1.webp",
    "scene": "S2C_44QQK_20260305_0_L2A",
    "acquired": "2026-03-05",
-   "gold": null
+   "community": true,
+   "wide": "chips/s47af7914f1_wide.webp",
+   "details": {
+    "lon": 83.7976,
+    "lat": 21.9567,
+    "state": "Odisha",
+    "detections": 13,
+    "night_share": 1.0,
+    "spread_m": 335,
+    "subdistrict": "Hemgir",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-11-28",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     13,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Dulanga Coal Mine",
+      "km": 1.2,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Darlipali Super Thermal Power Station",
+      "km": 10.1,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s693d0f8460",
    "chip": "chips/s693d0f8460.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s693d0f8460_wide.webp",
+   "details": {
+    "lon": 82.6722,
+    "lat": 24.1813,
+    "state": "Madhya Pradesh",
+    "detections": 13,
+    "night_share": 0.923,
+    "spread_m": 224,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2024-11-05",
+    "last_seen": "2024-11-27",
+    "days_seen": 11,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     13,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Dudhichua Coal Mine",
+      "km": 1.8,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "works or factory",
+      "name": null,
+      "km": 2.2,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s846f148430",
    "chip": "chips/s846f148430.webp",
    "scene": "S2B_44QME_20251213_1_L2A",
    "acquired": "2025-12-13",
-   "gold": null
-  },
-  {
-   "id": "s80527c5cf0",
-   "chip": "chips/s80527c5cf0.webp",
-   "scene": "S2B_43RCK_20260210_0_L2A",
-   "acquired": "2026-02-10",
-   "gold": null
-  },
-  {
-   "id": "s4ebff8a447",
-   "chip": "chips/s4ebff8a447.webp",
-   "scene": "S2C_44QNJ_20260114_0_L2A",
-   "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s846f148430_wide.webp",
+   "details": {
+    "lon": 80.3182,
+    "lat": 17.5839,
+    "state": "Telangana",
+    "detections": 13,
+    "night_share": 1.0,
+    "spread_m": 212,
+    "subdistrict": "Yellandu mandal",
+    "first_seen": "2024-10-29",
+    "last_seen": "2024-11-27",
+    "days_seen": 11,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     12,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "TGSRTC Bus Depot , Yallandu",
+      "km": 1.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Yellandu solar farm",
+      "km": 1.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s14e5b5ed0e",
    "chip": "chips/s14e5b5ed0e.webp",
    "scene": "S2C_44QLF_20260117_0_L2A",
    "acquired": "2026-01-17",
-   "gold": null
-  },
-  {
-   "id": "s595cc0db9f",
-   "chip": "chips/s595cc0db9f.webp",
-   "scene": "S2B_42QVL_20260308_0_L2A",
-   "acquired": "2026-03-08",
-   "gold": null
+   "community": true,
+   "wide": "chips/s14e5b5ed0e_wide.webp",
+   "details": {
+    "lon": 79.5527,
+    "lat": 18.6791,
+    "state": "Telangana",
+    "detections": 12,
+    "night_share": 1.0,
+    "spread_m": 332,
+    "subdistrict": "Ramagiri mandal",
+    "first_seen": "2023-10-23",
+    "last_seen": "2024-11-29",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     4,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.2,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Ramagundam II Coal Mine",
+      "km": 1.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "power plant",
+      "name": null,
+      "km": 2.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sfb5e6137c4",
    "chip": "chips/sfb5e6137c4.webp",
    "scene": "S2B_43QBF_20260511_0_L2A",
    "acquired": "2026-05-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sfb5e6137c4_wide.webp",
+   "details": {
+    "lon": 72.5657,
+    "lat": 22.9781,
+    "state": "Gujarat",
+    "detections": 12,
+    "night_share": 1.0,
+    "spread_m": 317,
+    "subdistrict": "Vatva Taluka",
+    "first_seen": "2024-11-14",
+    "last_seen": "2024-12-01",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Surendranagar solar farm",
+      "km": 4.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 18.0,
+      "source": "VIIRS flare catalogue"
+     }
+    ]
+   }
   },
   {
    "id": "s70c4f6e6d6",
    "chip": "chips/s70c4f6e6d6.webp",
    "scene": "S2C_43PFS_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/s70c4f6e6d6_wide.webp",
+   "details": {
+    "lon": 76.3779,
+    "lat": 15.1966,
+    "state": "Karnataka",
+    "detections": 12,
+    "night_share": 1.0,
+    "spread_m": 320,
+    "subdistrict": "Hosapete taluk",
+    "first_seen": "2023-11-11",
+    "last_seen": "2023-12-01",
+    "days_seen": 10,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     11,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Danapuram",
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Danapuram BMM power station",
+      "km": 2.9,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s109c46c7a7",
    "chip": "chips/s109c46c7a7.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s109c46c7a7_wide.webp",
+   "details": {
+    "lon": 82.7376,
+    "lat": 22.3162,
+    "state": "Chhattisgarh",
+    "detections": 12,
+    "night_share": 1.0,
+    "spread_m": 290,
+    "subdistrict": "Korba Tahsil",
+    "first_seen": "2023-11-16",
+    "last_seen": "2023-11-27",
+    "days_seen": 10,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     12,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Manikpur Coal Mine",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 2.9,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sb4b0e64ad7",
    "chip": "chips/sb4b0e64ad7.webp",
    "scene": "S2C_44QPK_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
-  },
-  {
-   "id": "scc5a43b9df",
-   "chip": "chips/scc5a43b9df.webp",
-   "scene": "S2A_45QUG_20251114_0_L2A",
-   "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s322c0a2680",
-   "chip": "chips/s322c0a2680.webp",
-   "scene": "S2B_44QLK_20260211_0_L2A",
-   "acquired": "2026-02-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sb4b0e64ad7_wide.webp",
+   "details": {
+    "lon": 82.5323,
+    "lat": 22.3321,
+    "state": "Chhattisgarh",
+    "detections": 11,
+    "night_share": 1.0,
+    "spread_m": 368,
+    "subdistrict": "Pali Tahsil",
+    "first_seen": "2023-11-13",
+    "last_seen": "2023-11-26",
+    "days_seen": 9,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     11,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Gevra Coal Mine",
+      "km": 1.5,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "S V Power Private Limited Renki",
+      "km": 3.9,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s1a1b151d5d",
    "chip": "chips/s1a1b151d5d.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
-  },
-  {
-   "id": "s943f3bc1d0",
-   "chip": "chips/s943f3bc1d0.webp",
-   "scene": "S2B_43REH_20251109_0_L2A",
-   "acquired": "2025-11-09",
-   "gold": null
-  },
-  {
-   "id": "s20030e2fea",
-   "chip": "chips/s20030e2fea.webp",
-   "scene": "S2C_43RCH_20260215_0_L2A",
-   "acquired": "2026-02-15",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1a1b151d5d_wide.webp",
+   "details": {
+    "lon": 82.602,
+    "lat": 24.1617,
+    "state": "Madhya Pradesh",
+    "detections": 11,
+    "night_share": 1.0,
+    "spread_m": 318,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2026-06-24",
+    "last_seen": "2026-08-13",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     5,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Moher Amlohri Coal Mine",
+      "km": 3.0,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 4.8,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "scf523c98ba",
    "chip": "chips/scf523c98ba.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/scf523c98ba_wide.webp",
+   "details": {
+    "lon": 85.3038,
+    "lat": 23.8416,
+    "state": "Jharkhand",
+    "detections": 11,
+    "night_share": 1.0,
+    "spread_m": 317,
+    "subdistrict": "Barkagaon",
+    "first_seen": "2024-11-15",
+    "last_seen": "2024-12-01",
+    "days_seen": 7,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Pakri Barwadih Coal Mine",
+      "km": 8.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s30b1ca8408",
    "chip": "chips/s30b1ca8408.webp",
    "scene": "S2B_45QUE_20260327_0_L2A",
    "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s30b1ca8408_wide.webp",
+   "details": {
+    "lon": 85.4361,
+    "lat": 22.1676,
+    "state": "Jharkhand",
+    "detections": 10,
+    "night_share": 1.0,
+    "spread_m": 255,
+    "subdistrict": "Noamundi",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-11-29",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     10,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Rungta Mines Karakhendra steel plant",
+      "km": 3.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s692e49412a",
    "chip": "chips/s692e49412a.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
-  },
-  {
-   "id": "s340326033d",
-   "chip": "chips/s340326033d.webp",
-   "scene": "S2B_45QVG_20251107_0_L2A",
-   "acquired": "2025-11-07",
-   "gold": null
-  },
-  {
-   "id": "sf1227f4d07",
-   "chip": "chips/sf1227f4d07.webp",
-   "scene": "S2B_44RQN_20260208_0_L2A",
-   "acquired": "2026-02-08",
-   "gold": null
+   "community": true,
+   "wide": "chips/s692e49412a_wide.webp",
+   "details": {
+    "lon": 82.5734,
+    "lat": 24.1329,
+    "state": "Madhya Pradesh",
+    "detections": 10,
+    "night_share": 1.0,
+    "spread_m": 264,
+    "subdistrict": "Singrauli Tahsil",
+    "first_seen": "2024-11-15",
+    "last_seen": "2024-12-01",
+    "days_seen": 8,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     9,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Amlohri Coal Mine",
+      "km": 2.0,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 5.1,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s1b77a0dd20",
    "chip": "chips/s1b77a0dd20.webp",
    "scene": "S2B_44QLJ_20260512_0_L2A",
    "acquired": "2026-05-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1b77a0dd20_wide.webp",
+   "details": {
+    "lon": 79.1873,
+    "lat": 21.258,
+    "state": "Maharashtra",
+    "detections": 8,
+    "night_share": 1.0,
+    "spread_m": 285,
+    "subdistrict": "Parseoni",
+    "first_seen": "2024-11-27",
+    "last_seen": "2024-12-01",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Gondegaon-Ghatrohana Coal Mine",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 6.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s39dde45870",
    "chip": "chips/s39dde45870.webp",
    "scene": "S2C_44QNJ_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s39dde45870_wide.webp",
+   "details": {
+    "lon": 81.748,
+    "lat": 21.557,
+    "state": "Chhattisgarh",
+    "detections": 8,
+    "night_share": 1.0,
+    "spread_m": 325,
+    "subdistrict": "Tilda Tahsil",
+    "first_seen": "2024-11-24",
+    "last_seen": "2024-11-30",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     8,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Neora Oil power station",
+      "km": 7.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sa197aa790b",
    "chip": "chips/sa197aa790b.webp",
    "scene": "S2C_45RWH_20260302_0_L2A",
    "acquired": "2026-03-02",
-   "gold": null
+   "community": true,
+   "wide": "chips/sa197aa790b_wide.webp",
+   "details": {
+    "lon": 87.3713,
+    "lat": 25.0338,
+    "state": "Jharkhand",
+    "detections": 8,
+    "night_share": 1.0,
+    "spread_m": 174,
+    "subdistrict": "Boarijor",
+    "first_seen": "2026-07-26",
+    "last_seen": "2026-08-12",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     6,
+     0,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "Rajmahal Coal Mine",
+      "km": 1.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Rajmahal Coal Mine",
+      "km": 1.8,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s5bf08f18fe",
    "chip": "chips/s5bf08f18fe.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s5b6f69ddef",
-   "chip": "chips/s5b6f69ddef.webp",
-   "scene": "S2B_43PHS_20260303_0_L2A",
-   "acquired": "2026-03-03",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5bf08f18fe_wide.webp",
+   "details": {
+    "lon": 85.3976,
+    "lat": 23.6416,
+    "state": "Jharkhand",
+    "detections": 8,
+    "night_share": 1.0,
+    "spread_m": 346,
+    "subdistrict": "Patratu",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-11-30",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     8,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Bhurkunda Coal Mine",
+      "km": 3.7,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.9,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "sda15d49f92",
    "chip": "chips/sda15d49f92.webp",
    "scene": "S2A_44QRK_20260413_0_L2A",
    "acquired": "2026-04-13",
-   "gold": null
+   "community": true,
+   "wide": "chips/sda15d49f92_wide.webp",
+   "details": {
+    "lon": 83.9937,
+    "lat": 21.8178,
+    "state": "Odisha",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 180,
+    "subdistrict": "Badmal",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-11-26",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.6,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "steel or iron plant",
+      "name": "Action Ispat and Power Jharsuguda steel plant",
+      "km": 2.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s9d811ec986",
    "chip": "chips/s9d811ec986.webp",
    "scene": "S2B_43QBB_20251212_0_L2A",
    "acquired": "2025-12-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/s9d811ec986_wide.webp",
+   "details": {
+    "lon": 72.8916,
+    "lat": 19.0217,
+    "state": "Maharashtra",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 326,
+    "first_seen": "2024-11-24",
+    "last_seen": "2024-11-30",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.9,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": "Mumbai Refinery Mahul",
+      "km": 0.5,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Trombay power station",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s18e1858615",
    "chip": "chips/s18e1858615.webp",
    "scene": "S2B_43RGM_20260217_1_L2A",
    "acquired": "2026-02-17",
-   "gold": null
+   "community": true,
+   "wide": "chips/s18e1858615_wide.webp",
+   "details": {
+    "lon": 77.2418,
+    "lat": 28.3581,
+    "state": "Haryana",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 220,
+    "subdistrict": "Faridabad",
+    "first_seen": "2024-11-25",
+    "last_seen": "2024-12-01",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.8,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Faridabad power station",
+      "km": 6.5,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s51998fa726",
    "chip": "chips/s51998fa726.webp",
    "scene": "S2C_44QNJ_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s51998fa726_wide.webp",
+   "details": {
+    "lon": 81.6564,
+    "lat": 21.3829,
+    "state": "Chhattisgarh",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 229,
+    "subdistrict": "Raipur Tahsil",
+    "first_seen": "2023-11-16",
+    "last_seen": "2023-11-26",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Siltara SKS power station",
+      "km": 1.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s16f4e34d45",
    "chip": "chips/s16f4e34d45.webp",
    "scene": "S2C_42QWK_20260109_0_L2A",
    "acquired": "2026-01-09",
-   "gold": null
-  },
-  {
-   "id": "s9e20bef747",
-   "chip": "chips/s9e20bef747.webp",
-   "scene": "S2C_43RCH_20260215_0_L2A",
-   "acquired": "2026-02-15",
-   "gold": null
+   "community": true,
+   "wide": "chips/s16f4e34d45_wide.webp",
+   "details": {
+    "lon": 69.8821,
+    "lat": 22.3228,
+    "state": "Gujarat",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 223,
+    "subdistrict": "Lalpur Taluka",
+    "first_seen": "2023-11-03",
+    "last_seen": "2023-11-23",
+    "days_seen": 4,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 4.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.1,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Lalpur Taluka solar project I",
+      "km": 3.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s8113babd4d",
    "chip": "chips/s8113babd4d.webp",
    "scene": "S2B_45QTE_20260215_1_L2A",
    "acquired": "2026-02-15",
-   "gold": null
+   "community": true,
+   "wide": "chips/s8113babd4d_wide.webp",
+   "details": {
+    "lon": 84.5503,
+    "lat": 22.208,
+    "state": "Odisha",
+    "detections": 7,
+    "night_share": 1.0,
+    "spread_m": 195,
+    "subdistrict": "Rajagangapur",
+    "first_seen": "2024-11-26",
+    "last_seen": "2024-11-30",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.2,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "cement plant",
+      "name": "OCL India Rajgangpur Cement Plant",
+      "km": 4.1,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s44ed662caf",
    "chip": "chips/s44ed662caf.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
-  },
-  {
-   "id": "s9183252290",
-   "chip": "chips/s9183252290.webp",
-   "scene": "S2B_45QUE_20260327_0_L2A",
-   "acquired": "2026-03-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s44ed662caf_wide.webp",
+   "details": {
+    "lon": 85.5384,
+    "lat": 23.8039,
+    "state": "Jharkhand",
+    "detections": 6,
+    "night_share": 1.0,
+    "spread_m": 153,
+    "subdistrict": "Mandu",
+    "first_seen": "2024-11-27",
+    "last_seen": "2024-12-01",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "West Bokaro Coal Mine",
+      "km": 2.0,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s5bb5a882af",
    "chip": "chips/s5bb5a882af.webp",
    "scene": "S2A_45QUG_20251114_0_L2A",
    "acquired": "2025-11-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5bb5a882af_wide.webp",
+   "details": {
+    "lon": 85.3684,
+    "lat": 23.6971,
+    "state": "Jharkhand",
+    "detections": 6,
+    "night_share": 1.0,
+    "spread_m": 281,
+    "subdistrict": "Dadi",
+    "first_seen": "2026-08-01",
+    "last_seen": "2026-08-23",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     0,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Gidi - A Open Cast Coal Mine",
+      "km": 1.1,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.0,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s1ffb205a05",
    "chip": "chips/s1ffb205a05.webp",
    "scene": "S2B_46RGR_20260127_0_L2A",
    "acquired": "2026-01-27",
-   "gold": null
+   "community": true,
+   "wide": "chips/s1ffb205a05_wide.webp",
+   "details": {
+    "lon": 95.335,
+    "lat": 27.3784,
+    "state": "Assam",
+    "detections": 6,
+    "night_share": 0.667,
+    "spread_m": 287,
+    "subdistrict": "Tengakhat",
+    "first_seen": "2026-08-06",
+    "last_seen": "2026-09-03",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     3,
+     0,
+     0,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 2.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.2,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Assam Gas Based power station",
+      "km": 8.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s03bd28d6e2",
    "chip": "chips/s03bd28d6e2.webp",
    "scene": "S2A_44QRK_20260413_0_L2A",
    "acquired": "2026-04-13",
-   "gold": null
+   "community": true,
+   "wide": "chips/s03bd28d6e2_wide.webp",
+   "details": {
+    "lon": 84.0321,
+    "lat": 21.6987,
+    "state": "Odisha",
+    "detections": 6,
+    "night_share": 1.0,
+    "spread_m": 213,
+    "subdistrict": "Rengali",
+    "first_seen": "2023-11-22",
+    "last_seen": "2023-12-01",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 0.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Rengali Bhushan power station",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s201365505a",
    "chip": "chips/s201365505a.webp",
    "scene": "S2C_45QTG_20260421_0_L2A",
    "acquired": "2026-04-21",
-   "gold": "factory"
+   "community": true,
+   "wide": "chips/s201365505a_wide.webp",
+   "details": {
+    "lon": 84.9362,
+    "lat": 23.8278,
+    "state": "Jharkhand",
+    "detections": 6,
+    "night_share": 1.0,
+    "spread_m": 212,
+    "subdistrict": "Balumath",
+    "first_seen": "2024-11-01",
+    "last_seen": "2024-11-07",
+    "days_seen": 6,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     6,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": "North Karanpura Thermal Power Station",
+      "km": 7.8,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "North Karanpura power station",
+      "km": 8.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s216ff292b0",
    "chip": "chips/s216ff292b0.webp",
    "scene": "S2C_44QQF_20260114_0_L2A",
    "acquired": "2026-01-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/s216ff292b0_wide.webp",
+   "details": {
+    "lon": 83.3435,
+    "lat": 18.5419,
+    "state": "Andhra Pradesh",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 167,
+    "subdistrict": "Bobbili",
+    "first_seen": "2024-11-01",
+    "last_seen": "2024-11-15",
+    "days_seen": 4,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.7,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.1,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Badangi solar project",
+      "km": 7.7,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sc65aa48b1f",
    "chip": "chips/sc65aa48b1f.webp",
    "scene": "S2C_43PFS_20251211_0_L2A",
    "acquired": "2025-12-11",
-   "gold": null
+   "community": true,
+   "wide": "chips/sc65aa48b1f_wide.webp",
+   "details": {
+    "lon": 76.6415,
+    "lat": 15.1829,
+    "state": "Karnataka",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 329,
+    "subdistrict": "Sanduru taluk",
+    "first_seen": "2024-11-22",
+    "last_seen": "2024-11-25",
+    "days_seen": 4,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.4,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "power plant",
+      "name": "JSW Vijayanagar Toranagallu power station",
+      "km": 2.3,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": "Vijayanagar Toranagallu Power Station",
+      "km": 2.6,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s6efac48cae",
    "chip": "chips/s6efac48cae.webp",
    "scene": "S2B_43QBC_20251212_0_L2A",
    "acquired": "2025-12-12",
-   "gold": null
+   "community": true,
+   "wide": "chips/s6efac48cae_wide.webp",
+   "details": {
+    "lon": 73.0019,
+    "lat": 20.1483,
+    "state": "Dadra and Nagar Haveli and Daman and Diu",
+    "detections": 5,
+    "night_share": 0.8,
+    "spread_m": 250,
+    "subdistrict": "Nagar Haveli",
+    "first_seen": "2024-11-29",
+    "last_seen": "2024-12-01",
+    "days_seen": 3,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     4,
+     1
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.6,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 1.4,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "power plant",
+      "name": "Nagar Haveli solar project",
+      "km": 2.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "sd96825bcd8",
    "chip": "chips/sd96825bcd8.webp",
    "scene": "S2C_44QPM_20260414_0_L2A",
    "acquired": "2026-04-14",
-   "gold": null
+   "community": true,
+   "wide": "chips/sd96825bcd8_wide.webp",
+   "details": {
+    "lon": 82.5767,
+    "lat": 24.1873,
+    "state": "Madhya Pradesh",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 199,
+    "subdistrict": "Singrauli Nagar Tahsil",
+    "first_seen": "2023-11-25",
+    "last_seen": "2023-11-29",
+    "days_seen": 3,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.3,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "works or factory",
+      "name": null,
+      "km": 1.3,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "coal mine",
+      "name": "Block-B Coal Mine",
+      "km": 2.2,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "s5e4e9dc40e",
    "chip": "chips/s5e4e9dc40e.webp",
    "scene": "S2A_45QVD_20260222_0_L2A",
    "acquired": "2026-02-22",
-   "gold": null
+   "community": true,
+   "wide": "chips/s5e4e9dc40e_wide.webp",
+   "details": {
+    "lon": 86.8328,
+    "lat": 21.5317,
+    "state": "Odisha",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 239,
+    "subdistrict": "Remuna",
+    "first_seen": "2024-11-20",
+    "last_seen": "2024-11-25",
+    "days_seen": 4,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 1.1,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "works or factory",
+      "name": "Emami Paper Mills",
+      "km": 0.3,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   },
   {
    "id": "s47ce87b014",
    "chip": "chips/s47ce87b014.webp",
    "scene": "S2B_45QVC_20260113_0_L2A",
    "acquired": "2026-01-13",
-   "gold": null
+   "community": true,
+   "wide": "chips/s47ce87b014_wide.webp",
+   "details": {
+    "lon": 86.6074,
+    "lat": 20.242,
+    "state": "Odisha",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 235,
+    "subdistrict": "Abhyachandpur",
+    "first_seen": "2023-11-27",
+    "last_seen": "2023-12-01",
+    "days_seen": 3,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     2
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 4.0,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "OpenStreetMap"
+     },
+     {
+      "what": "gas flare",
+      "name": null,
+      "km": 0.0,
+      "source": "VIIRS flare catalogue"
+     },
+     {
+      "what": "power plant",
+      "name": "Paradip Refinery Captive power station",
+      "km": 1.4,
+      "source": "Global Energy Monitor"
+     }
+    ]
+   }
   },
   {
    "id": "scbe0233ed4",
    "chip": "chips/scbe0233ed4.webp",
    "scene": "S2B_45QVG_20251107_0_L2A",
    "acquired": "2025-11-07",
-   "gold": null
+   "community": true,
+   "wide": "chips/scbe0233ed4_wide.webp",
+   "details": {
+    "lon": 86.2353,
+    "lat": 23.7962,
+    "state": "Jharkhand",
+    "detections": 5,
+    "night_share": 1.0,
+    "spread_m": 325,
+    "subdistrict": "Baghmara-Cum-Katras",
+    "first_seen": "2023-11-23",
+    "last_seen": "2023-11-30",
+    "days_seen": 5,
+    "by_month": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    "observed_months": [
+     6,
+     7,
+     8,
+     10,
+     11
+    ],
+    "median_frp_mw": 0.8,
+    "satellites": [
+     "viirs"
+    ],
+    "nearby": [
+     {
+      "what": "coal mine",
+      "name": "Muraidi Phularitand Coal Mine",
+      "km": 1.8,
+      "source": "Global Energy Monitor"
+     },
+     {
+      "what": "industrial area",
+      "name": null,
+      "km": 3.8,
+      "source": "OpenStreetMap"
+     }
+    ]
+   }
   }
  ]
 }
