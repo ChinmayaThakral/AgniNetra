@@ -19,16 +19,55 @@ import { syncButton } from "./sync";
 import { cityAir } from "./city-air";
 import { Season, wrappedCard, wrappedTime } from "./wrapped";
 
-async function load<T>(path: string, parse: (value: unknown) => T): Promise<T> {
-  const response = await fetch(path, { cache: "no-cache" });
-  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-  return parse(await response.json());
+// The page is being left, by a day switch or a reload; requests the browser cancels then
+// are not failures worth showing.
+let leaving = false;
+window.addEventListener("pagehide", () => (leaving = true));
+window.addEventListener("pageshow", () => (leaving = false));
+
+// A request can be cut off by a flaky connection or by the browser swapping in a new app
+// version mid load, so each is tried a few times, waiting a little longer each time, and
+// given up on after 20 seconds.
+async function load<T>(path: string, parse: (value: unknown) => T, tries = 3): Promise<T> {
+  for (let attempt = 1; ; attempt += 1) {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 20_000);
+    try {
+      const response = await fetch(path, { cache: "no-cache", signal: controller.signal });
+      if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+      return parse(await response.json());
+    } catch (error) {
+      if (attempt >= tries || leaving) throw error;
+      await new Promise((resolve) => window.setTimeout(resolve, 600 * attempt));
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
 }
 
 function failure(root: HTMLElement, message: string): void {
+  if (leaving) return;
   const loader = document.getElementById("loader");
   if (loader) loader.hidden = true;
-  root.replaceChildren(el("p", "card", `The feed could not be read: ${message}`));
+  const screen = el("div", "error-screen");
+  screen.setAttribute("role", "alert");
+  const again = el("button", "button primary", "Try again");
+  again.addEventListener("click", () => {
+    again.disabled = true;
+    if (loader) loader.hidden = false;
+    window.location.reload();
+  });
+  const details = el("details", "error-details");
+  details.append(el("summary", "", "Details"), el("p", "", message));
+  screen.append(
+    netuSvg("worried", 84),
+    el("span", "shadow"),
+    el("p", "error-title", "Netu could not fetch the evening."),
+    el("p", "muted", "Usually a dropped connection. Trying again normally works."),
+    again,
+    details,
+  );
+  root.replaceChildren(screen);
 }
 
 async function start(): Promise<void> {

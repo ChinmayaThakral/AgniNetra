@@ -218,3 +218,15 @@ a.button { display: inline-block; text-decoration: none; }
 }
 .how-sure { align-self: flex-start; justify-self: start; width: max-content; }
 .month-bar.unobserved { background: repeating-linear-gradient(135deg, var(--line) 0 3px, transparent 3px 6px); }
+
+/* The error screen mirrors the loader: Netu centred over its shadow, worried and swaying. */
+.error-screen { min-height: 80vh; display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; padding: 16px; }
+.error-screen svg { animation: netu-worry 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+.error-screen .shadow { width: 46px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, 0.35); margin-top: -6px; }
+:root[data-theme="light"] .error-screen .shadow { background: rgba(0, 0, 0, 0.15); }
+.error-title { font-size: 1.15rem; font-weight: 600; margin: 6px 0 0; }
+.error-screen .muted { margin: 0 0 6px; max-width: 34ch; }
+.error-details { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+.error-details summary { cursor: pointer; }
+@keyframes netu-worry { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg) translateY(2px); } }
+@media (prefers-reduced-motion: reduce) { .error-screen svg { animation: none; } }

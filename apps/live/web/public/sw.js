@@ -1,6 +1,6 @@
 // Installable and usable offline with the last feed. The feed is fetched network first,
 // so an evening in progress is never served stale while the network is up.
-const SHELL = "agninetra-shell-v2";
+const SHELL = "agninetra-shell-v3";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(["./", "data/boundaries.json"])));
@@ -20,6 +20,9 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET" || url.origin !== self.location.origin) return;
+  // The community API answers per player and is never cached: a signed in profile must not
+  // outlive the session in a cache, and a stale answer is worse than an error.
+  if (url.pathname.startsWith("/api/")) return;
   event.respondWith(
     fetch(event.request)
       .then((response) => {
