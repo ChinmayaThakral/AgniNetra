@@ -231,6 +231,8 @@ class Handler(BaseHTTPRequestHandler):
         payload = json.dumps(reply).encode()
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        # Answers are per player; no cache between here and the browser may keep one.
+        self.send_header("Cache-Control", "no-store")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
