@@ -35,6 +35,15 @@ function label(day: string): string {
 export function dayNav(latest: string, chosen: string, available: Set<string>): HTMLElement {
   const nav = el("nav", "day-nav");
   nav.setAttribute("aria-label", "Evening");
+  // Before the first build of the day the newest evening is yesterday's. Today still gets
+  // its place, greyed, saying when it arrives, rather than silently going missing.
+  const today = todayIst();
+  if (latest < today) {
+    const pending = el("a", "day missing", "Today, from 16:37");
+    pending.title = "Today's evening is built from 16:37 IST and refreshed every 30 minutes. Until then the newest is yesterday's.";
+    pending.setAttribute("aria-disabled", "true");
+    nav.append(pending);
+  }
   for (const day of allowedDays(latest)) {
     const link = el("a", day === chosen ? "day current" : "day", label(day));
     if (day === chosen) link.setAttribute("aria-current", "page");
