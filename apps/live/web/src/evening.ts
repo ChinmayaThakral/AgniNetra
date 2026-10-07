@@ -53,15 +53,34 @@ export function istTime(utc: string | null): string | null {
   return new Date(when.getTime() + 5.5 * 3_600_000).toISOString().slice(11, 16);
 }
 
+function todayIst(): string {
+  return new Date(Date.now() + 5.5 * 3_600_000).toISOString().slice(0, 10);
+}
+
+// How the chosen evening is named in a sentence: "today", "yesterday", or its date, so the
+// text always matches the day picked in the switcher.
+export function dayWords(evening: string, today = todayIst()): { when: string; whose: string; title: string } {
+  const yesterday = new Date(Date.parse(`${today}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
+  if (evening === today) return { when: "today", whose: "today's", title: "today's" };
+  if (evening === yesterday) return { when: "yesterday", whose: "yesterday's", title: "yesterday's" };
+  const date = new Date(`${evening}T00:00:00Z`).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  return { when: `on ${date}`, whose: `${date}'s`, title: `${date}'s` };
+}
+
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 // What Netu says at the top: the evening in three short lines anyone can read.
 export function eveningLines(feed: Feed): string[] {
   const { match } = feed;
   const split = splitOf(match);
-  if (!split) return ["A quiet sky so far today. No fire cells seen yet."];
+  const day = dayWords(feed.evening_ist);
+  if (!split) return [day.when === "today" ? "A quiet sky so far today. No fire cells seen yet." : `A quiet sky ${day.when}. No fire cells were seen.`];
   const lines = [
     split.total === null
-      ? `Polar satellites saw ${percent(match.polar_share)} of today's fire cells and INSAT-3DS saw ${percent(match.insat_share)}.`
-      : `${plural(split.total, "fire cell")} seen over India today. Polar satellites saw ${percent(match.polar_share)} of them, INSAT-3DS ${percent(match.insat_share)}.`,
+      ? `Polar satellites saw ${percent(match.polar_share)} of ${day.whose} fire cells and INSAT-3DS saw ${percent(match.insat_share)}.`
+      : `${plural(split.total, "fire cell")} seen over India ${day.when}. Polar satellites saw ${percent(match.polar_share)} of them, INSAT-3DS ${percent(match.insat_share)}.`,
   ];
   const polarLast = match.polar_last_seen_ist;
   const insatLast = match.insat_last_seen_ist;
@@ -85,11 +104,12 @@ function halfHourLine(over: Feed["match"]["overs"][number], newest: string | nul
 export function eveningCard(feed: Feed): HTMLElement {
   const { match } = feed;
   const card = el("section", "card evening");
-  card.append(el("h2", "", "Who saw today's fires"));
+  const day = dayWords(feed.evening_ist);
+  card.append(el("h2", "", `Who saw ${day.title} fires`));
   card.append(el("p", "muted small", `${feed.evening_ist}, fires seen ${match.window_ist} IST, counted per 11 km cell.`));
   const split = splitOf(match);
   if (!split) {
-    card.append(el("p", "big", "No fire cells seen yet today."));
+    card.append(el("p", "big", day.when === "today" ? "No fire cells seen yet today." : `No fire cells were seen ${day.when}.`));
     return card;
   }
   if (split.total !== null) card.append(el("p", "big", plural(split.total, "fire cell")));
@@ -119,7 +139,7 @@ export function eveningCard(feed: Feed): HTMLElement {
     el(
       "p",
       "explain",
-      `Polar satellites see small fires, but only when they pass overhead${polarLast ? `; today the last pass was at ${polarLast}` : ""}. INSAT-3DS sees only larger fires, but it looks every 30 minutes, day and night. The INSAT-3DS only part is fire the polar passes missed.`,
+      `Polar satellites see small fires, but only when they pass overhead${polarLast ? `; ${day.when} the last pass was at ${polarLast}` : ""}. INSAT-3DS sees only larger fires, but it looks every 30 minutes, day and night. The INSAT-3DS only part is fire the polar passes missed.`,
     ),
   );
 
@@ -134,7 +154,7 @@ export function eveningCard(feed: Feed): HTMLElement {
     row.append(el("span", "half-time", over.over), meter, el("span", "half-text", halfHourLine(over, newest)));
     timeline.append(row);
   }
-  card.append(el("h3", "", "The evening, half hour by half hour"), el("p", "muted small", "The bar is the share of today's fire cells INSAT-3DS had seen by then."), timeline);
+  card.append(el("h3", "", "The evening, half hour by half hour"), el("p", "muted small", `The bar is the share of ${day.whose} fire cells INSAT-3DS had seen by then.`), timeline);
   card.append(howSure("low", "Share of 11 km fire cells seen. Weak labels. Not an official count."));
   return card;
 }
@@ -179,7 +199,7 @@ export function satellitesCard(feed: Feed): HTMLElement {
       el("p", "small muted", s.who),
       el("p", "small", s.sees),
       el("p", "small", s.looks),
-      el("p", "stat", `Today: saw ${percent(s.share)} of fire cells${s.last ? `, last at ${s.last}` : ""}`),
+      el("p", "stat", `${capitalise(dayWords(feed.evening_ist).when)}: saw ${percent(s.share)} of fire cells${s.last ? `, last at ${s.last}` : ""}`),
     );
     grid.append(card);
   }

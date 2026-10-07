@@ -230,3 +230,15 @@ a.button { display: inline-block; text-decoration: none; }
 .error-details summary { cursor: pointer; }
 @keyframes netu-worry { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg) translateY(2px); } }
 @media (prefers-reduced-motion: reduce) { .error-screen svg { animation: none; } }
+
+.tab-stack { display: grid; gap: 14px; }
+.qualify-card { border-color: var(--ember); }
+.netu-box { position: relative; flex-shrink: 0; }
+.netu-button { background: none; border: 0; padding: 0; cursor: pointer; border-radius: 16px; line-height: 0; }
+.netu-button:focus-visible { outline: 2px solid var(--ember); outline-offset: 4px; }
+.netu-button svg { transition: transform 200ms; }
+.netu-button:hover svg, .netu-button[aria-expanded="true"] svg { transform: translateY(-3px) rotate(-4deg); }
+.netu-pop { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: min(380px, calc(100vw - 32px)); filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.45)); }
+.netu-pop::before { content: ""; position: absolute; top: -8px; left: 0; right: 0; height: 8px; }
+.netu-pop .card { margin: 0; }
+[hidden] { display: none !important; }

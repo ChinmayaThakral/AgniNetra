@@ -131,6 +131,13 @@ export function tabs(panels: [string, HTMLElement][], key: string): HTMLElement 
     bar.append(button);
   }
   box.append(bar, ...panels.map(([, panel]) => panel));
+  window.addEventListener("agninetra-tab", (event) => {
+    const name = event instanceof CustomEvent && typeof event.detail === "string" ? event.detail : "";
+    if (!panels.some(([title]) => title === name)) return;
+    remember(key, name);
+    show(name);
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
   show(panels.some(([title]) => title === saved) ? saved : (panels[0]?.[0] ?? ""));
   return box;
 }

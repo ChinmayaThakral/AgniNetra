@@ -2,6 +2,7 @@ import { el, howSure, plural } from "./dom";
 import { CLASS_COLOURS, CLASS_LABELS, type Mark } from "./fire-map";
 import { around, CLOSEST_KM, INDIA, type Bounds } from "./projection";
 import type { Air, Cell, Feed } from "./schema";
+import { dayWords } from "./evening";
 import { CORRIDOR_KM, kmBetween, type Point, upwindSources } from "./upwind";
 
 // Your air: pick a city, or share a location, and the map closes in on it. The card then
@@ -147,7 +148,7 @@ export function placeCard(feed: Feed, initialCity: string, hooks: PlaceHooks): {
   const smokeAt = (at: Point, name: string): HTMLElement[] => {
     if (!feed.wind) {
       hooks.setPath(undefined);
-      return [el("p", "muted small", "Wind is carried only for today's evening, so the smoke trace is not available for this day.")];
+      return [el("p", "muted small", "Wind is kept only for the current evening, so the smoke trace is not available for this day.")];
     }
     const { path, sources } = upwindSources(at, feed.wind, feed.cells);
     hooks.setPath(path);
@@ -173,7 +174,7 @@ export function placeCard(feed: Feed, initialCity: string, hooks: PlaceHooks): {
       const box = el("div", "air-box");
       const category = forecast.cpcb_category;
       box.append(
-        el("span", "air-label", `Tomorrow in ${forecast.city}`),
+        el("span", "air-label", dayWords(feed.evening_ist).when === "today" ? `Tomorrow in ${forecast.city}` : `${forecast.city}, forecast for ${feed.tomorrow.forecast_date}`),
         el("span", "air-value", forecast.pm25_24h_mean === null ? "PM2.5 not measured" : `PM2.5 about ${Math.round(forecast.pm25_24h_mean)} µg/m³`),
         el("span", `air-category ${category ? (CATEGORY_CLASS[category] ?? "") : ""}`, category ? `CPCB: ${category}` : "Category not measured"),
       );
@@ -181,8 +182,9 @@ export function placeCard(feed: Feed, initialCity: string, hooks: PlaceHooks): {
       if (rank) box.append(el("span", "muted small", rank));
       parts.push(box, el("p", "muted small", `${feed.tomorrow.source}. For ${feed.tomorrow.forecast_date}.`));
     }
-    parts.push(el("h3", "", `Fires within ${CLOSEST_KM} km today`));
-    if (near.length === 0) parts.push(el("p", "small", "None seen today."));
+    const day = dayWords(feed.evening_ist);
+    parts.push(el("h3", "", `Fires within ${CLOSEST_KM} km ${day.when}`));
+    if (near.length === 0) parts.push(el("p", "small", `None seen ${day.when}.`));
     else {
       parts.push(el("p", "small", `${plural(near.length, "fire cell")}, ${evening} of them burning in the evening.`), classSummary(near));
     }

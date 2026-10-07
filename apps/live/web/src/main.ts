@@ -122,7 +122,34 @@ async function start(): Promise<void> {
     netu.replaceWith(next);
     netu = next;
   };
-  header.append(netu);
+  // Netu in the header is also the door to its pet card: hover on a desktop, tap on a
+  // phone, Escape or a tap elsewhere to close.
+  const netuButton = el("button", "netu-button");
+  netuButton.type = "button";
+  netuButton.setAttribute("aria-label", "Your Netu: level, points and what it wears");
+  netuButton.setAttribute("aria-expanded", "false");
+  netuButton.append(netu);
+  const pop = el("div", "netu-pop");
+  pop.hidden = true;
+  pop.append(petCard(() => moodOf(feed, city)));
+  const netuBox = el("div", "netu-box");
+  netuBox.append(netuButton, pop);
+  let closeTimer: number | undefined;
+  const openPop = (open: boolean): void => {
+    window.clearTimeout(closeTimer);
+    pop.hidden = !open;
+    netuButton.setAttribute("aria-expanded", String(open));
+  };
+  netuBox.addEventListener("mouseenter", () => openPop(true));
+  netuBox.addEventListener("mouseleave", () => (closeTimer = window.setTimeout(() => openPop(false), 250)));
+  netuButton.addEventListener("click", () => openPop(pop.hidden));
+  document.addEventListener("click", (event) => {
+    if (!pop.hidden && event.target instanceof Node && !netuBox.contains(event.target)) openPop(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") openPop(false);
+  });
+  header.append(netuBox);
   window.addEventListener("netu-xp", repaintNetu);
   const lines = el("div", "netu-lines");
   lines.append(el("p", "brand", "AgniNetra Live, the evening fire analysis"));
@@ -170,10 +197,13 @@ async function start(): Promise<void> {
   );
   const mapColumn = el("div", "column map-column");
   mapColumn.append(map.card);
+  // Heatle and its qualifying rounds sit together: the daily puzzle and practice teach the
+  // eye, the qualifying rounds below it are what unlock Swipe.
+  const heatleTab = el("div", "tab-stack");
+  heatleTab.append(heatleCard(feed, practice, (centre) => pointAt(centre, "Heatle site")), swipeCard(pointAt, "qualify"));
   const games: [string, HTMLElement][] = [
-    ["Heatle", heatleCard(feed, practice, (centre) => pointAt(centre, "Heatle site"))],
+    ["Heatle", heatleTab],
     ["Swipe", swipeCard(pointAt)],
-    ["Netu", petCard(() => moodOf(feed, city))],
   ];
   const playColumn = el("div", "column");
   playColumn.append(tabs(games, "tab"), footer);

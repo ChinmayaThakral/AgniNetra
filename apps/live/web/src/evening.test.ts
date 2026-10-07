@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { istTime, splitOf, wholePercents } from "./evening";
+import { dayWords, istTime, splitOf, wholePercents } from "./evening";
 
 const base = { window_ist: "10:00 to 20:00", polar_last_seen_ist: "13:54", insat_last_seen_ist: "18:30", overs: [] };
 
@@ -35,5 +35,13 @@ describe("wholePercents", () => {
   it("always adds to 100", () => {
     expect(wholePercents([0.7584, 0.026, 0.2156])).toEqual([76, 3, 21]);
     expect(wholePercents([1 / 3, 1 / 3, 1 / 3]).reduce((a, b) => a + b, 0)).toBe(100);
+  });
+});
+
+describe("dayWords", () => {
+  it("names the chosen evening relative to today", () => {
+    expect(dayWords("2026-10-07", "2026-10-07").when).toBe("today");
+    expect(dayWords("2026-10-06", "2026-10-07").title).toBe("yesterday's");
+    expect(dayWords("2026-10-05", "2026-10-07").when).toBe("on Mon, 5 Oct");
   });
 });

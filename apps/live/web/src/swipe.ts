@@ -101,16 +101,38 @@ export function spotFacts(d: SpotDetails, onPlace: (at: Point, label: string) =>
   return box;
 }
 
-export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElement {
-  const card = el("section", "card swipe");
-  let settings: Config | null = null;
+// Switches the games panel to another tab, for the links between Heatle and Swipe.
+export function goToTab(name: string): void {
+  window.dispatchEvent(new CustomEvent("agninetra-tab", { detail: name }));
+}
 
-  const intro = (): HTMLElement[] => [
-    el("h2", "", "Swipe: label the unknown hot spots"),
-    el("p", "muted small", "These places burn again and again, yet no map we use explains them. Your eye can help name them."),
-  ];
+// The same community flow drives two places: under Heatle, where players sign in and
+// qualify, and in Swipe, where qualified players label. Each refreshes when the other
+// changes something.
+export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "label" | "qualify" = "label"): HTMLElement {
+  const card = el("section", mode === "label" ? "card swipe" : "card swipe qualify-card");
+  let settings: Config | null = null;
+  const qualifyHere = mode === "qualify";
+
+  const intro = (): HTMLElement[] =>
+    qualifyHere
+      ? [el("h2", "", "Unlock Swipe"), el("p", "muted small", "Swipe asks you to name hot spots no map explains. Prove your eye here first, on sites a registry confirms.")]
+      : [
+          el("h2", "", "Swipe: label the unknown hot spots"),
+          el("p", "muted small", "These places burn again and again, yet no map we use explains them. Your eye can help name them."),
+        ];
+
+  const toHeatle = (text: string, primary = true): HTMLButtonElement => {
+    const button = el("button", primary ? "button primary" : "button", text);
+    button.addEventListener("click", () => goToTab("Heatle"));
+    return button;
+  };
 
   const closed = (): void => {
+    if (qualifyHere) {
+      card.hidden = true;
+      return;
+    }
     card.replaceChildren(...intro(), el("p", "small", "Community labelling is not switched on for this server yet. Practise in Heatle meanwhile: it is the same skill."));
   };
 
@@ -123,7 +145,10 @@ export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElem
       el("li", "", `Qualify: solve ${cfg.qualify_needed} Heatle rounds on registry checked sites, each within ${cfg.max_clues} clues.`),
       el("li", "", "Swipe through the unknown spots: right for industry, left for not industry, up if you cannot tell."),
     );
-    card.replaceChildren(...intro(), steps, go, el("p", "muted small", "Only your email address and your answers are kept. You can delete them at any time under Your data."));
+    const actions = el("div", "choices");
+    actions.append(go);
+    if (!qualifyHere) actions.append(toHeatle("Practise in Heatle", false));
+    card.replaceChildren(...intro(), steps, actions, el("p", "muted small", "Only your email address and your answers are kept. You can delete them at any time under Your data."));
   };
 
   const progress = (p: Profile, cfg: Config): HTMLElement => {
@@ -136,6 +161,15 @@ export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElem
   };
 
   const qualifying = (p: Profile, cfg: Config): void => {
+    if (!qualifyHere) {
+      card.replaceChildren(
+        ...intro(),
+        progress(p, cfg),
+        el("p", "small", `Swipe opens once you have solved ${cfg.qualify_needed} qualifying rounds in Heatle, each within ${cfg.max_clues} clues.`),
+        toHeatle("Continue in Heatle"),
+      );
+      return;
+    }
     const play = el("button", "button primary", "Play a qualifying round");
     play.addEventListener("click", () => void round(cfg));
     card.replaceChildren(
@@ -190,8 +224,9 @@ export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElem
               feedback.textContent = `${reply.right ? (reply.counted ? "Right, and it counts." : "Right, but past the clue limit, so it does not count.") : "Not this time."} It is a ${reply.answer}. ${ABOUT[reply.answer] ?? ""}`;
               if (reply.right) award(reply.counted ? "heatleSolved" : "heatlePlayed");
               window.dispatchEvent(new Event("agninetra-data"));
-              const next = el("button", "button primary", reply.qualified ? "Start labelling" : "Next round");
-              next.addEventListener("click", () => void open());
+              window.dispatchEvent(new Event("agninetra-community"));
+              const next = el("button", "button primary", reply.qualified ? "Start labelling in Swipe" : "Next round");
+              next.addEventListener("click", () => (reply.qualified ? goToTab("Swipe") : void round(cfg)));
               after.replaceChildren(next, el("span", "small muted", `${reply.correct} of ${cfg.qualify_needed} counted.`));
               return;
             }
@@ -367,6 +402,12 @@ export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElem
     try {
       const profile = await me();
       if (!profile.qualified) return qualifying(profile, settings);
+      if (qualifyHere) {
+        const go = el("button", "button primary", "Label spots in Swipe");
+        go.addEventListener("click", () => goToTab("Swipe"));
+        card.replaceChildren(el("h2", "", "Swipe is unlocked"), el("p", "small", `You qualified with ${profile.correct} rounds solved. Thank you for lending your eye.`), go);
+        return;
+      }
       labelling(await nextSpot());
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) return signedOut(settings);
@@ -374,6 +415,10 @@ export function swipeCard(onPlace: (at: Point, label: string) => void): HTMLElem
     }
   };
 
+  // A finished qualifying round changes what the other card should show.
+  window.addEventListener("agninetra-community", () => {
+    if (card.querySelector(".clues") === null) void open();
+  });
   void open();
   return card;
 }
