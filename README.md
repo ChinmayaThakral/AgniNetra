@@ -67,7 +67,7 @@ evening, when most stubble is burned.
 - **The fire map**, with regions, daytime and evening filters and a Fire Clock that replays the day, all inside the map.
 - **Your air**: pick one of 22 cities, or share your location, and the map closes in on it with tomorrow's PM2.5 forecast, the fires around it and where its air came from.
 - **Heatle**, one verified mystery site a day with a lesson in every clue, and practice rounds.
-- **Swipe**, community labelling of the persistent hot spots no map explains. Players sign in with Google and qualify on 50 registry checked Heatle rounds first; each spot comes with its coordinates, dates seen, season and nearest mapped features.
+- **Swipe**, community labelling of the persistent hot spots no map explains. Players sign in with Google and qualify on 10 registry checked Heatle rounds first; each spot comes with its coordinates, dates seen, season and nearest mapped features.
 - **Netu as a pet** that levels up as you play, **Smog Wrapped** in December, light and dark themes, and optional sync across devices.
 
 Its rules are built in: farm fires only ever appear per district or 11 km cell, never per

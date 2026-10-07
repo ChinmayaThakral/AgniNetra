@@ -40,7 +40,7 @@ SWIPE_PATH = ROOT / "apps" / "live" / "web" / "public" / "game" / "swipe.json"
 TOKENINFO_URL = "https://oauth2.googleapis.com/tokeninfo"
 GOOGLE_ISSUERS = ("accounts.google.com", "https://accounts.google.com")
 
-QUALIFY_NEEDED = 50
+QUALIFY_NEEDED = 10
 MAX_CLUES = 4
 SESSION_S = 30 * 24 * 3600
 MAX_BODY = 64 * 1024
