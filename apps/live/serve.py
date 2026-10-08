@@ -147,7 +147,9 @@ def cache_control(url_path: str) -> str:
     # Vite names every built asset by its content hash, so a changed file is a new URL.
     if url_path.startswith("/assets/"):
         return "public, max-age=31536000, immutable"
-    return "no-cache"
+    # no-transform stops the CDN injecting its analytics beacon, which the content policy
+    # would block anyway, leaving an error in every visitor's console.
+    return "no-cache, no-transform"
 
 
 def content_type(path: Path) -> str:
@@ -291,7 +293,7 @@ class Handler(BaseHTTPRequestHandler):
     ) -> None:
         if not headers_open:
             self.send_response(HTTPStatus.OK)
-            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Cache-Control", "no-cache, no-transform")
         self.send_header("Content-Type", kind)
         self.send_header("Content-Length", str(len(payload)))
         self.end_headers()
