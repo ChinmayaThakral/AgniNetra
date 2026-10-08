@@ -21,15 +21,24 @@ reference layers:
 
 ## What it shows
 
-A MapLibre map of the sampled detections, coloured by predicted class. A timeline
-scrubber over the acquisition dates. A per detection evidence panel carrying the
-class posterior, the conformal prediction set, the applicability domain status,
-the recurrence history at that location and the nearest reference asset. A
-persistent source panel listing recurring locations with no registry match. CSV
-export of whatever the current filters select.
+One screen: a MapLibre map of the sampled detections, coloured by predicted class,
+with class and abstention filters and a timeline scrubber over the acquisition
+dates along the bottom, and a side column of tabs.
 
-Below the map, the model card: per class F1 by held out group, conformal coverage
-against the nominal level, B2, and an explicit list of what is not measured.
+- **Start here**: what the console is, how to read the map, the main findings read
+  from the exported files, and a glossary.
+- **Evidence**: the detection clicked on the map, with its class posterior, conformal
+  prediction set, applicability domain status, recurrence history and nearest
+  reference asset.
+- **Sources**: the recurring locations with no registry match; a row flies the map to it.
+- **Geostationary**: the two INSAT-3DS windows, their hourly profiles, states and
+  corroboration against the polar record.
+- **Model**: per class F1 by held out group, conformal coverage against the nominal
+  level, B2, provenance, and an explicit list of what is not measured.
+- **Credits** and **Export**, a CSV of whatever the current filters select.
+
+Any tab can be maximised over the workspace. The light or dark theme is kept in the
+address as `?theme=`, not in storage, so a shared link opens the same way.
 
 ## Rules this console follows
 

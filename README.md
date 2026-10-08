@@ -44,7 +44,7 @@ public app is free to grow on top of it.
 
 ## The research console
 
-<p align="center"><img src=".github/assets/console.jpg" alt="The AgniNetra research console: detections over India coloured by class, persistent sources circled, with the evidence panel on the right." width="100%"></p>
+<p align="center"><img src=".github/assets/console.jpg" alt="The AgniNetra research console: detections over India coloured by class, persistent sources circled, with the Start here guide in the side column." width="100%"></p>
 
 Every detection on the map carries its class probabilities, a conformal prediction set,
 whether it lies inside the model's applicability domain, and its recurrence history.
@@ -52,9 +52,16 @@ Persistent sources, places that burn again and again, are ringed, with their dis
 the nearest registered asset. The console runs no model: everything it shows is
 precomputed, so a number on screen and a number in the report have one source.
 
+The side column is a set of tabs: **Start here**, a plain language guide to the map, the
+findings and the words used; **Evidence** for the detection you click; **Sources**, the
+persistent sources with no registry match; **Geostationary**, what INSAT-3DS sees in the
+hours the polar satellites miss; **Model**, the scores, the calibrated uncertainty and
+everything not measured; **Credits**; and **Export** to CSV. Any tab can be maximised.
+Light and dark themes are kept in the address, so a shared link opens the same way.
+
 ## AgniNetra Live
 
-<p align="center"><img src=".github/assets/live.jpg" alt="AgniNetra Live on a desktop: which satellites saw the evening's fires, the fire map, and the Heatle game." width="100%"></p>
+<p align="center"><img src=".github/assets/live.jpg" alt="AgniNetra Live on a desktop: which satellites saw the evening's fires, the fire map, and Heatle with the Unlock Swipe card." width="100%"></p>
 
 <img src=".github/assets/netu.svg" alt="Netu" width="44" align="left">
 
@@ -63,12 +70,12 @@ but pass over at fixed times, the last one in the early afternoon; India's own
 geostationary INSAT-3DS sees only larger fires but looks every 30 minutes, through the
 evening, when most stubble is burned.
 
-- **Who saw today's fires**, refreshed every thirty minutes from 16:37 IST: one bar splitting the day's fire cells into seen by polar satellites only, by both, and by INSAT-3DS only, with the evening told half hour by half hour in plain words.
+- **Who saw the evening's fires**, refreshed every thirty minutes from 16:37 IST: one bar splitting the day's fire cells into seen by polar satellites only, by both, and by INSAT-3DS only, with the evening told half hour by half hour in plain words. A day switcher opens today and the three evenings before, and every card says which evening it is about.
 - **The fire map**, with regions, daytime and evening filters and a Fire Clock that replays the day, all inside the map.
 - **Your air**: pick one of 22 cities, or share your location, and the map closes in on it with tomorrow's PM2.5 forecast, the fires around it and where its air came from.
-- **Heatle**, one verified mystery site a day with a lesson in every clue, and practice rounds.
-- **Swipe**, community labelling of the persistent hot spots no map explains. Players sign in with Google and qualify on 50 registry checked Heatle rounds first; each spot comes with its coordinates, dates seen, season and nearest mapped features.
-- **Netu as a pet** that levels up as you play, **Smog Wrapped** in December, light and dark themes, and optional sync across devices.
+- **Heatle**, one verified mystery site a day with a lesson in every clue, and practice rounds. Below it, **Unlock Swipe** deals the qualifying rounds.
+- **Swipe**, community labelling of the persistent hot spots no map explains. Players sign in with Google and qualify on 10 registry checked Heatle rounds first; each spot comes with its coordinates, dates seen, season and nearest mapped features.
+- **Netu as a pet** that levels up as you play: hover over it in the header to see its level and outfit. **Smog Wrapped** in December, light and dark themes, and **Your data**: sync across devices with Google, or carry a backup file without an account.
 
 Its rules are built in: farm fires only ever appear per district or 11 km cell, never per
 field; points come from seeing fires, never from burning; industry is "likely industrial
@@ -140,8 +147,27 @@ AgniNetra Live, on the `agninetra` branch:
 
 The live feed needs a NASA FIRMS map key and a MOSDAC account in `.env`; copy
 `.env.example`. Without them, ingestion reports itself as blocked rather than inventing
-data. `requirements.lock.txt` freezes the exact environment the published results came
+data. Community labelling also needs `GOOGLE_CLIENT_ID`, a Google OAuth web client
+whose authorised redirect is the site's root, and `QUALIFY_SECRET`, at least 32 random
+characters; without them Live runs with labelling switched off. The server refuses to
+switch labelling on if the qualifying answers do not verify under the secret. `requirements.lock.txt` freezes the exact environment the published results came
 from.
+
+## Roadmap
+
+Every open item is an issue on the [project board](https://github.com/users/ChinmayaThakral/projects/1),
+and the [wiki roadmap](https://github.com/ChinmayaThakral/AgniNetra/wiki/Roadmap) lists them
+in order. The research items follow the future work of the project report:
+
+1. A geostationary fire detector that also works at night, the one measurement that could
+   separate flares from industry by time of day ([#31](https://github.com/ChinmayaThakral/AgniNetra/issues/31)).
+2. An independent validation of the INSAT-3DS detector ([#4](https://github.com/ChinmayaThakral/AgniNetra/issues/4)).
+3. Whole season geostationary windows ([#34](https://github.com/ChinmayaThakral/AgniNetra/issues/34)) and the 2020 baseline ([#2](https://github.com/ChinmayaThakral/AgniNetra/issues/2)).
+4. Scoring baselines B3 ([#1](https://github.com/ChinmayaThakral/AgniNetra/issues/1)) and B4 ([#32](https://github.com/ChinmayaThakral/AgniNetra/issues/32)).
+5. A small field verified set ([#33](https://github.com/ChinmayaThakral/AgniNetra/issues/33)).
+6. A model of where the reference maps are complete ([#3](https://github.com/ChinmayaThakral/AgniNetra/issues/3)).
+7. A preregistered test of the evening fire count for Delhi air quality forecasts ([#35](https://github.com/ChinmayaThakral/AgniNetra/issues/35)).
+8. Checked community labels as their own training layer ([#36](https://github.com/ChinmayaThakral/AgniNetra/issues/36)).
 
 ## Repository layout
 
