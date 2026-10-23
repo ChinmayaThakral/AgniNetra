@@ -73,7 +73,7 @@ osmium==4.3.1
 packaging==26.3
 pandas==3.0.5
 pathspec==1.1.1
-pillow==12.3.0
+pillow==13.0.0
 pluggy==1.6.0
 propcache==0.5.2
 protobuf==7.36.1
