@@ -172,6 +172,15 @@ function pickOther(pack: HeatlePack, current: Puzzle): Puzzle {
   return pool[Math.floor(Math.random() * pool.length)] ?? current;
 }
 
+export function recordDaily(day: string, solved: boolean, clue: number): z.infer<typeof HeatleRecord> {
+  const played = recall("heatle", (v) => HeatleRecord.parse(v), {});
+  if (played[day]) return played;
+  const updated = { ...played, [day]: { solved, clue: Math.max(clue, 1) } };
+  remember("heatle", updated);
+  award(solved ? "heatleSolved" : "heatlePlayed");
+  return updated;
+}
+
 export function heatleCard(feed: Feed, pack: HeatlePack | null, onPlace: (centre: [number, number]) => void): HTMLElement {
   const card = el("section", "card heatle");
   const today = feed.evening_ist;
@@ -233,10 +242,8 @@ export function heatleCard(feed: Feed, pack: HeatlePack | null, onPlace: (centre
     };
 
     const record = (solved: boolean): void => {
-      if (!daily || played[today]) return;
-      played = { ...played, [today]: { solved, clue: Math.max(shown, 1) } };
-      remember("heatle", played);
-      award(solved ? "heatleSolved" : "heatlePlayed");
+      if (!daily) return;
+      played = recordDaily(today, solved, shown);
     };
 
     for (const choice of puzzle.choices) {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { BackupData, collect } from "./backup";
+import { reconcile, sameValue } from "./progress-sync";
 import { recall, remember } from "./store";
 
 // Talking to the Live server's community API: Google sign in, the session, and keeping a
@@ -35,20 +36,60 @@ function token(): string | null {
   return recall<string | null>("session", (v) => z.string().parse(v), null);
 }
 
+type AuthContext = { session: string | null; generation: number };
+type SyncRun = { auth: AuthContext; queued: boolean; promise: Promise<boolean> };
+
+let generation = 0;
+let suspended: AuthContext | null = null;
+let syncing: SyncRun | null = null;
+
+function authContext(): AuthContext {
+  return { session: token(), generation };
+}
+
+function ownsSession(auth: AuthContext): boolean {
+  return auth.generation === generation && auth.session === token();
+}
+
+function activeSession(auth: AuthContext): boolean {
+  return auth.session !== null && ownsSession(auth) && !(suspended && ownsSession(suspended));
+}
+
+function invalidateWork(): void {
+  generation += 1;
+  suspended = null;
+  syncing = null;
+}
+
+function clearSession(auth: AuthContext): void {
+  if (!ownsSession(auth)) return;
+  invalidateWork();
+  remember("session", null);
+}
+
+export function sessionGuard(): () => boolean {
+  const auth = authContext();
+  const active = activeSession(auth);
+  return () => active && activeSession(auth);
+}
+
 export function signedIn(): boolean {
   return token() !== null;
 }
 
-export async function api<T>(method: string, path: string, parse: (v: unknown) => T, body?: unknown): Promise<T> {
+export function api<T>(method: string, path: string, parse: (v: unknown) => T, body?: unknown): Promise<T> {
+  return request(authContext(), method, path, parse, body);
+}
+
+async function request<T>(auth: AuthContext, method: string, path: string, parse: (v: unknown) => T, body?: unknown): Promise<T> {
   const headers: Record<string, string> = {};
-  const session = token();
-  if (session) headers.Authorization = `Bearer ${session}`;
+  if (auth.session) headers.Authorization = `Bearer ${auth.session}`;
   if (body !== undefined) headers["Content-Type"] = "application/json";
   const response = await fetch(path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   const value: unknown = await response.json().catch(() => ({}));
   if (!response.ok) {
     const message = z.object({ error: z.string() }).safeParse(value);
-    if (response.status === 401) remember("session", null);
+    if (response.status === 401) clearSession(auth);
     throw new ApiError(response.status, message.success ? message.data.error : `The server answered ${response.status}.`);
   }
   return parse(value);
@@ -92,33 +133,67 @@ export async function finishSignIn(): Promise<Profile | null> {
   const nonce = recall<string | null>("nonce", (v) => z.string().parse(v), null);
   remember("nonce", null);
   if (!nonce) return null;
-  const reply = await api("POST", "api/session", (v) => Profile.extend({ token: z.string() }).parse(v), {
+  const auth = authContext();
+  const reply = await request(auth, "POST", "api/session", (v) => Profile.extend({ token: z.string() }).parse(v), {
     id_token: idToken,
     nonce,
   });
+  if (!ownsSession(auth)) return null;
+  invalidateWork();
   remember("session", reply.token);
+  const installed = authContext();
   await syncData();
-  return reply;
+  return activeSession(installed) ? reply : null;
 }
 
 export async function signOut(): Promise<void> {
-  await api("DELETE", "api/session", () => null).catch(() => null);
-  remember("session", null);
+  const auth = authContext();
+  clearSession(auth);
+  await request(auth, "DELETE", "api/session", () => null).catch(() => null);
 }
 
 export async function deleteAccount(): Promise<void> {
-  await api("DELETE", "api/me", () => null);
-  remember("session", null);
+  invalidateWork();
+  const auth = authContext();
+  suspended = auth;
+  try {
+    await request(auth, "DELETE", "api/me", () => null);
+    clearSession(auth);
+  } finally {
+    if (suspended === auth) suspended = null;
+  }
 }
 
-// The server merges this browser's game data with what it holds, by the same rule as a
-// backup import, and both sides end up with the union.
-export async function syncData(): Promise<void> {
-  if (!signedIn()) return;
-  const reply = await api("PUT", "api/me/data", (v) => z.object({ data: BackupData }).parse(v), { data: collect() });
-  for (const [key, value] of Object.entries(reply.data)) {
-    if (value !== undefined) remember(key, value);
+async function runSync(run: SyncRun): Promise<boolean> {
+  while (activeSession(run.auth)) {
+    run.queued = false;
+    const sent = collect();
+    const reply = await request(run.auth, "PUT", "api/me/data", (v) => z.object({ data: BackupData }).parse(v), { data: sent });
+    if (!activeSession(run.auth)) return false;
+    const current = collect();
+    const changed = !sameValue(sent, current);
+    const merged = reconcile(sent, current, reply.data);
+    for (const key of ["pet", "heatle", "swipe", "visits", "city", "theme"] as const) {
+      if (merged[key] !== undefined && !sameValue(current[key], merged[key])) remember(key, merged[key]);
+    }
+    if (!changed && !run.queued) return true;
   }
+  return false;
+}
+
+export function syncData(): Promise<boolean> {
+  const auth = authContext();
+  if (!activeSession(auth)) return Promise.resolve(false);
+  if (syncing && ownsSession(syncing.auth)) {
+    syncing.queued = true;
+    return syncing.promise;
+  }
+  const run: SyncRun = { auth, queued: false, promise: Promise.resolve(false) };
+  syncing = run;
+  run.promise = Promise.resolve().then(() => runSync(run)).finally(() => {
+    if (syncing === run) syncing = null;
+  });
+  return run.promise;
 }
 
 export async function me(): Promise<Profile> {

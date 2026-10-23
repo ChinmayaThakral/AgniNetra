@@ -24,8 +24,8 @@ export function syncButton(): HTMLElement {
 
   const sync = (): Promise<void> =>
     syncData()
-      .then(() => {
-        lastSync = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      .then((didSync) => {
+        if (didSync) lastSync = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
       })
       .catch(() => undefined)
       .finally(paint);
