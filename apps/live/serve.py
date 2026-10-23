@@ -324,10 +324,16 @@ def build_once(day: str | None = None) -> None:
                 [sys.executable, "-m", *step], cwd=ROOT, timeout=BUILD_TIMEOUT_S, check=False
             )
         except subprocess.TimeoutExpired:
-            log(f"{step[0]} stopped after {BUILD_TIMEOUT_S} s; the last good feed stays up")
+            log(
+                f"{step[0]} stopped after {BUILD_TIMEOUT_S} s; "
+                "complete published files remain available"
+            )
             return
         if done.returncode != 0:
-            log(f"{step[0]} failed with exit code {done.returncode}; the last good feed stays up")
+            log(
+                f"{step[0]} failed with exit code {done.returncode}; "
+                "complete published files remain available"
+            )
             return
     log(f"feed build finished in {time.monotonic() - started:.0f} s")
 

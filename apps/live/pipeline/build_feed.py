@@ -36,9 +36,8 @@ from .feed import (
     netu_lines,
     pm25_category,
     restrict_to_india,
-    season_stats,
-    validate,
 )
+from .publish import publish_feed
 from .sources import Districts, firms_fires, insat_fires, pm25_tomorrow, wind_grid
 
 PIPELINE = ROOT / "apps" / "live" / "pipeline"
@@ -192,22 +191,7 @@ def main() -> int:
         + ([pack["imagery_credit"]] if "imagery_credit" in pack else []),
         "caveats": list(CAVEATS),
     }
-    validate(feed)
-
-    out_dir = args.out
-    out_dir.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(feed, separators=(",", ":"), allow_nan=False)
-    (out_dir / f"{day}.json").write_text(text)
-    if not args.keep_latest:
-        (out_dir / "latest.json").write_text(text)
-    # Smog Wrapped's season file is rebuilt from every evening on disk, so it is never
-    # ahead of the feeds it summarises.
-    evenings = [json.loads(p.read_text()) for p in sorted(out_dir.glob("20??-??-??.json"))]
-    # Which evenings exist, so the app's day switcher never asks for one that does not.
-    (out_dir / "days.json").write_text(json.dumps([e["evening_ist"] for e in evenings]))
-    (out_dir / "season.json").write_text(
-        json.dumps(season_stats(evenings), separators=(",", ":"), allow_nan=False)
-    )
+    publish_feed(feed, args.out, keep_latest=args.keep_latest)
     print(
         f"{day}: {len(polar)} polar and {len(insat)} INSAT detections, {len(fires)} in India, "
         f"{len(cells)} cells, "
