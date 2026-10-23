@@ -18,7 +18,7 @@ export interface MapView {
 const TIMES: [TimeFilter, string, string][] = [
   ["all", "All day", "Every fire cell seen from 10:00 to 20:00 IST"],
   ["day", "Daytime", "Cells seen burning only before 16:00 IST, while the polar satellites still pass"],
-  ["evening", "Evening", "Cells seen burning from 16:00 IST, after the last polar pass"],
+  ["evening", "Evening", "Cells with fire detections from 16:00 IST"],
 ];
 
 const PLAY_ICON =

@@ -279,12 +279,16 @@ def build_districts(cells: list[dict]) -> list[dict]:
 # Every sentence Netu says. Placeholders are filled from the feed and nothing else.
 TEMPLATES = {
     "polar_all_out": (
-        "The last polar satellite pass was at {polar_last}. Since then only INSAT-3DS is watching."
+        "The last polar fire detection in this feed was at {polar_last}. "
+        "INSAT-3DS detected fires later."
     ),
-    "both_quiet": "Last polar pass at {polar_last}. INSAT-3DS last saw a fire at {insat_last}.",
+    "both_quiet": (
+        "Last polar fire detection in this feed at {polar_last}. "
+        "INSAT-3DS last fire detection: {insat_last}."
+    ),
     "insat_share": "INSAT-3DS has seen {insat_pct} percent of today's fire cells so far.",
-    "polar_share": "Polar satellites saw {polar_pct} percent, nearly all on their afternoon pass.",
-    "quiet": "Quiet sky today. No fire cells seen yet.",
+    "polar_share": "Polar satellites saw {polar_pct} percent of today's fire cells in this feed.",
+    "quiet": "No fire cells detected in this feed.",
     "worried": "Delhi's air looks heavy tomorrow. Netu is worried, not excited.",
     "data_late": "INSAT data here is from {insat_age}. Live layer: NASA FIRMS.",
 }
@@ -293,10 +297,15 @@ TEMPLATES = {
 # The evening, half hour by half hour, in plain words. Templates only, like Netu, and about
 # the satellites and what they saw, never about who lit a fire.
 COMMENTARY = {
-    "maiden": "{over}: no new fires seen by INSAT-3DS. It has seen {insat_pct} percent so far.",
-    "insat_up": "{over}: INSAT-3DS saw new fires. It has now seen {insat_pct} percent.",
-    "polar_in_pavilion": "{over}: no polar satellite has passed over since {polar_last}.",
-    "polar_late": "{over}: a polar satellite passed over. Polar has now seen {polar_pct} percent.",
+    "maiden": "{over}: no new fires detected by INSAT-3DS. It has seen {insat_pct} percent so far.",
+    "insat_up": (
+        "{over}: INSAT-3DS detected fires this half hour. It has now seen {insat_pct} percent."
+    ),
+    "polar_in_pavilion": "{over}: last polar fire detection in this feed at {polar_last}.",
+    "polar_late": (
+        "{over}: polar satellites detected fires this half hour. "
+        "Polar has now seen {polar_pct} percent."
+    ),
     "not_yet": "{over}: INSAT-3DS data for this half hour has not arrived; it runs an hour behind.",
 }
 
@@ -315,7 +324,7 @@ def commentary(match: dict, insat_newest_ist: str | None) -> list[dict]:
             key, values = "polar_late", {"polar_pct": ppct}
         elif over["insat_new"]:
             key, values = "insat_up", {"insat_pct": pct}
-        elif polar_last and not said_pavilion:
+        elif polar_last and polar_last <= over["over"] and not said_pavilion:
             key, values = "polar_in_pavilion", {"polar_last": polar_last}
             said_pavilion = True
         else:
@@ -343,7 +352,6 @@ def netu_lines(match: dict, insat_delay_hours: float | None, heavy: bool) -> lis
         say("worried")
     polar_last, insat_last = match["polar_last_seen_ist"], match["insat_last_seen_ist"]
     if polar_last:
-        # "Only INSAT-3DS is watching" is said only when it saw something after the polar pass.
         if insat_last and insat_last > polar_last:
             say("polar_all_out", polar_last=polar_last)
         else:

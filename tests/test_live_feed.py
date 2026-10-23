@@ -5,6 +5,7 @@ never free text, and no weak label stated as high confidence.
 """
 
 import importlib.util
+import json
 import sys
 from datetime import UTC, datetime
 
@@ -173,15 +174,38 @@ def test_fires_outside_india_are_dropped_before_scoring() -> None:
     assert feed.build_match(kept)["insat_share"] == 1.0
 
 
-def test_netu_says_only_insat_watches_when_it_saw_something_later() -> None:
+def test_netu_reports_detection_order_without_inferring_passes_or_exclusive_coverage() -> None:
     late = feed.build_match(
         [fire(75.55, 30.55, 8, 0, "polar"), fire(75.95, 30.95, 11, 30, "insat")]
     )
     early = feed.build_match(
         [fire(75.55, 30.55, 10, 30, "polar"), fire(75.95, 30.95, 10, 0, "insat")]
     )
-    assert "only INSAT-3DS is watching" in feed.netu_lines(late, None, False)[0]["text"]
-    assert all("only INSAT-3DS" not in line["text"] for line in feed.netu_lines(early, None, False))
+    for match, template in ((late, "polar_all_out"), (early, "both_quiet")):
+        lines = feed.netu_lines(match, None, False)
+        assert lines[0]["template"] == template
+        assert "polar fire detection in this feed" in lines[0]["text"]
+        assert f"at {match['polar_last_seen_ist']}" in lines[0]["text"]
+        text = json.dumps({"netu": lines, "commentary": feed.commentary(match, "19:30")})
+        assert "pass" not in text.lower()
+        assert "watching" not in text.lower()
+        assert "afternoon" not in text.lower()
+        assert "missed" not in text.lower()
+    assert "INSAT-3DS detected fires later" in feed.netu_lines(late, None, False)[0]["text"]
+
+
+def test_netu_with_no_polar_detections_does_not_invent_a_last_time() -> None:
+    match = feed.build_match([fire(75.95, 30.95, 11, 30, "insat")])
+    lines = feed.netu_lines(match, None, False)
+    assert [line["template"] for line in lines] == ["insat_share", "polar_share"]
+    assert match["polar_last_seen_ist"] is None
+    assert all("last" not in line["text"].lower() for line in lines)
+    assert "afternoon" not in json.dumps(lines).lower()
+
+
+def test_netu_with_no_detections_does_not_claim_a_quiet_sky() -> None:
+    lines = feed.netu_lines(feed.build_match([]), None, False)
+    assert lines == [{"template": "quiet", "text": "No fire cells detected in this feed."}]
 
 
 def test_each_cell_carries_the_half_hour_it_was_first_seen(reference) -> None:
@@ -210,6 +234,65 @@ def test_commentary_follows_each_over_and_never_runs_ahead_of_the_data() -> None
     assert later["17:30"]["template"] == "maiden"
     assert [line["template"] for line in later.values()].count("polar_in_pavilion") == 1
     assert all(line["template"] in feed.COMMENTARY for line in lines.values())
+
+
+@pytest.mark.parametrize("earlier", [False, True])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_commentary_never_quotes_a_1940_detection_in_an_earlier_over(earlier, reverse) -> None:
+    fires = [fire(75.95, 30.95, 14, 10, "polar")]  # 19:40 IST
+    if earlier:
+        fires.append(fire(75.55, 30.55, 8, 0, "polar"))  # 13:30 IST
+    if reverse:
+        fires.reverse()
+    match = feed.build_match(fires)
+    lines = feed.commentary(match, insat_newest_ist="19:30")
+    assert match["polar_last_seen_ist"] == "19:40"
+    assert match["overs"][-1]["over"] == "19:30"
+    assert match["overs"][-1]["polar_new"] is True
+    assert lines[-1]["template"] == "polar_late"
+    assert "polar satellites detected fires this half hour" in lines[-1]["text"]
+    assert all("19:40" not in line["text"] for line in lines)
+    assert all(line["template"] != "polar_in_pavilion" for line in lines)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_commentary_waits_for_the_latest_detection_then_quotes_it_only_once(reverse) -> None:
+    fires = [
+        fire(75.55, 30.55, 8, 0, "polar"),  # 13:30 IST
+        fire(75.95, 30.95, 13, 30, "polar"),  # 19:00 IST
+    ]
+    if reverse:
+        fires.reverse()
+    match = feed.build_match(fires)
+    lines = feed.commentary(match, insat_newest_ist="19:30")
+    quoted = [line for line in lines if line["template"] == "polar_in_pavilion"]
+    assert len(quoted) == 1
+    assert quoted[0]["over"] == "19:30"
+    assert "19:00" in quoted[0]["text"]
+    assert all("19:00" not in line["text"] for line in lines if line["over"] < "19:00")
+
+
+def test_commentary_without_polar_detections_has_no_last_detection_line() -> None:
+    match = feed.build_match([fire(75.95, 30.95, 11, 0, "insat")])
+    lines = feed.commentary(match, insat_newest_ist="19:30")
+    assert all(line["template"] in {"maiden", "insat_up"} for line in lines)
+    assert "afternoon" not in json.dumps(lines).lower()
+    assert "polar fire detection" not in json.dumps(lines).lower()
+
+
+@pytest.mark.parametrize("newest", [None, "15:30", "16:00", "16:30"])
+def test_missing_or_delayed_insat_takes_precedence_over_detection_commentary(newest) -> None:
+    match = feed.build_match(
+        [fire(75.55, 30.55, 10, 30, "polar"), fire(75.95, 30.95, 11, 0, "insat")]
+    )
+    lines = feed.commentary(match, insat_newest_ist=newest)
+    for line in lines:
+        if newest is None or line["over"] > newest:
+            assert line["template"] == "not_yet"
+    if newest is not None and newest >= "16:00":
+        assert lines[0]["template"] == "polar_late"
+    if newest == "16:30":
+        assert lines[1]["template"] == "insat_up"
 
 
 def test_validate_refuses_commentary_outside_the_templates(reference) -> None:

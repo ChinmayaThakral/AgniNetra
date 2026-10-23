@@ -76,7 +76,7 @@ export function eveningLines(feed: Feed): string[] {
   const { match } = feed;
   const split = splitOf(match);
   const day = dayWords(feed.evening_ist);
-  if (!split) return [day.when === "today" ? "A quiet sky so far today. No fire cells seen yet." : `A quiet sky ${day.when}. No fire cells were seen.`];
+  if (!split) return [day.when === "today" ? "No fire cells detected in this feed so far today." : `No fire cells detected in this feed ${day.when}.`];
   const lines = [
     split.total === null
       ? `Polar satellites saw ${percent(match.polar_share)} of ${day.whose} fire cells and INSAT-3DS saw ${percent(match.insat_share)}.`
@@ -85,20 +85,20 @@ export function eveningLines(feed: Feed): string[] {
   const polarLast = match.polar_last_seen_ist;
   const insatLast = match.insat_last_seen_ist;
   if (polarLast && insatLast && insatLast > polarLast) {
-    lines.push(`The last polar pass was at ${polarLast}. After that only INSAT-3DS was watching; it last saw a fire at ${insatLast}.`);
+    lines.push(`The last polar fire detection in this feed was at ${polarLast}. INSAT-3DS detected fires later, most recently at ${insatLast}.`);
   } else if (polarLast) {
-    lines.push(`The last polar pass was at ${polarLast}.`);
+    lines.push(`The last polar fire detection in this feed was at ${polarLast}.`);
   }
   const delay = feed.latency.insat_delay_hours;
   if (delay !== null && delay >= 24) lines.push(`INSAT-3DS data here is ${plural(Math.round(delay / 24), "day")} old.`);
   return lines;
 }
 
-function halfHourLine(over: Feed["match"]["overs"][number], newest: string | null): string {
+export function halfHourLine(over: Feed["match"]["overs"][number], newest: string | null): string {
   if (newest === null || over.over > newest) return "INSAT-3DS data for this half hour has not arrived yet; it runs about an hour behind.";
-  if (over.polar_new) return `A polar satellite passed over. Polar satellites have now seen ${percent(over.polar_share)}.`;
-  if (over.insat_new) return `INSAT-3DS saw new fires. It has now seen ${percent(over.insat_share)}.`;
-  return "No new fires seen.";
+  if (over.polar_new) return `Polar satellites detected fires this half hour. They have now seen ${percent(over.polar_share)}.`;
+  if (over.insat_new) return `INSAT-3DS detected fires this half hour. It has now seen ${percent(over.insat_share)}.`;
+  return "No new fires detected in this feed this half hour.";
 }
 
 export function eveningCard(feed: Feed): HTMLElement {
@@ -109,7 +109,7 @@ export function eveningCard(feed: Feed): HTMLElement {
   card.append(el("p", "muted small", `${feed.evening_ist}, fires seen ${match.window_ist} IST, counted per 11 km cell.`));
   const split = splitOf(match);
   if (!split) {
-    card.append(el("p", "big", day.when === "today" ? "No fire cells seen yet today." : `No fire cells were seen ${day.when}.`));
+    card.append(el("p", "big", day.when === "today" ? "No fire cells detected in this feed yet today." : `No fire cells detected in this feed ${day.when}.`));
     return card;
   }
   if (split.total !== null) card.append(el("p", "big", plural(split.total, "fire cell")));
@@ -139,7 +139,7 @@ export function eveningCard(feed: Feed): HTMLElement {
     el(
       "p",
       "explain",
-      `Polar satellites see small fires, but only when they pass overhead${polarLast ? `; ${day.when} the last pass was at ${polarLast}` : ""}. INSAT-3DS sees only larger fires, but it looks every 30 minutes, day and night. The INSAT-3DS only part is fire the polar passes missed.`,
+      `Polar satellites see small fires, but only when they pass overhead. INSAT-3DS sees only larger fires, but it looks every 30 minutes, day and night.${polarLast ? ` The last polar fire detection in this feed was at ${polarLast}.` : ""} The INSAT-3DS only part is cells observed by INSAT-3DS but not by polar satellites in this feed.`,
     ),
   );
 

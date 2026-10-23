@@ -59,11 +59,10 @@ FLAME = [
 
 CAPTIONS = {
     "match": (
-        "Evening fire analysis, {day}. Polar satellites saw {polar} of today's fire cells, "
-        "with their last pass at {polar_last}. INSAT-3DS saw {insat}. The polar passes end in "
-        "the afternoon; the smoke does not."
+        "Evening fire analysis, {day}. Polar satellites saw {polar} of today's fire cells. "
+        "INSAT-3DS saw {insat}. Last polar fire detection in this feed: {polar_last}."
     ),
-    "quiet": "Evening fire analysis, {day}. A quiet sky over India today.",
+    "quiet": "Evening fire analysis, {day}. No fire cells detected in this feed.",
     "tomorrow": "Tomorrow in {city}: PM2.5 forecast about {pm25}, CPCB {category}.",
     "credits": (
         "How sure: low. Weak labels from maps, not an official count. Fires shown per 11 km "
@@ -137,7 +136,7 @@ def story(feed: dict, path: Path) -> None:
     text(ax, 540, 880, f"INSAT {pct(match['insat_share'])}", 44, EMBER)
     text(ax, 540, 810, "share of today's fire cells each saw", 22, MUTED, "normal")
     if match["polar_last_seen_ist"]:
-        text(ax, 540, 700, f"Last polar pass {match['polar_last_seen_ist']}", 28)
+        text(ax, 540, 700, f"Last polar fire detection in feed {match['polar_last_seen_ist']}", 28)
     text(ax, 540, 330, "how sure: low. Weak labels. Not an official count.", 20, SURE)
     text(ax, 540, 250, "Data Source MOSDAC/SAC/ISRO. NASA FIRMS.", 16, MUTED, "normal")
     text(ax, 540, 210, "Boundaries (c) OpenStreetMap contributors, ODbL.", 16, MUTED, "normal")
@@ -181,7 +180,7 @@ def caption(feed: dict) -> str:
             day=feed["evening_ist"],
             polar=pct(match["polar_share"]),
             insat=pct(match["insat_share"]),
-            polar_last=match["polar_last_seen_ist"] or "the afternoon",
+            polar_last=match["polar_last_seen_ist"] or "none recorded",
         )
     tomorrow = feed["tomorrow"]
     parts = [first]
