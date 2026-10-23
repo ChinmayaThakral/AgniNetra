@@ -11,6 +11,7 @@ import {
   type Profile,
   type Queue,
   type RoundView,
+  sessionGuard,
   signedIn,
   signIn,
   type Spot,
@@ -23,6 +24,7 @@ import { award } from "./pet";
 import { SwipeRecord } from "./records";
 import { recall, remember } from "./store";
 import { busyMonths, gesture, monthName, THRESHOLD_PX } from "./swipe-logic";
+import { swipeRequest } from "./swipe-request";
 import type { Point } from "./upwind";
 
 // Swipe: the community labels the hot spots no map explains. It opens in two steps. A
@@ -113,6 +115,13 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
   const card = el("section", mode === "label" ? "card swipe" : "card swipe qualify-card");
   let settings: Config | null = null;
   const qualifyHere = mode === "qualify";
+  let generation = 0;
+
+  const replaceView = (): (() => boolean) => {
+    const view = ++generation;
+    const activeSession = sessionGuard();
+    return () => view === generation && activeSession();
+  };
 
   const intro = (): HTMLElement[] =>
     qualifyHere
@@ -160,7 +169,7 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
     return box;
   };
 
-  const qualifying = (p: Profile, cfg: Config): void => {
+  const qualifying = (p: Profile, cfg: Config, current: () => boolean): void => {
     if (!qualifyHere) {
       card.replaceChildren(
         ...intro(),
@@ -171,7 +180,7 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
       return;
     }
     const play = el("button", "button primary", "Play a qualifying round");
-    play.addEventListener("click", () => void round(cfg));
+    play.addEventListener("click", () => { if (current()) void round(cfg); });
     card.replaceChildren(
       ...intro(),
       progress(p, cfg),
@@ -181,10 +190,14 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
   };
 
   const round = async (cfg: Config): Promise<void> => {
+    const current = replaceView();
+    if (!current()) return;
     let view: RoundView;
     try {
       view = await startRound();
+      if (!current()) return;
     } catch (error) {
+      if (!current()) return;
       card.append(el("p", "small error", message(error)));
       return;
     }
@@ -200,20 +213,24 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
       more.disabled = v.clues.length >= v.total_clues;
     };
     more.addEventListener("click", () => {
+      if (!current()) return;
       more.disabled = true;
       nextClue(view.round)
         .then((v) => {
+          if (!current()) return;
           view = v;
           paint(v);
         })
-        .catch((error: unknown) => (feedback.textContent = message(error)));
+        .catch((error: unknown) => { if (current()) feedback.textContent = message(error); });
     });
     for (const choice of view.choices) {
       const button = el("button", "choice", choice);
       button.addEventListener("click", () => {
+        if (!current()) return;
         for (const b of choices.querySelectorAll("button")) b.disabled = true;
         guess(view.round, choice)
           .then((reply) => {
+            if (!current()) return;
             if ("counted" in reply) {
               const used = view.clues.length;
               paint({ ...view, clues: reply.clues, total_clues: reply.clues.length });
@@ -226,7 +243,12 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
               window.dispatchEvent(new Event("agninetra-data"));
               window.dispatchEvent(new Event("agninetra-community"));
               const next = el("button", "button primary", reply.qualified ? "Start labelling in Swipe" : "Next round");
-              next.addEventListener("click", () => (reply.qualified ? goToTab("Swipe") : void round(cfg)));
+              next.addEventListener("click", () => {
+                if (current()) {
+                  if (reply.qualified) goToTab("Swipe");
+                  else void round(cfg);
+                }
+              });
               after.replaceChildren(next, el("span", "small muted", `${reply.correct} of ${cfg.qualify_needed} counted.`));
               return;
             }
@@ -238,6 +260,7 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
             for (const b of choices.querySelectorAll("button")) if (!b.classList.contains("wrong")) b.disabled = false;
           })
           .catch((error: unknown) => {
+            if (!current()) return;
             feedback.textContent = message(error);
             for (const b of choices.querySelectorAll("button")) if (!b.classList.contains("wrong")) b.disabled = false;
           });
@@ -248,11 +271,13 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
     paint(view);
   };
 
-  const labelling = (queue: Queue): void => {
+  const labelling = (queue: Queue, notice = ""): void => {
+    const current = replaceView();
+    if (!current()) return;
     const spot = queue.item;
     const status = el("p", "small muted", `You have labelled ${queue.answered} of ${queue.total} spots.`);
     if (!spot) {
-      card.replaceChildren(el("h2", "", "Swipe"), el("p", "", "You have labelled every spot. Thank you: each answer helps find the heat sources the maps are missing."), status);
+      card.replaceChildren(el("h2", "", "Swipe"), el("p", "", "You have labelled every spot. Thank you: each answer helps find the heat sources the maps are missing."), el("p", "small", notice), status);
       return;
     }
     const kinds = queue.kinds ?? [];
@@ -277,69 +302,99 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
     zoom.type = "button";
     zoom.hidden = !spot.wide;
     zoom.addEventListener("click", () => {
+      if (!current()) return;
       wide = !wide;
       zoom.textContent = wide ? "Zoom in" : "Zoom out";
       paintPicture();
     });
     const caption = el("p", "muted small", `Sentinel-2, ${spot.acquired}. Contains modified Copernicus Sentinel data.`);
-    const feedback = el("p", "small", "");
+    const feedback = el("p", "small", notice);
     const buttons = el("div", "choices swipe-choices");
-    let busy = false;
-
-    const send = (answer: Label, kind?: string): void => {
-      label(spot.id, answer, kind)
-        .then((next) => {
-          const mine = recall("swipe", (v) => SwipeRecord.parse(v), {});
-          remember("swipe", { ...mine, [spot.id]: { a: answer, at: new Date().toISOString() } });
-          window.dispatchEvent(new Event("agninetra-data"));
-          award("swipe");
-          labelling(next);
-        })
-        .catch((error: unknown) => {
-          busy = false;
-          sheet.style.transform = "";
-          feedback.textContent = message(error);
+    const recovery = el("div", "choices");
+    const savedElsewhere = "This spot already has a saved answer. Your new choice was not recorded, and no XP was added.";
+    let intended = "";
+    const request = swipeRequest({
+      site: spot.id,
+      current,
+      sessionGuard,
+      request: (intent) => label(intent.site, intent.answer, intent.kind),
+      refresh: nextSpot,
+      history: () => recall("swipe", (v) => SwipeRecord.parse(v), {}),
+      record: (mine) => remember("swipe", mine),
+      now: () => new Date().toISOString(),
+      recorded: () => {
+        award("swipe");
+        if (current()) window.dispatchEvent(new Event("agninetra-data"));
+      },
+      complete: (next, result) => labelling(next, result === "conflict" ? savedElsewhere : ""),
+      conflict: () => {
+        feedback.textContent = `${savedElsewhere} Refreshing the queue.`;
+        recovery.replaceChildren();
+      },
+      failed: (error, action) => {
+        sheet.style.transform = "";
+        feedback.textContent = action === "refresh"
+          ? `${savedElsewhere} ${message(error)}`
+          : `${message(error)} The answer may already be saved. Retry the same choice: ${intended}.`;
+        const retry = el("button", "button primary", action === "refresh" ? "Refresh queue" : "Retry same answer");
+        retry.addEventListener("click", () => {
+          if (!current() || retry.disabled) return;
+          retry.disabled = true;
+          feedback.textContent = action === "refresh" ? `${savedElsewhere} Refreshing the queue.` : `Retrying the same choice: ${intended}.`;
+          if (action === "refresh") void request.refresh();
+          else void request.retry();
         });
-    };
-
-    const askKind = (): void => {
-      const pick = el("div", "kind-pick");
-      pick.append(el("p", "small", "What kind of industry, if you can tell?"));
-      const row = el("div", "choices");
-      for (const kind of kinds) {
-        const b = el("button", "choice", kind);
-        b.addEventListener("click", () => send("industry", kind));
-        row.append(b);
-      }
-      const skip = el("button", "choice", "Not sure which");
-      skip.addEventListener("click", () => send("industry"));
-      row.append(skip);
-      pick.append(row);
-      buttons.replaceWith(pick);
-      pick.querySelector("button")?.focus();
-    };
+        recovery.replaceChildren(retry);
+      },
+    });
 
     const commit = (answer: Label): void => {
-      if (busy) return;
-      busy = true;
+      const selection = request.choose(answer);
+      if (!selection) return;
+      start = null;
+      for (const b of buttons.querySelectorAll("button")) b.disabled = true;
       const fly: Record<Label, string> = { industry: "translate(140%, 0) rotate(18deg)", "not industry": "translate(-140%, 0) rotate(-18deg)", unsure: "translate(0, -140%)" };
       sheet.style.transition = "transform 220ms ease-in";
       sheet.style.transform = fly[answer];
       window.setTimeout(() => {
-        if (answer === "industry" && kinds.length) askKind();
-        else send(answer);
+        if (!selection.active()) return;
+        const send = (kind?: string): void => {
+          if (!selection.active()) return;
+          intended = `${STAMPS[answer]}${kind === undefined ? "" : `, ${kind}`}`;
+          for (const b of card.querySelectorAll<HTMLButtonElement>(".kind-pick button")) b.disabled = true;
+          feedback.textContent = `Saving ${intended}.`;
+          void selection.submit(kind);
+        };
+        if (answer !== "industry" || !kinds.length) {
+          send();
+          return;
+        }
+        const pick = el("div", "kind-pick");
+        pick.append(el("p", "small", "What kind of industry, if you can tell?"));
+        const row = el("div", "choices");
+        for (const kind of kinds) {
+          const b = el("button", "choice", kind);
+          b.addEventListener("click", () => send(kind));
+          row.append(b);
+        }
+        const skip = el("button", "choice", "Not sure which");
+        skip.addEventListener("click", () => send());
+        row.append(skip);
+        pick.append(row);
+        buttons.replaceWith(pick);
+        pick.querySelector("button")?.focus();
       }, 220);
     };
 
     let start: [number, number] | null = null;
     sheet.addEventListener("pointerdown", (event) => {
-      if (busy) return;
+      if (!request.canChoose()) return;
       start = [event.clientX, event.clientY];
       sheet.setPointerCapture(event.pointerId);
       sheet.style.transition = "none";
     });
     sheet.addEventListener("pointermove", (event) => {
-      if (!start) return;
+      if (!start || !request.canChoose()) return;
       const dx = event.clientX - start[0];
       const dy = event.clientY - start[1];
       sheet.style.transform = `translate(${dx}px, ${Math.min(dy, 40)}px) rotate(${dx / 18}deg)`;
@@ -348,7 +403,10 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
       stamp.className = would ? `stamp show ${would === "not industry" ? "no" : would}` : "stamp";
     });
     const release = (event: PointerEvent): void => {
-      if (!start) return;
+      if (!start || !request.canChoose()) {
+        start = null;
+        return;
+      }
       const answer = gesture(event.clientX - start[0], event.clientY - start[1]);
       start = null;
       if (answer) commit(answer);
@@ -387,6 +445,7 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
       zoom,
       caption,
       feedback,
+      recovery,
       facts,
       status,
     );
@@ -395,23 +454,33 @@ export function swipeCard(onPlace: (at: Point, label: string) => void, mode: "la
   };
 
   const open = async (): Promise<void> => {
+    const view = ++generation;
+    const activeSession = sessionGuard();
+    const sameView = (): boolean => view === generation;
+    const current = (): boolean => sameView() && activeSession();
     card.replaceChildren(...intro(), el("p", "small muted", "Loading."));
-    settings ??= await config();
-    if (!settings) return closed();
-    if (!signedIn()) return signedOut(settings);
+    const cfg = settings ?? await config();
+    if (!sameView()) return;
+    settings = cfg;
+    if (!cfg) return closed();
+    if (!signedIn()) return signedOut(cfg);
+    if (!current()) return;
     try {
       const profile = await me();
-      if (!profile.qualified) return qualifying(profile, settings);
+      if (!current()) return;
+      if (!profile.qualified) return qualifying(profile, cfg, current);
       if (qualifyHere) {
         const go = el("button", "button primary", "Label spots in Swipe");
-        go.addEventListener("click", () => goToTab("Swipe"));
+        go.addEventListener("click", () => { if (current()) goToTab("Swipe"); });
         card.replaceChildren(el("h2", "", "Swipe is unlocked"), el("p", "small", `You qualified with ${profile.correct} rounds solved. Thank you for lending your eye.`), go);
         return;
       }
-      labelling(await nextSpot());
+      const queue = await nextSpot();
+      if (current()) labelling(queue);
     } catch (error) {
-      if (error instanceof ApiError && error.status === 401) return signedOut(settings);
-      card.replaceChildren(...intro(), el("p", "small error", message(error)));
+      if (!sameView()) return;
+      if (error instanceof ApiError && error.status === 401 && !signedIn()) return signedOut(cfg);
+      if (current()) card.replaceChildren(...intro(), el("p", "small error", message(error)));
     }
   };
 

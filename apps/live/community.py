@@ -499,11 +499,17 @@ class Community:
             raise ApiError(400, "Unknown site or answer.")
         if kind is not None and (choice != "industry" or kind not in self.kinds):
             raise ApiError(400, "A kind goes only with an industry answer, from the list.")
-        inserted = self.db.execute(
-            "INSERT OR IGNORE INTO answers (user_id, item, answer, kind, at) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (user["id"], item, choice, kind, self.now_iso()),
-        ).rowcount
-        if not inserted:
-            raise ApiError(409, "You have already answered this site.")
-        return self.next_item(user)
+        with self.lock:
+            inserted = self.db.execute(
+                "INSERT OR IGNORE INTO answers (user_id, item, answer, kind, at) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (user["id"], item, choice, kind, self.now_iso()),
+            ).rowcount
+            if not inserted:
+                saved = self.db.execute(
+                    "SELECT answer, kind FROM answers WHERE user_id = ? AND item = ?",
+                    (user["id"], item),
+                ).fetchone()
+                if saved is None or saved["answer"] != choice or saved["kind"] != kind:
+                    raise ApiError(409, "You have already answered this site.")
+            return self.next_item(user)

@@ -192,6 +192,129 @@ def test_swipe_opens_only_after_qualifying_and_takes_one_answer_per_site(tmp_pat
     )
 
 
+@pytest.mark.parametrize(
+    ("answer", "kind"),
+    [("industry", None), ("industry", "coal mine"), ("not industry", None), ("unsure", None)],
+)
+def test_swipe_exact_retry_recovers_a_lost_response_without_changing_the_row(
+    tmp_path, answer, kind
+) -> None:
+    now = [1_000_000.0]
+    c = make(tmp_path, clock=lambda: now[0])
+    token = sign_in(c)
+    for _ in range(cm.QUALIFY_NEEDED):
+        assert solve(c, token)[0] == 200
+    _, queue = call(c, "GET", "/api/swipe/next", token=token)
+    item = queue["item"]["id"]
+    payload = {"item": item, "answer": answer}
+    if kind is not None:
+        payload["kind"] = kind
+
+    assert call(c, "POST", "/api/swipe/answer", payload, token)[0] == 200
+    saved = dict(c.db.execute("SELECT * FROM answers").fetchone())
+    now[0] += 60
+    status, recovered = call(c, "POST", "/api/swipe/answer", payload, token)
+
+    assert status == 200
+    assert recovered == call(c, "GET", "/api/swipe/next", token=token)[1]
+    assert recovered["answered"] == 1 and recovered["item"]["id"] != item
+    assert c.db.execute("SELECT count(*) FROM answers").fetchone()[0] == 1
+    assert dict(c.db.execute("SELECT * FROM answers").fetchone()) == saved
+    assert saved["at"] != c.now_iso()
+    c.db.close()
+
+
+@pytest.mark.parametrize(
+    ("first", "retry"),
+    [
+        ({"answer": "industry"}, {"answer": "not industry"}),
+        ({"answer": "not industry"}, {"answer": "unsure"}),
+        ({"answer": "unsure"}, {"answer": "industry"}),
+        (
+            {"answer": "industry", "kind": "coal mine"},
+            {"answer": "industry", "kind": "power plant"},
+        ),
+        ({"answer": "industry"}, {"answer": "industry", "kind": "coal mine"}),
+        ({"answer": "industry", "kind": "coal mine"}, {"answer": "industry"}),
+    ],
+)
+def test_swipe_changed_retry_conflicts_and_keeps_the_original_timestamp(
+    tmp_path, first, retry
+) -> None:
+    now = [1_000_000.0]
+    c = make(tmp_path, clock=lambda: now[0])
+    token = sign_in(c)
+    for _ in range(cm.QUALIFY_NEEDED):
+        assert solve(c, token)[0] == 200
+    _, queue = call(c, "GET", "/api/swipe/next", token=token)
+    item = queue["item"]["id"]
+    assert call(c, "POST", "/api/swipe/answer", {"item": item, **first}, token)[0] == 200
+    saved = dict(c.db.execute("SELECT * FROM answers").fetchone())
+    now[0] += 60
+
+    assert call(c, "POST", "/api/swipe/answer", {"item": item, **retry}, token)[0] == 409
+    assert c.db.execute("SELECT count(*) FROM answers").fetchone()[0] == 1
+    assert dict(c.db.execute("SELECT * FROM answers").fetchone()) == saved
+    assert saved["at"] != c.now_iso()
+    c.db.close()
+
+
+def test_swipe_exact_retry_returns_the_current_finished_queue(tmp_path) -> None:
+    c = make(tmp_path)
+    token = sign_in(c)
+    for _ in range(cm.QUALIFY_NEEDED):
+        assert solve(c, token)[0] == 200
+    _, queue = call(c, "GET", "/api/swipe/next", token=token)
+    first = {"item": queue["item"]["id"], "answer": "unsure"}
+    assert call(c, "POST", "/api/swipe/answer", first, token)[0] == 200
+    saved = dict(c.db.execute("SELECT * FROM answers").fetchone())
+    _, queue = call(c, "GET", "/api/swipe/next", token=token)
+    while queue["item"] is not None:
+        status, queue = call(
+            c,
+            "POST",
+            "/api/swipe/answer",
+            {"item": queue["item"]["id"], "answer": "unsure"},
+            token,
+        )
+        assert status == 200
+    status, recovered = call(c, "POST", "/api/swipe/answer", first, token)
+    assert status == 200
+    assert recovered == {"item": None, "answered": 3, "total": 3}
+    assert c.db.execute("SELECT count(*) FROM answers").fetchone()[0] == 3
+    assert (
+        dict(c.db.execute("SELECT * FROM answers WHERE item = ?", (first["item"],)).fetchone())
+        == saved
+    )
+    c.db.close()
+
+
+def test_swipe_retries_remain_isolated_between_players(tmp_path) -> None:
+    now = [1_000_000.0]
+    c = make(tmp_path, clock=lambda: now[0])
+    first = sign_in(c)
+    other = sign_in(c, "b@gmail.com")
+    for token in (first, other):
+        for _ in range(cm.QUALIFY_NEEDED):
+            assert solve(c, token)[0] == 200
+    payload = {"item": "a1", "answer": "industry", "kind": "coal mine"}
+    assert call(c, "POST", "/api/swipe/answer", payload, first)[0] == 200
+    saved = dict(c.db.execute("SELECT * FROM answers").fetchone())
+    now[0] += 60
+    assert (
+        call(c, "POST", "/api/swipe/answer", {"item": "a1", "answer": "not industry"}, other)[0]
+        == 200
+    )
+    assert call(c, "POST", "/api/swipe/answer", payload, first)[0] == 200
+    assert call(c, "POST", "/api/swipe/answer", payload, other)[0] == 409
+    rows = [dict(row) for row in c.db.execute("SELECT * FROM answers ORDER BY user_id")]
+    assert len(rows) == 2 and rows[0] == saved
+    assert rows[1]["answer"] == "not industry" and rows[1]["kind"] is None
+    for token in (first, other):
+        assert call(c, "GET", "/api/swipe/next", token=token)[1]["answered"] == 1
+    c.db.close()
+
+
 def test_sign_in_attempts_are_throttled(tmp_path) -> None:
     c = make(tmp_path)
     codes = [
