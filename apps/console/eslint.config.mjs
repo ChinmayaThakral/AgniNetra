@@ -1,13 +1,6 @@
 // Flat config, run by `eslint .`. `next lint` was deprecated in Next 15 and is gone in
 // 16. Under 15, with no ESLint installed, it dropped into an interactive setup prompt
 // and hung, so the lint script had been passing as a no op rather than linting anything.
-//
-// This is eslint-config-next 16 written out without its Next.js plugin. That plugin
-// pins fast-glob 3.3.1, whose brace expansion carries a high advisory with no fixed
-// release (GHSA-vfj7-8cjw-p6xm). Enabled, its 22 rules reported nothing here: one
-// page, no links between pages, no images, no scripts, no fonts. Every other rule
-// matches the official config. Go back to eslint-config-next once a release of the
-// plugin drops that dependency.
 import { defineConfig, globalIgnores } from "eslint/config";
 import importPlugin from "eslint-plugin-import";
 import jsxA11y from "eslint-plugin-jsx-a11y";

@@ -1,6 +1,6 @@
 name: ci
 
-# The verification battery on every push to main and every pull request. The test
+# The verification battery on every push to console and every pull request. The test
 # suite stays the enforcement layer locally; this makes it run whether or not
 # somebody remembers to. Tests that read docs/, context/ or data/ skip here, because
 # those stay on the team's machines.
@@ -22,11 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
-      - run: uv sync --extra dev
-      - run: uv run ruff check .
-      - run: uv run ruff format --check .
-      - run: uv run python scripts/check_conventions.py
-      - run: uv run pytest
+      - run: uv venv --python 3.11
+      - run: uv pip install -c requirements.lock.txt -r pyproject.toml --extra dev
+      - run: uv pip check
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync python scripts/check_conventions.py
+      - run: uv run --no-sync pytest
 
   console:
     runs-on: ubuntu-latest

@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "maplibre-gl": "6.12.0",
-    "next": "16.3.8",
+    "next": "16.4.3",
     "react": "19.1.9",
     "react-dom": "19.1.9",
-    "zod": "3.25.76"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "22.15.3",
@@ -32,7 +32,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.13.0",
-    "puppeteer-core": "25.12.0",
+    "puppeteer-core": "25.16.0",
     "typescript": "5.8.3",
     "typescript-eslint": "^8.71.1"
   }
