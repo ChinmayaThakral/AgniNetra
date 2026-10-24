@@ -20,11 +20,29 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
-      - run: uv sync --extra dev
-      - run: uv run ruff check .
-      - run: uv run ruff format --check .
-      - run: uv run python scripts/check_conventions.py
-      - run: uv run pytest
+      - run: uv venv --python 3.11
+      - run: uv pip install -c requirements.lock.txt -r pyproject.toml --extra dev
+      - run: uv pip check
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync python scripts/check_conventions.py
+      - run: uv run --no-sync pytest
+
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - run: uv venv --python 3.11 --seed .venv-runtime
+      - run: >-
+          .venv-runtime/bin/python -m pip install -c requirements.lock.txt
+          duckdb h5py matplotlib numpy pillow python-dotenv requests
+      - run: .venv-runtime/bin/python -m pip check
+      - run: >-
+          .venv-runtime/bin/python -c
+          "import duckdb, h5py, matplotlib, numpy, PIL, dotenv, requests;
+          from PIL import features; assert features.check('webp')"
 
   web:
     runs-on: ubuntu-latest
